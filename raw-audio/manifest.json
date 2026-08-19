@@ -1,555 +1,1388 @@
 [
   {
-    "id": "b",
-    "category": "am_dau",
+    "key": "am_dau__b",
+    "char": "b",
     "text": "bờ",
     "filename": "am_dau__b.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "c",
-    "category": "am_dau",
+    "key": "am_dau__c",
+    "char": "c",
     "text": "cờ",
     "filename": "am_dau__c.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "ch",
-    "category": "am_dau",
+    "key": "am_dau__ch",
+    "char": "ch",
     "text": "chờ",
     "filename": "am_dau__ch.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "d",
-    "category": "am_dau",
+    "key": "am_dau__d",
+    "char": "d",
     "text": "dờ",
     "filename": "am_dau__d.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "dd",
-    "category": "am_dau",
+    "key": "am_dau__dd",
+    "char": "đ",
     "text": "đờ",
     "filename": "am_dau__dd.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "g",
-    "category": "am_dau",
+    "key": "am_dau__g",
+    "char": "g",
     "text": "gờ",
     "filename": "am_dau__g.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "gh",
-    "category": "am_dau",
-    "text": "gờ",
+    "key": "am_dau__gh",
+    "char": "gh",
+    "text": "ghờ",
     "filename": "am_dau__gh.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "gi",
-    "category": "am_dau",
-    "text": "gi",
+    "key": "am_dau__gi",
+    "char": "gi",
+    "text": "giờ",
     "filename": "am_dau__gi.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "h",
-    "category": "am_dau",
+    "key": "am_dau__h",
+    "char": "h",
     "text": "hờ",
     "filename": "am_dau__h.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "k",
-    "category": "am_dau",
+    "key": "am_dau__k",
+    "char": "k",
     "text": "kờ",
     "filename": "am_dau__k.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "kh",
-    "category": "am_dau",
+    "key": "am_dau__kh",
+    "char": "kh",
     "text": "khờ",
     "filename": "am_dau__kh.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "l",
-    "category": "am_dau",
+    "key": "am_dau__l",
+    "char": "l",
     "text": "lờ",
     "filename": "am_dau__l.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "m",
-    "category": "am_dau",
+    "key": "am_dau__m",
+    "char": "m",
     "text": "mờ",
     "filename": "am_dau__m.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "n",
-    "category": "am_dau",
+    "key": "am_dau__n",
+    "char": "n",
     "text": "nờ",
     "filename": "am_dau__n.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "ng",
-    "category": "am_dau",
+    "key": "am_dau__ng",
+    "char": "ng",
     "text": "ngờ",
     "filename": "am_dau__ng.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "ngh",
-    "category": "am_dau",
-    "text": "ngờ",
+    "key": "am_dau__ngh",
+    "char": "ngh",
+    "text": "nghờ",
     "filename": "am_dau__ngh.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "nh",
-    "category": "am_dau",
+    "key": "am_dau__nh",
+    "char": "nh",
     "text": "nhờ",
     "filename": "am_dau__nh.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "p",
-    "category": "am_dau",
+    "key": "am_dau__p",
+    "char": "p",
     "text": "pờ",
     "filename": "am_dau__p.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "ph",
-    "category": "am_dau",
+    "key": "am_dau__ph",
+    "char": "ph",
     "text": "phờ",
     "filename": "am_dau__ph.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "qu",
-    "category": "am_dau",
+    "key": "am_dau__qu",
+    "char": "qu",
     "text": "quờ",
     "filename": "am_dau__qu.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "r",
-    "category": "am_dau",
+    "key": "am_dau__r",
+    "char": "r",
     "text": "rờ",
     "filename": "am_dau__r.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "s",
-    "category": "am_dau",
+    "key": "am_dau__s",
+    "char": "s",
     "text": "sờ",
     "filename": "am_dau__s.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "t",
-    "category": "am_dau",
+    "key": "am_dau__t",
+    "char": "t",
     "text": "tờ",
     "filename": "am_dau__t.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "th",
-    "category": "am_dau",
+    "key": "am_dau__th",
+    "char": "th",
     "text": "thờ",
     "filename": "am_dau__th.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "tr",
-    "category": "am_dau",
+    "key": "am_dau__tr",
+    "char": "tr",
     "text": "trờ",
     "filename": "am_dau__tr.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "v",
-    "category": "am_dau",
+    "key": "am_dau__v",
+    "char": "v",
     "text": "vờ",
     "filename": "am_dau__v.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "x",
-    "category": "am_dau",
+    "key": "am_dau__x",
+    "char": "x",
     "text": "xờ",
     "filename": "am_dau__x.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "a",
-    "category": "van",
-    "text": "a",
-    "filename": "van__a.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "an",
-    "category": "van",
-    "text": "an",
-    "filename": "van__an.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "at",
-    "category": "van",
-    "text": "at",
-    "filename": "van__at.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ang",
-    "category": "van",
-    "text": "ang",
-    "filename": "van__ang.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "at_breve",
-    "category": "van",
-    "text": "ắt",
-    "filename": "van__at_breve.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "e",
-    "category": "van",
-    "text": "e",
-    "filename": "van__e.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "en",
-    "category": "van",
-    "text": "en",
-    "filename": "van__en.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ê",
-    "category": "van",
-    "text": "ê",
-    "filename": "van__e_hat.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ên",
-    "category": "van",
-    "text": "ên",
-    "filename": "van__en_hat.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "i",
-    "category": "van",
-    "text": "i",
-    "filename": "van__i.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "in",
-    "category": "van",
-    "text": "in",
-    "filename": "van__in.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "iêu",
-    "category": "van",
-    "text": "iêu",
-    "filename": "van__ieu.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "o",
-    "category": "van",
-    "text": "o",
-    "filename": "van__o.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "on",
-    "category": "van",
-    "text": "on",
-    "filename": "van__on.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "oan",
-    "category": "van",
-    "text": "oan",
-    "filename": "van__oan.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ô",
-    "category": "van",
-    "text": "ô",
-    "filename": "van__o_hat.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "u",
-    "category": "van",
-    "text": "u",
-    "filename": "van__u.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "uông",
-    "category": "van",
-    "text": "uông",
-    "filename": "van__uong.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "uyên",
-    "category": "van",
-    "text": "uyên",
-    "filename": "van__uyen.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ươ",
-    "category": "van",
-    "text": "ươ",
-    "filename": "van__uo.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ương",
-    "category": "van",
-    "text": "ương",
-    "filename": "van__uong_horn.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "uyu",
-    "category": "van",
-    "text": "uyu",
-    "filename": "van__uyu.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ach",
-    "category": "van",
-    "text": "ach",
-    "filename": "van__ach.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ao",
-    "category": "van",
-    "text": "ao",
-    "filename": "van__ao.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "im",
-    "category": "van",
-    "text": "im",
-    "filename": "van__im.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ai",
-    "category": "van",
-    "text": "ai",
-    "filename": "van__ai.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ngang",
-    "category": "thanh",
+    "key": "thanh__ngang",
+    "char": "ngang",
     "text": "thanh ngang",
     "filename": "thanh__ngang.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "huyen",
-    "category": "thanh",
+    "key": "thanh__huyen",
+    "char": "huyền",
     "text": "huyền",
     "filename": "thanh__huyen.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "sac",
-    "category": "thanh",
+    "key": "thanh__sac",
+    "char": "sắc",
     "text": "sắc",
     "filename": "thanh__sac.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "hoi",
-    "category": "thanh",
+    "key": "thanh__hoi",
+    "char": "hỏi",
     "text": "hỏi",
     "filename": "thanh__hoi.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "nga",
-    "category": "thanh",
+    "key": "thanh__nga",
+    "char": "ngã",
     "text": "ngã",
     "filename": "thanh__nga.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "nang",
-    "category": "thanh",
+    "key": "thanh__nang",
+    "char": "nặng",
     "text": "nặng",
     "filename": "thanh__nang.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "truong_ngang",
-    "category": "tu",
+    "key": "van__a",
+    "char": "a",
+    "text": "a",
+    "filename": "van__a.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_breve",
+    "char": "ă",
+    "text": "ă",
+    "filename": "van__a_breve.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat",
+    "char": "â",
+    "text": "â",
+    "filename": "van__a_hat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e",
+    "char": "e",
+    "text": "e",
+    "filename": "van__e.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat",
+    "char": "ê",
+    "text": "ê",
+    "filename": "van__e_hat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__i",
+    "char": "i",
+    "text": "i",
+    "filename": "van__i.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__y",
+    "char": "y",
+    "text": "y",
+    "filename": "van__y.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o",
+    "char": "o",
+    "text": "o",
+    "filename": "van__o.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_hat",
+    "char": "ô",
+    "text": "ô",
+    "filename": "van__o_hat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_horn",
+    "char": "ơ",
+    "text": "ơ",
+    "filename": "van__o_horn.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u",
+    "char": "u",
+    "text": "u",
+    "filename": "van__u.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn",
+    "char": "ư",
+    "text": "ư",
+    "filename": "van__u_horn.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ia",
+    "char": "ia",
+    "text": "ia",
+    "filename": "van__ia.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ya",
+    "char": "ya",
+    "text": "ya",
+    "filename": "van__ya.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ie",
+    "char": "iê",
+    "text": "iê",
+    "filename": "van__ie.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ye",
+    "char": "yê",
+    "text": "yê",
+    "filename": "van__ye.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ua",
+    "char": "ua",
+    "text": "ua",
+    "filename": "van__ua.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uo_hat",
+    "char": "uô",
+    "text": "uô",
+    "filename": "van__uo_hat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ua_horn",
+    "char": "ưa",
+    "text": "ưa",
+    "filename": "van__ua_horn.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uo_horn",
+    "char": "ươ",
+    "text": "ươ",
+    "filename": "van__uo_horn.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ai",
+    "char": "ai",
+    "text": "ai",
+    "filename": "van__ai.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ay",
+    "char": "ay",
+    "text": "ay",
+    "filename": "van__ay.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat_y",
+    "char": "ây",
+    "text": "ây",
+    "filename": "van__a_hat_y.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ao",
+    "char": "ao",
+    "text": "ao",
+    "filename": "van__ao.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__au",
+    "char": "au",
+    "text": "au",
+    "filename": "van__au.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat_u",
+    "char": "âu",
+    "text": "âu",
+    "filename": "van__a_hat_u.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__eo",
+    "char": "eo",
+    "text": "eo",
+    "filename": "van__eo.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_u",
+    "char": "êu",
+    "text": "êu",
+    "filename": "van__e_hat_u.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__iu",
+    "char": "iu",
+    "text": "iu",
+    "filename": "van__iu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ieu",
+    "char": "iêu",
+    "text": "iêu",
+    "filename": "van__ieu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__yeu",
+    "char": "yêu",
+    "text": "yêu",
+    "filename": "van__yeu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oi",
+    "char": "oi",
+    "text": "oi",
+    "filename": "van__oi.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_hat_i",
+    "char": "ôi",
+    "text": "ôi",
+    "filename": "van__o_hat_i.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_horn_i",
+    "char": "ơi",
+    "text": "ơi",
+    "filename": "van__o_horn_i.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ui",
+    "char": "ui",
+    "text": "ui",
+    "filename": "van__ui.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_i",
+    "char": "ưi",
+    "text": "ưi",
+    "filename": "van__u_horn_i.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uoi",
+    "char": "uôi",
+    "text": "uôi",
+    "filename": "van__uoi.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_o_horn_i",
+    "char": "ươi",
+    "text": "ươi",
+    "filename": "van__u_horn_o_horn_i.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oa",
+    "char": "oa",
+    "text": "oa",
+    "filename": "van__oa.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oe",
+    "char": "oe",
+    "text": "oe",
+    "filename": "van__oe.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oai",
+    "char": "oai",
+    "text": "oai",
+    "filename": "van__oai.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oay",
+    "char": "oay",
+    "text": "oay",
+    "filename": "van__oay.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oeo",
+    "char": "oeo",
+    "text": "oeo",
+    "filename": "van__oeo.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uya",
+    "char": "uya",
+    "text": "uya",
+    "filename": "van__uya.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uyu",
+    "char": "uyu",
+    "text": "uyu",
+    "filename": "van__uyu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__am",
+    "char": "am",
+    "text": "am",
+    "filename": "van__am.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_breve_m",
+    "char": "ăm",
+    "text": "ăm",
+    "filename": "van__a_breve_m.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat_m",
+    "char": "âm",
+    "text": "âm",
+    "filename": "van__a_hat_m.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__em",
+    "char": "em",
+    "text": "em",
+    "filename": "van__em.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_m",
+    "char": "êm",
+    "text": "êm",
+    "filename": "van__e_hat_m.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__im",
+    "char": "im",
+    "text": "im",
+    "filename": "van__im.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__om",
+    "char": "om",
+    "text": "om",
+    "filename": "van__om.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_hat_m",
+    "char": "ôm",
+    "text": "ôm",
+    "filename": "van__o_hat_m.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_horn_m",
+    "char": "ơm",
+    "text": "ơm",
+    "filename": "van__o_horn_m.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__um",
+    "char": "um",
+    "text": "um",
+    "filename": "van__um.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_m",
+    "char": "ưm",
+    "text": "ưm",
+    "filename": "van__u_horn_m.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__iem",
+    "char": "iêm",
+    "text": "iêm",
+    "filename": "van__iem.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__yem",
+    "char": "yêm",
+    "text": "yêm",
+    "filename": "van__yem.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uom",
+    "char": "uôm",
+    "text": "uôm",
+    "filename": "van__uom.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_o_horn_m",
+    "char": "ươm",
+    "text": "ươm",
+    "filename": "van__u_horn_o_horn_m.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oam",
+    "char": "oam",
+    "text": "oam",
+    "filename": "van__oam.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__an",
+    "char": "an",
+    "text": "an",
+    "filename": "van__an.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_breve_n",
+    "char": "ăn",
+    "text": "ăn",
+    "filename": "van__a_breve_n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat_n",
+    "char": "ân",
+    "text": "ân",
+    "filename": "van__a_hat_n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__en",
+    "char": "en",
+    "text": "en",
+    "filename": "van__en.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_n",
+    "char": "ên",
+    "text": "ên",
+    "filename": "van__e_hat_n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__in",
+    "char": "in",
+    "text": "in",
+    "filename": "van__in.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__on",
+    "char": "on",
+    "text": "on",
+    "filename": "van__on.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_hat_n",
+    "char": "ôn",
+    "text": "ôn",
+    "filename": "van__o_hat_n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_horn_n",
+    "char": "ơn",
+    "text": "ơn",
+    "filename": "van__o_horn_n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__un",
+    "char": "un",
+    "text": "un",
+    "filename": "van__un.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_n",
+    "char": "ưn",
+    "text": "ưn",
+    "filename": "van__u_horn_n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ien",
+    "char": "iên",
+    "text": "iên",
+    "filename": "van__ien.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__yen",
+    "char": "yên",
+    "text": "yên",
+    "filename": "van__yen.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uon",
+    "char": "uôn",
+    "text": "uôn",
+    "filename": "van__uon.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_o_horn_n",
+    "char": "ươn",
+    "text": "ươn",
+    "filename": "van__u_horn_o_horn_n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oan",
+    "char": "oan",
+    "text": "oan",
+    "filename": "van__oan.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_breve_n",
+    "char": "oăn",
+    "text": "oăn",
+    "filename": "van__o_breve_n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uan",
+    "char": "uân",
+    "text": "uân",
+    "filename": "van__uan.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uen",
+    "char": "uên",
+    "text": "uên",
+    "filename": "van__uen.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ang",
+    "char": "ang",
+    "text": "ang",
+    "filename": "van__ang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_breve_ng",
+    "char": "ăng",
+    "text": "ăng",
+    "filename": "van__a_breve_ng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat_ng",
+    "char": "âng",
+    "text": "âng",
+    "filename": "van__a_hat_ng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__eng",
+    "char": "eng",
+    "text": "eng",
+    "filename": "van__eng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_ng",
+    "char": "êng",
+    "text": "êng",
+    "filename": "van__e_hat_ng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ong",
+    "char": "ong",
+    "text": "ong",
+    "filename": "van__ong.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_hat_ng",
+    "char": "ông",
+    "text": "ông",
+    "filename": "van__o_hat_ng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ung",
+    "char": "ung",
+    "text": "ung",
+    "filename": "van__ung.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_ng",
+    "char": "ưng",
+    "text": "ưng",
+    "filename": "van__u_horn_ng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ieng",
+    "char": "iêng",
+    "text": "iêng",
+    "filename": "van__ieng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__yeng",
+    "char": "yêng",
+    "text": "yêng",
+    "filename": "van__yeng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uong",
+    "char": "uông",
+    "text": "uông",
+    "filename": "van__uong.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_o_horn_ng",
+    "char": "ương",
+    "text": "ương",
+    "filename": "van__u_horn_o_horn_ng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oang",
+    "char": "oang",
+    "text": "oang",
+    "filename": "van__oang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_breve_ng",
+    "char": "oăng",
+    "text": "oăng",
+    "filename": "van__o_breve_ng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uang",
+    "char": "uâng",
+    "text": "uâng",
+    "filename": "van__uang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__anh",
+    "char": "anh",
+    "text": "anh",
+    "filename": "van__anh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_nh",
+    "char": "ênh",
+    "text": "ênh",
+    "filename": "van__e_hat_nh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__inh",
+    "char": "inh",
+    "text": "inh",
+    "filename": "van__inh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oanh",
+    "char": "oanh",
+    "text": "oanh",
+    "filename": "van__oanh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uynh",
+    "char": "uynh",
+    "text": "uynh",
+    "filename": "van__uynh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ap",
+    "char": "ap",
+    "text": "ap",
+    "filename": "van__ap.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_breve_p",
+    "char": "ăp",
+    "text": "ăp",
+    "filename": "van__a_breve_p.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat_p",
+    "char": "âp",
+    "text": "âp",
+    "filename": "van__a_hat_p.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ep",
+    "char": "ep",
+    "text": "ep",
+    "filename": "van__ep.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_p",
+    "char": "êp",
+    "text": "êp",
+    "filename": "van__e_hat_p.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ip",
+    "char": "ip",
+    "text": "ip",
+    "filename": "van__ip.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__op",
+    "char": "op",
+    "text": "op",
+    "filename": "van__op.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_hat_p",
+    "char": "ôp",
+    "text": "ôp",
+    "filename": "van__o_hat_p.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_horn_p",
+    "char": "ơp",
+    "text": "ơp",
+    "filename": "van__o_horn_p.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__up",
+    "char": "up",
+    "text": "up",
+    "filename": "van__up.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_p",
+    "char": "ưp",
+    "text": "ưp",
+    "filename": "van__u_horn_p.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__iep",
+    "char": "iêp",
+    "text": "iêp",
+    "filename": "van__iep.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__yep",
+    "char": "yêp",
+    "text": "yêp",
+    "filename": "van__yep.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_o_horn_p",
+    "char": "ươp",
+    "text": "ươp",
+    "filename": "van__u_horn_o_horn_p.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__at",
+    "char": "at",
+    "text": "at",
+    "filename": "van__at.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_breve_t",
+    "char": "ăt",
+    "text": "ăt",
+    "filename": "van__a_breve_t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat_t",
+    "char": "ât",
+    "text": "ât",
+    "filename": "van__a_hat_t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__et",
+    "char": "et",
+    "text": "et",
+    "filename": "van__et.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_t",
+    "char": "êt",
+    "text": "êt",
+    "filename": "van__e_hat_t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__it",
+    "char": "it",
+    "text": "it",
+    "filename": "van__it.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ot",
+    "char": "ot",
+    "text": "ot",
+    "filename": "van__ot.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_hat_t",
+    "char": "ôt",
+    "text": "ôt",
+    "filename": "van__o_hat_t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_horn_t",
+    "char": "ơt",
+    "text": "ơt",
+    "filename": "van__o_horn_t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ut",
+    "char": "ut",
+    "text": "ut",
+    "filename": "van__ut.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_t",
+    "char": "ưt",
+    "text": "ưt",
+    "filename": "van__u_horn_t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__iet",
+    "char": "iêt",
+    "text": "iêt",
+    "filename": "van__iet.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__yet",
+    "char": "yêt",
+    "text": "yêt",
+    "filename": "van__yet.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uot",
+    "char": "uôt",
+    "text": "uôt",
+    "filename": "van__uot.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_o_horn_t",
+    "char": "ươt",
+    "text": "ươt",
+    "filename": "van__u_horn_o_horn_t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oat",
+    "char": "oat",
+    "text": "oat",
+    "filename": "van__oat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_breve_t",
+    "char": "oăt",
+    "text": "oăt",
+    "filename": "van__o_breve_t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uat",
+    "char": "uât",
+    "text": "uât",
+    "filename": "van__uat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uet",
+    "char": "uêt",
+    "text": "uêt",
+    "filename": "van__uet.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uyt",
+    "char": "uyt",
+    "text": "uyt",
+    "filename": "van__uyt.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ac",
+    "char": "ac",
+    "text": "ac",
+    "filename": "van__ac.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_breve_c",
+    "char": "ăc",
+    "text": "ăc",
+    "filename": "van__a_breve_c.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__a_hat_c",
+    "char": "âc",
+    "text": "âc",
+    "filename": "van__a_hat_c.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ec",
+    "char": "ec",
+    "text": "ec",
+    "filename": "van__ec.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_c",
+    "char": "êc",
+    "text": "êc",
+    "filename": "van__e_hat_c.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oc",
+    "char": "oc",
+    "text": "óc",
+    "filename": "van__oc.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_hat_c",
+    "char": "ôc",
+    "text": "ôc",
+    "filename": "van__o_hat_c.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uc",
+    "char": "uc",
+    "text": "uc",
+    "filename": "van__uc.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_c",
+    "char": "ưc",
+    "text": "ưc",
+    "filename": "van__u_horn_c.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__iec",
+    "char": "iêc",
+    "text": "iêc",
+    "filename": "van__iec.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uoc",
+    "char": "uôc",
+    "text": "uôc",
+    "filename": "van__uoc.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__u_horn_o_horn_c",
+    "char": "ươc",
+    "text": "ươc",
+    "filename": "van__u_horn_o_horn_c.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oac",
+    "char": "oac",
+    "text": "oac",
+    "filename": "van__oac.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__o_breve_c",
+    "char": "oăc",
+    "text": "oăc",
+    "filename": "van__o_breve_c.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ach",
+    "char": "ach",
+    "text": "ach",
+    "filename": "van__ach.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__e_hat_ch",
+    "char": "êch",
+    "text": "ếch",
+    "filename": "van__e_hat_ch.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__ich",
+    "char": "ich",
+    "text": "ích",
+    "filename": "van__ich.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__oach",
+    "char": "oach",
+    "text": "oach",
+    "filename": "van__oach.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "van__uych",
+    "char": "uych",
+    "text": "uych",
+    "filename": "van__uych.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "tu__truong_ngang",
+    "char": "trương",
     "text": "trương",
     "filename": "tu__truong_ngang.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "truong",
-    "category": "tu",
+    "key": "tu__truong",
+    "char": "trường",
     "text": "trường",
     "filename": "tu__truong.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "uong",
-    "category": "tu",
-    "text": "uống",
-    "filename": "tu__uong.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "giat_ngang",
-    "category": "tu",
-    "text": "giăt",
+    "key": "tu__giat_ngang",
+    "char": "giăt",
+    "text": "giắt",
     "filename": "tu__giat_ngang.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "giat",
-    "category": "tu",
+    "key": "tu__giat",
+    "char": "giặt",
     "text": "giặt",
     "filename": "tu__giat.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "quang",
-    "category": "tu",
+    "key": "tu__quang",
+    "char": "quang",
     "text": "quang",
     "filename": "tu__quang.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "khuyu",
-    "category": "tu",
+    "key": "tu__khuyu_ngang",
+    "char": "khuyu",
+    "text": "khuyu",
+    "filename": "tu__khuyu_ngang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "key": "tu__khuyu",
+    "char": "khuỷu",
     "text": "khuỷu",
     "filename": "tu__khuyu.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "nguyen",
-    "category": "tu",
+    "key": "tu__nguyen",
+    "char": "nguyễn",
     "text": "nguyễn",
     "filename": "tu__nguyen.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "be",
-    "category": "tu",
-    "text": "bé",
-    "filename": "tu__be.mp3",
+    "key": "tu__chich",
+    "char": "chích",
+    "text": "chích",
+    "filename": "tu__chich.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "hoc",
-    "category": "tu",
-    "text": "học",
-    "filename": "tu__hoc.mp3",
+    "key": "tu__choe",
+    "char": "chòe",
+    "text": "chòe",
+    "filename": "tu__choe.mp3",
     "sizeBytes": 10656
   },
   {
-    "id": "bai",
-    "category": "tu",
-    "text": "bài",
-    "filename": "tu__bai.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "vui",
-    "category": "tu",
-    "text": "vui",
-    "filename": "tu__vui.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "cham",
-    "category": "tu",
-    "text": "chăm",
-    "filename": "tu__cham.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "chi",
-    "category": "tu",
-    "text": "chỉ",
-    "filename": "tu__chi.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ca",
-    "category": "tu",
-    "text": "cá",
-    "filename": "tu__ca.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "hoa",
-    "category": "tu",
-    "text": "hoa",
-    "filename": "tu__hoa.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "sach",
-    "category": "tu",
-    "text": "sách",
-    "filename": "tu__sach.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "yeu",
-    "category": "tu",
-    "text": "yêu",
-    "filename": "tu__yeu.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "an",
-    "category": "tu",
-    "text": "ăn",
-    "filename": "tu__an.mp3",
-    "sizeBytes": 10656
-  },
-  {
-    "id": "ba",
-    "category": "tu",
-    "text": "bà",
-    "filename": "tu__ba.mp3",
+    "key": "tu__huych",
+    "char": "huých",
+    "text": "huých",
+    "filename": "tu__huych.mp3",
     "sizeBytes": 10656
   }
 ]

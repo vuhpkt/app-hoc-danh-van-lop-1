@@ -1,11 +1,11 @@
 /**
  * Script Node.js: Đóng gói Chunked Audio Sprite & Tạo audio-map.json
- * - SỬ DỤNG SMART NATURAL DECAY TRIMMER:
- *   + Tự động phát hiện điểm bắt đầu thực tế và điểm kết thúc tự nhiên của giọng nói (bao gồm cả đuôi âm ngân và âm vang phòng)
- *   + Triệt tiêu hoàn toàn lỗi cắt ngang giữa chừng (vốn là nguyên nhân gây tiếng nổ lẹt xẹt sau các âm "ương", "trương", "huyền")
- *   + Áp dụng cửa sổ Cosine (Hann Windowing) và Zero-Crossing tại 2 đầu clip
- * - Xuất file Sprite tối ưu: public/audio/sprite-main.mp3 (& .webm)
- * - Xuất toạ độ chính xác: public/audio/audio-map.json
+ * NGUỒN DUY NHẤT: danh_muc_am_thanh_lop_1.md (thông qua raw-audio/manifest.json)
+ *
+ * TỐI ƯU TOÀN DIỆN VỚI SMART NATURAL DECAY & ZERO-CROSSING TRIMMER:
+ * - Nhận diện chính xác điểm bắt đầu và đuôi âm ngân tự nhiên (-52dB + 50ms reverb tail)
+ * - Áp dụng Hann Windowing 12ms và hard zero 32 mẫu đầu/cuối của PCM
+ * - Xuất sprite-main.mp3, sprite-main.webm và audio-map.json
  */
 
 import fs from 'node:fs';
@@ -20,6 +20,7 @@ const __dirname = path.dirname(__filename);
 const RAW_AUDIO_DIR = path.join(__dirname, '..', 'raw-audio');
 const PUBLIC_AUDIO_DIR = path.join(__dirname, '..', 'public', 'audio');
 const TEMP_DIR = path.join(__dirname, '..', 'temp_trimmed_audio');
+const MANIFEST_FILE = path.join(RAW_AUDIO_DIR, 'manifest.json');
 
 const SAMPLE_RATE = 24000;
 
@@ -29,24 +30,24 @@ function createWavHeader(dataLength) {
   buffer.writeUInt32LE(36 + dataLength, 4);
   buffer.write('WAVE', 8);
   buffer.write('fmt ', 12);
-  buffer.writeUInt32LE(16, 16); // PCM Chunk size
-  buffer.writeUInt16LE(1, 20);  // Format = 1 (PCM)
-  buffer.writeUInt16LE(1, 22);  // Channels = 1 (Mono)
-  buffer.writeUInt32LE(SAMPLE_RATE, 24); // Sample rate = 24000
-  buffer.writeUInt32LE(SAMPLE_RATE * 2, 28); // Byte rate = 48000
-  buffer.writeUInt16LE(2, 32);  // Block align = 2
-  buffer.writeUInt16LE(16, 34); // Bits per sample = 16
+  buffer.writeUInt32LE(16, 16);
+  buffer.writeUInt16LE(1, 20);  // PCM format
+  buffer.writeUInt16LE(1, 22);  // Mono
+  buffer.writeUInt32LE(SAMPLE_RATE, 24);
+  buffer.writeUInt32LE(SAMPLE_RATE * 2, 28);
+  buffer.writeUInt16LE(2, 32);
+  buffer.writeUInt16LE(16, 34);
   buffer.write('data', 36);
   buffer.writeUInt32LE(dataLength, 40);
   return buffer;
 }
 
 async function main() {
-  console.log('='.repeat(70));
-  console.log('🔨 BỘ ĐÓNG GÓI AUDIO SPRITE CHUẨN SƯ PHẠM (SMART NATURAL DECAY)');
-  console.log(`📂 Thư mục nguồn:   ${RAW_AUDIO_DIR}`);
-  console.log(`📂 Thư mục đích:     ${PUBLIC_AUDIO_DIR}`);
-  console.log('='.repeat(70));
+  console.log('='.repeat(75));
+  console.log('🔨 BỘ ĐÓNG GÓI AUDIO SPRITE TIẾNG VIỆT LỚP 1 (SMART NATURAL DECAY)');
+  console.log(`📂 Nguồn:        ${RAW_AUDIO_DIR}`);
+  console.log(`📂 Thư mục đích: ${PUBLIC_AUDIO_DIR}`);
+  console.log('='.repeat(75));
 
   if (!fs.existsSync(RAW_AUDIO_DIR)) {
     console.error('❌ Không tìm thấy thư mục raw-audio!');
@@ -60,29 +61,39 @@ async function main() {
     fs.mkdirSync(TEMP_DIR, { recursive: true });
   }
 
-  const allFiles = fs.readdirSync(RAW_AUDIO_DIR)
-    .filter((f) => f.endsWith('.mp3') && !f.startsWith('test'))
-    .sort();
-
-  if (allFiles.length === 0) {
-    console.error('❌ Không có file mp3 nào trong raw-audio!');
-    process.exit(1);
+  let itemsToPack = [];
+  if (fs.existsSync(MANIFEST_FILE)) {
+    const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf-8'));
+    itemsToPack = manifest.map((m) => ({
+      key: m.key || path.basename(m.filename, '.mp3'),
+      filename: m.filename,
+    }));
+  } else {
+    itemsToPack = fs.readdirSync(RAW_AUDIO_DIR)
+      .filter((f) => f.endsWith('.mp3') && !f.startsWith('test'))
+      .sort()
+      .map((f) => ({ key: path.basename(f, '.mp3'), filename: f }));
   }
 
-  console.log(`🔍 Tìm thấy ${allFiles.length} file âm thanh. Đang xử lý bóc tách & làm mịn tự nhiên...`);
+  console.log(`🔍 Tìm thấy ${itemsToPack.length} mẫu âm chuẩn từ đặc tả. Đang xử lý bóc tách & làm mịn...`);
 
   const audioMap = {};
   let currentOffset = 0.0;
   const concatList = [];
 
-  for (let i = 0; i < allFiles.length; i++) {
-    const file = allFiles[i];
-    const key = path.basename(file, '.mp3');
-    const inputPath = path.join(RAW_AUDIO_DIR, file);
+  for (let i = 0; i < itemsToPack.length; i++) {
+    const { key, filename } = itemsToPack[i];
+    const inputPath = path.join(RAW_AUDIO_DIR, filename);
+
+    if (!fs.existsSync(inputPath)) {
+      console.warn(`  ⚠️ Bỏ qua không tìm thấy file: ${filename}`);
+      continue;
+    }
+
     const tempRawWav = path.join(TEMP_DIR, `raw_${String(i).padStart(3, '0')}.wav`);
     const tempTrimmedWav = path.join(TEMP_DIR, `${String(i).padStart(3, '0')}_${key}.wav`);
 
-    process.stdout.write(`  [${String(i + 1).padStart(2, '0')}/${allFiles.length}] Xử lý: ${key.padEnd(22)}... `);
+    process.stdout.write(`  [${String(i + 1).padStart(3, '0')}/${itemsToPack.length}] Xử lý: ${key.padEnd(25)}... `);
 
     // 1. Chuyển đổi MP3 sang PCM 16-bit Mono 24000Hz không cắt
     execSync(`"${ffmpegPath}" -y -i "${inputPath}" -ar ${SAMPLE_RATE} -ac 1 -c:a pcm_s16le "${tempRawWav}"`, { stdio: 'pipe' });
@@ -94,7 +105,7 @@ async function main() {
       samples[s] = rawBuf.readInt16LE(44 + s * 2) / 32768.0;
     }
 
-    // 2. Tìm điểm bắt đầu thực tế (vượt ngưỡng âm lượng 0.008, lùi 10ms)
+    // 2. Tìm điểm bắt đầu thực tế (vượt ngưỡng âm lượng 0.008, lùi 10ms an toàn)
     let startIdx = 0;
     for (let s = 0; s < totalSamples; s++) {
       if (Math.abs(samples[s]) > 0.008) {
@@ -169,7 +180,7 @@ async function main() {
   const concatFilePath = path.join(TEMP_DIR, 'concat_list.txt');
   fs.writeFileSync(concatFilePath, concatList.join('\n'), 'utf-8');
 
-  console.log('='.repeat(70));
+  console.log('='.repeat(75));
   console.log('📦 Đang đóng gói Master Audio Sprite...');
 
   const outputMp3 = path.join(PUBLIC_AUDIO_DIR, 'sprite-main.mp3');
@@ -196,11 +207,11 @@ async function main() {
     fs.rmSync(TEMP_DIR, { recursive: true, force: true });
   } catch {}
 
-  console.log('='.repeat(70));
+  console.log('='.repeat(75));
   console.log('🎉 HOÀN TẤT ĐÓNG GÓI AUDIO SPRITE!');
-  console.log(`📊 Tổng thời lượng Sprite: ${currentOffset.toFixed(2)}s (${allFiles.length} mẫu âm tự nhiên đầy đủ)`);
+  console.log(`📊 Tổng thời lượng Sprite: ${currentOffset.toFixed(2)}s (${Object.keys(audioMap).length} mẫu âm chuẩn đặc tả)`);
   console.log(`📄 Bản đồ toạ độ: public/audio/audio-map.json`);
-  console.log('='.repeat(70));
+  console.log('='.repeat(75));
 }
 
 main().catch((err) => {

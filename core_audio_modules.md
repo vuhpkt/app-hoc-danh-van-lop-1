@@ -46,12 +46,14 @@ export const audioManager = AudioManager.getInstance();
 [src/core/audio/AudioSpritePlayer.ts] :
 ```typescript
 /**
- * Bộ phát Audio Sprite & Phonics Sequence Player
- * Hỗ trợ chuyển đổi linh hoạt giữa Real Audio Sprite và Synthetic Tone Generator
+ * Mô-đun 4: AudioSpritePlayer - Bộ điều khiển phát âm thanh cấp cao
+ * - Hỗ trợ phát từ đơn lẻ (đánh vần / đọc trơn)
+ * - Hỗ trợ phát cả câu (Đọc trơn Karaoke / Đánh vần từng từ tuần tự cả câu)
+ * - Tương thích mượt mà giữa Real Audio Sprite và Synthetic Tone Generator
  */
 import { AudioSpriteMap, PhonicsBreakdown } from '../../types';
 import { webAudioEngine, AudioSequenceItem } from './WebAudioEngine';
-import { spriteManager } from './SpriteManager';
+import { spriteManager, SpriteManager } from './SpriteManager';
 
 export const MOCK_AUDIO_SPRITE_MAP: AudioSpriteMap = {
   'b': { id: 'b', label: 'Âm b', start: 0.0, duration: 0.5, category: 'initial' },
@@ -73,6 +75,8 @@ export const MOCK_AUDIO_SPRITE_MAP: AudioSpriteMap = {
 };
 
 export class AudioSpritePlayer {
+  private static sentencePlaybackId = 0;
+
   /**
    * Chuyển đổi một PhonicsBreakdown thành danh sách các AudioSequenceItem
    */
@@ -91,8 +95,7 @@ export class AudioSpritePlayer {
   }
 
   /**
-   * Phát chuỗi đánh vần tuần tự:
-   * @param useRealAudio: true -> Dùng giọng đọc thật từ sprite-main.mp3, false -> Dùng Synth giả lập
+   * 1. Phát chuỗi đánh vần của 1 từ đơn lẻ
    */
   public static playSpellingSequence(
     breakdown: PhonicsBreakdown,
@@ -135,24 +138,169 @@ export class AudioSpritePlayer {
   }
 
   /**
-   * Phát đọc trơn (Fluent read) cả từ
+   * 2. Phát đọc trơn (Fluent read) 1 từ đơn lẻ
    */
   public static playFluentWord(
     breakdown: PhonicsBreakdown,
     speed = 1.0,
     onComplete?: () => void,
     useRealAudio = true
-  ): void {
+  ): { stop: () => void } {
     if (useRealAudio) {
       spriteManager.playAudioSegment(breakdown.raw).then(() => {
         onComplete?.();
       });
-      return;
+      return {
+        stop: () => spriteManager.stop(),
+      };
     }
 
-    webAudioEngine.playSyntheticTone(breakdown.raw, breakdown.tone, 650, speed).then(() => {
+    webAudioEngine.playSyntheticTone(breakdown.raw, breakdown.tone, 550, speed).then(() => {
       onComplete?.();
     });
+
+    return {
+      stop: () => webAudioEngine.stop(),
+    };
+  }
+
+  /**
+   * 3. PHÁT ĐỌC TRƠN CẢ CÂU (Fluent Sentence Reading - Karaoke Mode)
+   */
+  public static playSentenceFluent(
+    words: { text: string; breakdown?: PhonicsBreakdown }[],
+    speed = 1.0,
+    onWordChange?: (index: number) => void,
+    onComplete?: () => void,
+    useRealAudio = true
+  ): { stop: () => void } {
+    this.sentencePlaybackId++;
+    const currentId = this.sentencePlaybackId;
+
+    const interWordGapMs = Math.round(160 + Math.max(0, 1 - speed) * 750);
+
+    const run = async () => {
+      if (useRealAudio && !spriteManager.isSpriteReady()) {
+        await spriteManager.loadSprite();
+      }
+
+      for (let i = 0; i < words.length; i++) {
+        if (currentId !== this.sentencePlaybackId) return;
+
+        const item = words[i];
+        const cleanWord = item.text.replace(/[,.!?:;]/g, '').trim();
+
+        if (!cleanWord) continue;
+
+        onWordChange?.(i);
+
+        if (useRealAudio) {
+          await spriteManager.playAudioSegment(cleanWord);
+        } else {
+          const tone = item.breakdown?.tone || 'ngang';
+          await webAudioEngine.playSyntheticTone(cleanWord, tone, 500, 1.0);
+        }
+
+        if (currentId !== this.sentencePlaybackId) return;
+
+        if (i < words.length - 1) {
+          await new Promise((r) => setTimeout(r, interWordGapMs));
+        }
+      }
+
+      if (currentId === this.sentencePlaybackId) {
+        onWordChange?.(-1);
+        onComplete?.();
+      }
+    };
+
+    run();
+
+    return {
+      stop: () => {
+        this.sentencePlaybackId++;
+        spriteManager.stop();
+        webAudioEngine.stop();
+        onWordChange?.(-1);
+      },
+    };
+  }
+
+  /**
+   * 4. PHÁT ĐÁNH VẦN TỪNG TỪ TRONG CẢ CÂU (Spelling Sentence Reading)
+   */
+  public static playSentenceSpelling(
+    words: { text: string; breakdown?: PhonicsBreakdown }[],
+    speed = 1.0,
+    onStepChange?: (wordIdx: number, subStepIdx: number, subStepLabel: string) => void,
+    onComplete?: () => void,
+    useRealAudio = true
+  ): { stop: () => void } {
+    this.sentencePlaybackId++;
+    const currentId = this.sentencePlaybackId;
+
+    const interWordGapMs = Math.round(350 + Math.max(0, 1 - speed) * 800);
+    const intraPhonemeGapMs = SpriteManager.calculateSilencePadding(speed);
+
+    const run = async () => {
+      if (useRealAudio && !spriteManager.isSpriteReady()) {
+        await spriteManager.loadSprite();
+      }
+
+      for (let i = 0; i < words.length; i++) {
+        if (currentId !== this.sentencePlaybackId) return;
+
+        const item = words[i];
+        const breakdown = item.breakdown;
+
+        if (!breakdown || breakdown.spellingFormula.length === 0) {
+          continue;
+        }
+
+        for (let s = 0; s < breakdown.spellingFormula.length; s++) {
+          if (currentId !== this.sentencePlaybackId) return;
+
+          const stepLabel = breakdown.spellingFormula[s];
+          onStepChange?.(i, s, stepLabel);
+
+          if (useRealAudio) {
+            await spriteManager.playAudioSegment(stepLabel);
+          } else {
+            const isLast = s === breakdown.spellingFormula.length - 1;
+            const isTone = stepLabel === breakdown.toneName && breakdown.tone !== 'ngang';
+            const stepTone = isTone || isLast ? breakdown.tone : 'ngang';
+            await webAudioEngine.playSyntheticTone(stepLabel, stepTone, 450, 1.0);
+          }
+
+          if (currentId !== this.sentencePlaybackId) return;
+
+          if (s < breakdown.spellingFormula.length - 1) {
+            await new Promise((r) => setTimeout(r, intraPhonemeGapMs));
+          }
+        }
+
+        if (i < words.length - 1) {
+          onStepChange?.(i, -1, '');
+          await new Promise((r) => setTimeout(r, interWordGapMs));
+        }
+      }
+
+      if (currentId === this.sentencePlaybackId) {
+        onStepChange?.(-1, -1, '');
+        onComplete?.();
+      }
+    };
+
+    run();
+
+    return {
+      stop: () => {
+        this.sentencePlaybackId++;
+        spriteManager.stop();
+        webAudioEngine.stop();
+        onStepChange?.(-1, -1, '');
+      },
+    };
   }
 
   /**
@@ -187,18 +335,15 @@ export class AudioSpritePlayer {
 [src/core/audio/SpriteManager.ts] :
 ```typescript
 /**
- * Mô-đun 3.2: SpriteManager - Nạp và phát Audio Sprite chuẩn Web Audio API
+ * Mô-đun 3.2 & 4: SpriteManager - Nạp và phát Audio Sprite chuẩn Web Audio API
+ * NGUỒN DUY NHẤT: danh_muc_am_thanh_lop_1.md (100% chuẩn SGK Tiếng Việt 1 Kết Nối Tri Thức)
  *
- * ĐÃ XỬ LÝ TRIỆT TIÊU 100% TIẾNG CLICK/POP & LỖI LỆCH TẦNG ÂM:
- * 1. Cơ chế Lookahead Audio Scheduling:
- *    - Lên lịch phát trước một khoảng đệm an toàn startTime = ctx.currentTime + 0.025 (25ms)
- *    - Gain Envelope mượt mà với Fade-in 8ms và Fade-out 8ms
- *    - Ngắt nguồn source.stop(startTime + duration + 0.010) sau khi Gain đã về 0 hoàn toàn
- * 2. Làm mịn dữ liệu sóng (Zero-Crossing Envelope) khi cắt Master Buffer:
- *    - Áp dụng cửa sổ Cosine (Hann Windowing) 12ms ở 2 đầu mỗi clip PCM
- *    - Ép cứng 64 mẫu đầu tiên và 64 mẫu cuối cùng của mảng Float32Array về đúng 0.0000
- * 3. Đồng bộ Promise chuẩn thời gian thực qua setTimeout: (LOOKAHEAD_SEC + duration) * 1000 ms
- * 4. Luôn giữ playbackRate = 1.0 bảo toàn chất giọng cô giáo tự nhiên, điều chỉnh tốc độ qua calculateSilencePadding(speed)
+ * ĐÃ TỐI ƯU TOÀN DIỆN:
+ * 1. Lookahead Audio Scheduling (25ms buffer) chống audio underflow
+ * 2. Gain Envelope mượt mà với Fade-in 8ms / Fade-out 8ms và xả Gain 3ms khi stop
+ * 3. Zero-Crossing Hann Windowing 12ms & Hard clamp 64 mẫu PCM về 0.0000
+ * 4. Đồng bộ Promise thời gian thực bằng setTimeout
+ * 5. Giữ nguyên playbackRate = 1.0 bảo toàn cao độ sư phạm tự nhiên
  */
 
 import { webAudioEngine } from './WebAudioEngine';
@@ -211,66 +356,42 @@ export interface SpriteSegmentInfo {
 
 export type AudioSpriteMap = Record<string, SpriteSegmentInfo>;
 
-// Bảng mapping toàn diện: Hỗ trợ cả dạng ký tự ('tr') và dạng đọc sư phạm ('trờ')
+// BẢNG ÁNH XẠ TOKEN -> SPRITE KEY CHUẨN 100% TỪ danh_muc_am_thanh_lop_1.md
 const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
-  // Âm đầu - dạng đọc sư phạm & ký tự
-  'bờ': 'am_dau__b', 'b': 'am_dau__b',
-  'cờ': 'am_dau__c', 'c': 'am_dau__c',
-  'chờ': 'am_dau__ch', 'ch': 'am_dau__ch',
-  'dờ': 'am_dau__d', 'd': 'am_dau__d',
-  'đờ': 'am_dau__dd', 'đ': 'am_dau__dd',
-  'gờ': 'am_dau__g', 'g': 'am_dau__g',
-  'ghờ': 'am_dau__gh', 'gh': 'am_dau__gh',
+  // ==========================================
+  // 1. 27 ÂM ĐẦU (Ký tự & Dạng đọc sư phạm)
+  // ==========================================
+  'b': 'am_dau__b', 'bờ': 'am_dau__b',
+  'c': 'am_dau__c', 'cờ': 'am_dau__c',
+  'ch': 'am_dau__ch', 'chờ': 'am_dau__ch',
+  'd': 'am_dau__d', 'dờ': 'am_dau__d',
+  'đ': 'am_dau__dd', 'đờ': 'am_dau__dd',
+  'g': 'am_dau__g', 'gờ': 'am_dau__g',
+  'gh': 'am_dau__gh', 'ghờ': 'am_dau__gh',
   'gi': 'am_dau__gi', 'giờ': 'am_dau__gi',
-  'hờ': 'am_dau__h', 'h': 'am_dau__h',
-  'kờ': 'am_dau__k', 'k': 'am_dau__k',
-  'khờ': 'am_dau__kh', 'kh': 'am_dau__kh',
-  'lờ': 'am_dau__l', 'l': 'am_dau__l',
-  'mờ': 'am_dau__m', 'm': 'am_dau__m',
-  'nờ': 'am_dau__n', 'n': 'am_dau__n',
-  'ngờ': 'am_dau__ng', 'ng': 'am_dau__ng',
-  'nghờ': 'am_dau__ngh', 'ngh': 'am_dau__ngh',
-  'nhờ': 'am_dau__nh', 'nh': 'am_dau__nh',
-  'pờ': 'am_dau__p', 'p': 'am_dau__p',
-  'phờ': 'am_dau__ph', 'ph': 'am_dau__ph',
-  'quờ': 'am_dau__qu', 'qu': 'am_dau__qu',
-  'rờ': 'am_dau__r', 'r': 'am_dau__r',
-  'sờ': 'am_dau__s', 's': 'am_dau__s',
-  'tờ': 'am_dau__t', 't': 'am_dau__t',
-  'thờ': 'am_dau__th', 'th': 'am_dau__th',
-  'trờ': 'am_dau__tr', 'tr': 'am_dau__tr',
-  'vờ': 'am_dau__v', 'v': 'am_dau__v',
-  'xờ': 'am_dau__x', 'x': 'am_dau__x',
+  'h': 'am_dau__h', 'hờ': 'am_dau__h',
+  'k': 'am_dau__k', 'kờ': 'am_dau__k',
+  'kh': 'am_dau__kh', 'khờ': 'am_dau__kh',
+  'l': 'am_dau__l', 'lờ': 'am_dau__l',
+  'm': 'am_dau__m', 'mờ': 'am_dau__m',
+  'n': 'am_dau__n', 'nờ': 'am_dau__n',
+  'ng': 'am_dau__ng', 'ngờ': 'am_dau__ng',
+  'ngh': 'am_dau__ngh', 'nghờ': 'am_dau__ngh',
+  'nh': 'am_dau__nh', 'nhờ': 'am_dau__nh',
+  'p': 'am_dau__p', 'pờ': 'am_dau__p',
+  'ph': 'am_dau__ph', 'phờ': 'am_dau__ph',
+  'qu': 'am_dau__qu', 'quờ': 'am_dau__qu',
+  'r': 'am_dau__r', 'rờ': 'am_dau__r',
+  's': 'am_dau__s', 'sờ': 'am_dau__s',
+  't': 'am_dau__t', 'tờ': 'am_dau__t',
+  'th': 'am_dau__th', 'thờ': 'am_dau__th',
+  'tr': 'am_dau__tr', 'trờ': 'am_dau__tr',
+  'v': 'am_dau__v', 'vờ': 'am_dau__v',
+  'x': 'am_dau__x', 'xờ': 'am_dau__x',
 
-  // Vần
-  'a': 'van__a',
-  'ach': 'van__ach',
-  'ai': 'van__ai',
-  'an': 'van__an',
-  'ang': 'van__ang',
-  'ao': 'van__ao',
-  'at': 'van__at',
-  'ăt': 'van__at_breve', 'ắt': 'van__at_breve',
-  'e': 'van__e',
-  'en': 'van__en',
-  'ê': 'van__e_hat',
-  'ên': 'van__en_hat',
-  'i': 'van__i',
-  'ieu': 'van__ieu', 'iêu': 'van__ieu',
-  'im': 'van__im',
-  'in': 'van__in',
-  'o': 'van__o',
-  'on': 'van__on',
-  'oan': 'van__oan',
-  'ô': 'van__o_hat',
-  'u': 'van__u',
-  'uo': 'van__uo', 'ươ': 'van__uo',
-  'uông': 'van__uong', 'uong': 'van__uong',
-  'ương': 'van__uong_horn', 'uong_horn': 'van__uong_horn',
-  'uyên': 'van__uyen', 'uyen': 'van__uyen',
-  'uyu': 'van__uyu',
-
-  // Dấu thanh
+  // ==========================================
+  // 2. 6 DẤU THANH
+  // ==========================================
   'ngang': 'thanh__ngang', 'không dấu': 'thanh__ngang', 'thanh ngang': 'thanh__ngang',
   'huyền': 'thanh__huyen', 'huyen': 'thanh__huyen',
   'sắc': 'thanh__sac', 'sac': 'thanh__sac',
@@ -278,27 +399,200 @@ const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
   'ngã': 'thanh__nga', 'nga': 'thanh__nga',
   'nặng': 'thanh__nang', 'nang': 'thanh__nang',
 
-  // Từ hoàn chỉnh & trung gian
+  // ==========================================
+  // 3. TOÀN BỘ VẦN TIẾNG VIỆT LỚP 1
+  // ==========================================
+  // Nhóm 1: Vần đơn & Nguyên âm đôi (20 vần)
+  'a': 'van__a',
+  'ă': 'van__a_breve',
+  'â': 'van__a_hat',
+  'e': 'van__e',
+  'ê': 'van__e_hat',
+  'i': 'van__i',
+  'y': 'van__y',
+  'o': 'van__o',
+  'ô': 'van__o_hat',
+  'ơ': 'van__o_horn',
+  'u': 'van__u',
+  'ư': 'van__u_horn',
+  'ia': 'van__ia',
+  'ya': 'van__ya',
+  'iê': 'van__ie',
+  'yê': 'van__ye',
+  'ua': 'van__ua',
+  'uô': 'van__uo_hat',
+  'ưa': 'van__ua_horn',
+  'ươ': 'van__uo_horn',
+
+  // Nhóm 2: Vần kết thúc bằng bán âm i/y, o/u (25 vần)
+  'ai': 'van__ai',
+  'ay': 'van__ay',
+  'ây': 'van__a_hat_y',
+  'ao': 'van__ao',
+  'au': 'van__au',
+  'âu': 'van__a_hat_u',
+  'eo': 'van__eo',
+  'êu': 'van__e_hat_u',
+  'iu': 'van__iu',
+  'iêu': 'van__ieu',
+  'yêu': 'van__yeu',
+  'oi': 'van__oi',
+  'ôi': 'van__o_hat_i',
+  'ơi': 'van__o_horn_i',
+  'ui': 'van__ui',
+  'ưi': 'van__u_horn_i',
+  'uôi': 'van__uoi',
+  'ươi': 'van__u_horn_o_horn_i',
+  'oa': 'van__oa',
+  'oe': 'van__oe',
+  'oai': 'van__oai',
+  'oay': 'van__oay',
+  'oeo': 'van__oeo',
+  'uya': 'van__uya',
+  'uyu': 'van__uyu',
+
+  // Nhóm 3: Vần kết thúc bằng phụ âm mũi m, n, ng, nh (56 vần)
+  // Kết thúc -m:
+  'am': 'van__am',
+  'ăm': 'van__a_breve_m',
+  'âm': 'van__a_hat_m',
+  'em': 'van__em',
+  'êm': 'van__e_hat_m',
+  'im': 'van__im',
+  'om': 'van__om',
+  'ôm': 'van__o_hat_m',
+  'ơm': 'van__o_horn_m',
+  'um': 'van__um',
+  'ưm': 'van__u_horn_m',
+  'iêm': 'van__iem',
+  'yêm': 'van__yem',
+  'uôm': 'van__uom',
+  'ươm': 'van__u_horn_o_horn_m',
+  'oam': 'van__oam',
+
+  // Kết thúc -n:
+  'an': 'van__an',
+  'ăn': 'van__a_breve_n',
+  'ân': 'van__a_hat_n',
+  'en': 'van__en',
+  'ên': 'van__e_hat_n',
+  'in': 'van__in',
+  'on': 'van__on',
+  'ôn': 'van__o_hat_n',
+  'ơn': 'van__o_horn_n',
+  'un': 'van__un',
+  'ưn': 'van__u_horn_n',
+  'iên': 'van__ien',
+  'yên': 'van__yen',
+  'uôn': 'van__uon',
+  'ươn': 'van__u_horn_o_horn_n',
+  'oan': 'van__oan',
+  'oăn': 'van__o_breve_n',
+  'uân': 'van__uan',
+  'uên': 'van__uen',
+
+  // Kết thúc -ng:
+  'ang': 'van__ang',
+  'ăng': 'van__a_breve_ng',
+  'âng': 'van__a_hat_ng',
+  'eng': 'van__eng',
+  'êng': 'van__e_hat_ng',
+  'ong': 'van__ong',
+  'ông': 'van__o_hat_ng',
+  'ung': 'van__ung',
+  'ưng': 'van__u_horn_ng',
+  'iêng': 'van__ieng',
+  'yêng': 'van__yeng',
+  'uông': 'van__uong',
+  'ương': 'van__u_horn_o_horn_ng',
+  'oang': 'van__oang',
+  'oăng': 'van__o_breve_ng',
+  'uâng': 'van__uang',
+
+  // Kết thúc -nh:
+  'anh': 'van__anh',
+  'ênh': 'van__e_hat_nh',
+  'inh': 'van__inh',
+  'oanh': 'van__oanh',
+  'uynh': 'van__uynh',
+
+  // Nhóm 4: Vần kết thúc bằng phụ âm tắc p, t, c, ch (44 vần)
+  // Kết thúc -p:
+  'ap': 'van__ap',
+  'ăp': 'van__a_breve_p',
+  'âp': 'van__a_hat_p',
+  'ep': 'van__ep',
+  'êp': 'van__e_hat_p',
+  'ip': 'van__ip',
+  'op': 'van__op',
+  'ôp': 'van__o_hat_p',
+  'ơp': 'van__o_horn_p',
+  'up': 'van__up',
+  'ưp': 'van__u_horn_p',
+  'iêp': 'van__iep',
+  'yêp': 'van__yep',
+  'ươp': 'van__u_horn_o_horn_p',
+
+  // Kết thúc -t:
+  'at': 'van__at',
+  'ăt': 'van__a_breve_t', 'ắt': 'van__a_breve_t',
+  'ât': 'van__a_hat_t', 'ất': 'van__a_hat_t',
+  'et': 'van__et',
+  'êt': 'van__e_hat_t', 'ết': 'van__e_hat_t',
+  'it': 'van__it', 'ít': 'van__it',
+  'ot': 'van__ot',
+  'ôt': 'van__o_hat_t', 'ốt': 'van__o_hat_t',
+  'ơt': 'van__o_horn_t', 'ớt': 'van__o_horn_t',
+  'ut': 'van__ut', 'út': 'van__ut',
+  'ưt': 'van__u_horn_t', 'ứt': 'van__u_horn_t',
+  'iêt': 'van__iet', 'iết': 'van__iet',
+  'yêt': 'van__yet', 'yết': 'van__yet',
+  'uôt': 'van__uot', 'uốt': 'van__uot',
+  'ươt': 'van__u_horn_o_horn_t', 'ướt': 'van__u_horn_o_horn_t',
+  'oat': 'van__oat',
+  'oăt': 'van__o_breve_t', 'oắt': 'van__o_breve_t',
+  'uât': 'van__uat', 'uất': 'van__uat',
+  'uêt': 'van__uet',
+  'uyt': 'van__uyt',
+
+  // Kết thúc -c:
+  'ac': 'van__ac',
+  'ăc': 'van__a_breve_c', 'ắc': 'van__a_breve_c',
+  'âc': 'van__a_hat_c', 'ấc': 'van__a_hat_c',
+  'ec': 'van__ec',
+  'êc': 'van__e_hat_c', 'ếc': 'van__e_hat_c',
+  'oc': 'van__oc',
+  'ôc': 'van__o_hat_c', 'ốc': 'van__o_hat_c',
+  'uc': 'van__uc', 'úc': 'van__uc',
+  'ưc': 'van__u_horn_c', 'ức': 'van__u_horn_c',
+  'iêc': 'van__iec', 'iếc': 'van__iec',
+  'uôc': 'van__uoc', 'uốc': 'van__uoc',
+  'ươc': 'van__u_horn_o_horn_c', 'ước': 'van__u_horn_o_horn_c',
+  'oac': 'van__oac',
+  'oăc': 'van__o_breve_c', 'oắc': 'van__o_breve_c',
+
+  // Kết thúc -ch:
+  'ach': 'van__ach',
+  'êch': 'van__e_hat_ch', 'ếch': 'van__e_hat_ch',
+  'ich': 'van__ich', 'ích': 'van__ich',
+  'oach': 'van__oach',
+  'uych': 'van__uych',
+
+  // ==========================================
+  // 4. TIẾNG TRUNG GIAN & TỪ ĐẶC BIỆT SGK LỚP 1
+  // ==========================================
   'trương': 'tu__truong_ngang',
   'trường': 'tu__truong',
-  'uống': 'tu__uong',
   'giăt': 'tu__giat_ngang',
+  'giắt': 'tu__giat_ngang',
   'giặt': 'tu__giat',
   'quang': 'tu__quang',
+  'khuyu': 'tu__khuyu_ngang',
   'khuỷu': 'tu__khuyu',
   'nguyễn': 'tu__nguyen',
-  'bé': 'tu__be',
-  'học': 'tu__hoc',
-  'bài': 'tu__bai',
-  'vui': 'tu__vui',
-  'chăm': 'tu__cham',
-  'chỉ': 'tu__chi',
-  'cá': 'tu__ca',
-  'hoa': 'tu__hoa',
-  'sách': 'tu__sach',
-  'yêu': 'tu__yeu',
-  'ăn': 'tu__an',
-  'bà': 'tu__ba'
+  'chích': 'tu__chich',
+  'chòe': 'tu__choe',
+  'huých': 'tu__huych',
 };
 
 export class SpriteManager {
@@ -353,7 +647,7 @@ export class SpriteManager {
 
       this.isLoaded = true;
       this.isLoading = false;
-      console.log(`✅ SpriteManager: Đã load thành công và làm mịn Zero-Crossing cho ${this.clipBuffers.size} clips.`);
+      console.log(`✅ SpriteManager: Đã nạp thành công và làm mịn Zero-Crossing cho ${this.clipBuffers.size} clips.`);
       return true;
     } catch (err) {
       console.error('❌ SpriteManager load error:', err);
@@ -364,9 +658,9 @@ export class SpriteManager {
   }
 
   /**
-   * Cắt nhỏ Master AudioBuffer thành từng clip riêng biệt
-   * - Áp dụng Hann Windowing 12ms ở cả 2 đầu
-   * - Ép cứng 64 mẫu đầu tiên và 64 mẫu cuối cùng về chính xác 0.0000
+   * Cắt nhỏ Master AudioBuffer thành từng clip riêng biệt trong RAM
+   * - Cửa sổ Cosine (Hann Windowing 12ms) ở 2 đầu
+   * - Ép cứng 64 mẫu đầu tiên và 64 mẫu cuối cùng về đúng 0.0000
    */
   private sliceAndWindowClips(ctx: AudioContext): void {
     if (!this.masterBuffer || !this.audioMap) return;
@@ -403,7 +697,7 @@ export class SpriteManager {
           clipData[numSamples - 1 - i] *= factor;
         }
 
-        // 3. Ép 64 mẫu đầu tiên và 64 mẫu cuối cùng về đúng 0.0000 (Zero-Crossing bảo đảm)
+        // 3. Ép cứng 64 mẫu đầu & cuối về đúng 0.0000
         const clampLimit = Math.min(HARD_ZERO_SAMPLES, Math.floor(numSamples / 4));
         for (let i = 0; i < clampLimit; i++) {
           clipData[i] = 0.0;
