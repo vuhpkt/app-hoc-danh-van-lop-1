@@ -1,57 +1,99 @@
 import React from 'react';
-import { Token } from '../types';
-import { Sparkles } from 'lucide-react';
+import { Token, ReadingMode } from '../types';
+import { BookOpen, Volume2, Sparkles } from 'lucide-react';
 
 interface TextReaderProps {
   tokens: Token[];
   activeTokenId?: string;
-  onTokenClick?: (token: Token) => void;
+  activeWordIndex?: number;
+  activeSubStepLabel?: string;
+  readingMode?: ReadingMode;
+  onTokenClick?: (token: Token, index: number) => void;
   title?: string;
+  subtitle?: string;
 }
 
 export const TextReader: React.FC<TextReaderProps> = ({
   tokens,
   activeTokenId,
+  activeWordIndex,
+  activeSubStepLabel,
+  readingMode = 'fluent',
   onTokenClick,
-  title = 'Bài Đọc Mẫu Lớp 1',
+  title = 'Bài Đọc Lớp 1 Chuẩn SGK',
+  subtitle = 'Chạm vào bất kỳ từ nào để nghe đọc riêng hoặc xem đánh vần chi tiết',
 }) => {
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 relative overflow-hidden">
-      <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-100">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-            <Sparkles className="w-4 h-4" />
+    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200/80 relative overflow-visible transition-all">
+      {/* Header bài đọc */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-slate-100">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black shadow-md shadow-blue-500/20">
+            <BookOpen className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+          <div>
+            <h3 className="text-lg font-black text-slate-900">{title}</h3>
+            <p className="text-xs text-slate-500 font-medium">{subtitle}</p>
+          </div>
         </div>
-        <span className="text-xs font-semibold px-3 py-1 bg-amber-50 text-amber-700 rounded-full border border-amber-200/60">
-          Chạm vào từng từ để nghe đánh vần
-        </span>
+
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold px-3 py-1 bg-amber-50 text-amber-800 rounded-full border border-amber-200/70 flex items-center gap-1.5 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            <span>Tương tác 1-chạm (FR-09)</span>
+          </span>
+        </div>
       </div>
 
-      {/* Vùng văn bản tương tác */}
-      <div className="leading-relaxed flex flex-wrap gap-x-3 gap-y-4 text-2xl md:text-3xl font-extrabold tracking-wide">
-        {tokens.map((token) => {
-          const isActive = token.id === activeTokenId;
-          return (
-            <button
-              key={token.id}
-              onClick={() => onTokenClick?.(token)}
-              className={`px-3 py-1.5 rounded-2xl transition-all duration-200 relative group cursor-pointer ${
-                isActive
-                  ? 'bg-amber-400 text-slate-950 scale-110 shadow-md ring-4 ring-amber-200 -translate-y-1'
-                  : 'text-slate-800 hover:bg-blue-50 hover:text-blue-600 active:scale-95'
-              }`}
-            >
-              <span>{token.text}</span>
+      {/* Vùng văn bản tương tác Karaoke 60fps */}
+      <div className="min-h-[140px] flex flex-wrap items-center gap-x-3 gap-y-6 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide leading-relaxed p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+        {tokens.map((token, index) => {
+          // Xác định trạng thái active qua activeTokenId hoặc activeWordIndex
+          const isActive =
+            (activeTokenId && token.id === activeTokenId) ||
+            (activeWordIndex !== undefined && activeWordIndex === index);
 
-              {/* Tooltip nhỏ khi hover */}
-              <span className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow">
-                {token.phonics?.spellingFormulaText || token.text}
-              </span>
-            </button>
+          const isSpellingMode = readingMode === 'spelling';
+
+          return (
+            <div key={token.id} className="relative inline-block my-1">
+              <button
+                onClick={() => onTokenClick?.(token, index)}
+                title={`Chạm để nghe: "${token.text}"`}
+                className={`relative px-4 py-2 rounded-2xl transition-all duration-150 cursor-pointer select-none font-black ${
+                  isActive
+                    ? isSpellingMode
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white scale-110 shadow-xl shadow-blue-500/30 ring-4 ring-blue-300 -translate-y-1 z-20'
+                      : 'bg-gradient-to-r from-amber-400 to-amber-300 text-slate-950 scale-110 shadow-xl shadow-amber-500/30 ring-4 ring-amber-200 -translate-y-1 z-20'
+                    : 'text-slate-800 bg-white hover:bg-blue-50 hover:text-blue-600 shadow-xs border border-slate-200/60 active:scale-95'
+                }`}
+              >
+                <span>{token.text}</span>
+
+                {/* Khi active trong chế độ đánh vần: Hiển thị Floating Badge âm tiết đang phát */}
+                {isActive && isSpellingMode && activeSubStepLabel && (
+                  <span className="absolute -top-9 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg border-2 border-white flex items-center gap-1.5 animate-bounce whitespace-nowrap z-30">
+                    <Volume2 className="w-3 h-3 animate-pulse" />
+                    <span>{activeSubStepLabel}</span>
+                  </span>
+                )}
+
+                {/* Tooltip khi hover trên Desktop */}
+                {!isActive && token.phonics && (
+                  <span className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow z-10">
+                    {token.phonics.spellingFormulaText}
+                  </span>
+                )}
+              </button>
+            </div>
           );
         })}
+      </div>
+
+      {/* Footer gợi ý */}
+      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
+        <span>Tổng số từ: <strong className="text-slate-700 font-bold">{tokens.length} từ</strong></span>
+        <span>Chế độ: <strong className="text-blue-600 font-bold">{readingMode === 'fluent' ? '📖 Đọc trơn' : '🔤 Đánh vần chi tiết'}</strong></span>
       </div>
     </div>
   );

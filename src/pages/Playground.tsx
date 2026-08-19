@@ -15,7 +15,8 @@ import {
   Activity,
   Radio,
   SlidersHorizontal,
-  Headphones
+  Headphones,
+  Edit3
 } from 'lucide-react';
 import { PhonicsBreakdown, Token, ReadingMode } from '../types';
 import { parseVietnamesePhonics, tokenizeVietnameseText } from '../core/parser/vietnamesePhonics';
@@ -30,6 +31,27 @@ import { ControlBar } from '../components/ControlBar';
 import { OCRUploader } from '../components/OCRUploader';
 
 type TabType = 'parser' | 'audio' | 'karaoke' | 'ocr';
+
+const SAMPLE_POEMS = [
+  {
+    id: 'poem-1',
+    title: 'Bài 1: Trường học của em',
+    text: 'Trường học của em khang trang. Tiếng chim hót líu lo trên cành cây. Bé học bài vui vẻ.',
+    note: 'SGK Kết nối tri thức - Âm tr, kh, ch, v',
+  },
+  {
+    id: 'poem-2',
+    title: 'Bài 2: Vè chim chích',
+    text: 'Ve vẻ vè ve. Cái vè chim chích. Bắt sâu đầu cành. Giúp ích cho cây.',
+    note: 'Thơ đồng dao ngắn - Luyện dấu thanh & âm ch, v',
+  },
+  {
+    id: 'poem-3',
+    title: 'Bài 3: Bé ngoan chăm chỉ',
+    text: 'Bé ngoan bé học chăm chỉ. Cô giáo khen bé hoa điểm mười.',
+    note: 'Chủ đề trường lớp - Luyện vần oan, am, iêm',
+  },
+];
 
 export const Playground: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('parser');
@@ -98,7 +120,7 @@ export const Playground: React.FC = () => {
   const [audioBreakdown, setAudioBreakdown] = useState<PhonicsBreakdown>(() => parseVietnamesePhonics('trường'));
   const [audioActiveStepIdx, setAudioActiveStepIdx] = useState<number>(-1);
   const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
-  const [audioSpeed, setAudioSpeed] = useState<number>(0.8); // 0.3x -> 1.2x
+  const [audioSpeed, setAudioSpeed] = useState<number>(0.8); // 0.3x -> 1.0x
   const [useRealAudio, setUseRealAudio] = useState<boolean>(true); // Toggle Real Sprite vs Mock Synth
   const [spriteLoaded, setSpriteLoaded] = useState<boolean>(false);
   const [activeSoundboardKey, setActiveSoundboardKey] = useState<string | null>(null);
@@ -168,67 +190,137 @@ export const Playground: React.FC = () => {
     setTimeout(() => setActiveSoundboardKey(null), 350);
   };
 
-  // --- State Tab 3: Test Karaoke ---
-  const sampleReadingText = 'Trường học của em khang trang. Tiếng chim hót líu lo trên cành cây.';
-  const [karaokeTokens, setKaraokeTokens] = useState<Token[]>(() => tokenizeVietnameseText(sampleReadingText));
-  const [activeKaraokeTokenId, setActiveKaraokeTokenId] = useState<string | undefined>(undefined);
+  // ============================================================
+  // STATE TAB 3: TEST KARAOKE & TEXT READER HIGHLIGHT (BƯỚC 4)
+  // ============================================================
+  const [karaokeRawText, setKaraokeRawText] = useState<string>(SAMPLE_POEMS[0].text);
+  const [karaokeTitle, setKaraokeTitle] = useState<string>(SAMPLE_POEMS[0].title);
+  const [karaokeTokens, setKaraokeTokens] = useState<Token[]>(() => tokenizeVietnameseText(SAMPLE_POEMS[0].text));
+  const [activeWordIdx, setActiveWordIdx] = useState<number>(-1);
+  const [activeSubStepLabel, setActiveSubStepLabel] = useState<string>('');
   const [isKaraokePlaying, setIsKaraokePlaying] = useState<boolean>(false);
-  const [readingMode, setReadingMode] = useState<ReadingMode>('spelling');
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
+  const [readingMode, setReadingMode] = useState<ReadingMode>('fluent');
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(0.8);
   const [selectedKaraokeToken, setSelectedKaraokeToken] = useState<Token | null>(null);
-  const karaokeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [showCustomTextInput, setShowCustomTextInput] = useState<boolean>(false);
 
-  const startKaraoke = () => {
+  const sentenceControllerRef = useRef<{ stop: () => void } | null>(null);
+
+  const handleSelectSamplePoem = (poem: typeof SAMPLE_POEMS[0]) => {
+    handleResetKaraoke();
+    setKaraokeTitle(poem.title);
+    setKaraokeRawText(poem.text);
+    setKaraokeTokens(tokenizeVietnameseText(poem.text));
+    setSelectedKaraokeToken(null);
+    audioManager.playClickSound();
+  };
+
+  const handleApplyCustomText = () => {
+    handleResetKaraoke();
+    if (karaokeRawText.trim()) {
+      setKaraokeTokens(tokenizeVietnameseText(karaokeRawText));
+      setKaraokeTitle('Đoạn Văn Tùy Chỉnh');
+      setShowCustomTextInput(false);
+      audioManager.playSuccessChime();
+    }
+  };
+
+  const handleToggleKaraoke = () => {
     if (isKaraokePlaying) {
-      if (karaokeTimerRef.current) clearInterval(karaokeTimerRef.current);
-      setIsKaraokePlaying(false);
+      handleStopKaraoke();
       return;
     }
 
     setIsKaraokePlaying(true);
-    let currentIndex = 0;
-    const intervalMs = Math.round(900 / playbackSpeed);
+    setActiveWordIdx(0);
+    setSelectedKaraokeToken(null);
 
-    if (karaokeTimerRef.current) clearInterval(karaokeTimerRef.current);
+    const wordsData = karaokeTokens.map((t) => ({
+      text: t.text,
+      breakdown: t.phonics,
+    }));
 
-    // Phát âm đầu tiên
-    setActiveKaraokeTokenId(karaokeTokens[0]?.id);
-    if (useRealAudio) {
-      spriteManager.playAudioSegment(karaokeTokens[0]?.text || '');
+    if (readingMode === 'fluent') {
+      // 1. Chế độ Đọc trơn cả câu (Karaoke Mode)
+      sentenceControllerRef.current = AudioSpritePlayer.playSentenceFluent(
+        wordsData,
+        playbackSpeed,
+        (idx) => {
+          setActiveWordIdx(idx);
+        },
+        () => {
+          setIsKaraokePlaying(false);
+          setActiveWordIdx(-1);
+          audioManager.playSuccessChime();
+        },
+        useRealAudio
+      );
     } else {
-      webAudioEngine.playSyntheticTone(karaokeTokens[0]?.text || '', 'ngang', 300, 1.0);
+      // 2. Chế độ Đánh vần chi tiết từng từ trong câu
+      sentenceControllerRef.current = AudioSpritePlayer.playSentenceSpelling(
+        wordsData,
+        playbackSpeed,
+        (wordIdx, _subStepIdx, subStepLabel) => {
+          setActiveWordIdx(wordIdx);
+          setActiveSubStepLabel(subStepLabel);
+        },
+        () => {
+          setIsKaraokePlaying(false);
+          setActiveWordIdx(-1);
+          setActiveSubStepLabel('');
+          audioManager.playSuccessChime();
+        },
+        useRealAudio
+      );
     }
-
-    karaokeTimerRef.current = setInterval(() => {
-      currentIndex++;
-      if (currentIndex < karaokeTokens.length) {
-        const token = karaokeTokens[currentIndex];
-        setActiveKaraokeTokenId(token.id);
-        if (useRealAudio) {
-          spriteManager.playAudioSegment(token.text);
-        } else {
-          const tone = token.phonics?.tone || 'ngang';
-          webAudioEngine.playSyntheticTone(token.text, tone, 350, 1.0);
-        }
-      } else {
-        if (karaokeTimerRef.current) clearInterval(karaokeTimerRef.current);
-        setIsKaraokePlaying(false);
-        audioManager.playSuccessChime();
-      }
-    }, intervalMs);
   };
 
-  const resetKaraoke = () => {
-    if (karaokeTimerRef.current) clearInterval(karaokeTimerRef.current);
+  const handleStopKaraoke = () => {
+    if (sentenceControllerRef.current) {
+      sentenceControllerRef.current.stop();
+      sentenceControllerRef.current = null;
+    }
     spriteManager.stop();
     webAudioEngine.stop();
     setIsKaraokePlaying(false);
-    setActiveKaraokeTokenId(undefined);
+    setActiveWordIdx(-1);
+    setActiveSubStepLabel('');
+  };
+
+  const handleResetKaraoke = () => {
+    handleStopKaraoke();
+    setSelectedKaraokeToken(null);
+  };
+
+  // Tương tác 1-chạm (FR-09): Click vào bất kỳ từ nào sẽ dừng câu và phát riêng từ đó
+  const handleTokenClick = (token: Token, index: number) => {
+    handleStopKaraoke();
+    setActiveWordIdx(index);
+    setSelectedKaraokeToken(token);
+
+    if (token.phonics) {
+      if (readingMode === 'fluent') {
+        AudioSpritePlayer.playFluentWord(token.phonics, playbackSpeed, undefined, useRealAudio);
+      } else {
+        AudioSpritePlayer.playSpellingSequence(
+          token.phonics,
+          playbackSpeed,
+          (_subIdx) => {
+            const step = token.phonics?.spellingFormula[_subIdx] || '';
+            setActiveSubStepLabel(step);
+          },
+          () => {
+            setActiveSubStepLabel('');
+          },
+          useRealAudio
+        );
+      }
+    }
   };
 
   useEffect(() => {
     return () => {
-      if (karaokeTimerRef.current) clearInterval(karaokeTimerRef.current);
+      handleStopKaraoke();
     };
   }, []);
 
@@ -254,7 +346,7 @@ export const Playground: React.FC = () => {
                 </span>
               </h1>
               <p className="text-xs text-slate-500 font-semibold">
-                Mô-đun 3.2: Chunked Audio Sprite Loader & Web Audio Engine
+                Mô-đun 4: Karaoke Text Highlight 60fps & Bộ Điều Khiển Player
               </p>
             </div>
           </div>
@@ -278,7 +370,10 @@ export const Playground: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <nav className="flex space-x-2 border-t border-slate-100 pt-2 overflow-x-auto">
             <button
-              onClick={() => setActiveTab('parser')}
+              onClick={() => {
+                handleStopKaraoke();
+                setActiveTab('parser');
+              }}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'parser'
                   ? 'border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl'
@@ -290,7 +385,10 @@ export const Playground: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActiveTab('audio')}
+              onClick={() => {
+                handleStopKaraoke();
+                setActiveTab('audio');
+              }}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'audio'
                   ? 'border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl'
@@ -314,7 +412,10 @@ export const Playground: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActiveTab('ocr')}
+              onClick={() => {
+                handleStopKaraoke();
+                setActiveTab('ocr');
+              }}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'ocr'
                   ? 'border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl'
@@ -663,7 +764,7 @@ export const Playground: React.FC = () => {
                     22 Âm Đầu (Hoài My Voice)
                   </h4>
                   <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md font-bold">
-                    Fade 3ms
+                    Fade 8ms
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
@@ -744,78 +845,197 @@ export const Playground: React.FC = () => {
         )}
 
         {/* ============================================================ */}
-        {/* TAB 3: TEST KARAOKE & TEXT READER */}
+        {/* TAB 3: TEST KARAOKE & TEXT READER HIGHLIGHT (MÔ-ĐUN 4) */}
         {/* ============================================================ */}
         {activeTab === 'karaoke' && (
           <div className="space-y-6 animate-fadeIn">
-            <ControlBar
-              mode={readingMode}
-              onModeChange={setReadingMode}
-              isPlaying={isKaraokePlaying}
-              onTogglePlay={startKaraoke}
-              onReset={resetKaraoke}
-              speed={playbackSpeed}
-              onSpeedChange={setPlaybackSpeed}
-            />
-
-            <TextReader
-              tokens={karaokeTokens}
-              activeTokenId={activeKaraokeTokenId}
-              onTokenClick={(token) => {
-                setSelectedKaraokeToken(token);
-                if (token.phonics) {
-                  setCurrentBreakdown(token.phonics);
-                  if (useRealAudio) {
-                    spriteManager.playAudioSegment(token.text);
-                  } else {
-                    const tone = token.phonics.tone || 'ngang';
-                    webAudioEngine.playSyntheticTone(token.text, tone, 400, 1.0);
-                  }
-                }
-              }}
-              title="Bài Đọc 1: Trường Học Của Em"
-            />
-
-            {selectedKaraokeToken && selectedKaraokeToken.phonics && (
-              <div className="bg-white rounded-3xl p-6 border-2 border-blue-200 shadow-md animate-fadeIn space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                      Từ vừa chọn:
-                    </span>
-                    <span className="text-2xl font-black text-slate-900">
-                      "{selectedKaraokeToken.text}"
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => {
-                      if (selectedKaraokeToken.phonics) {
-                        AudioSpritePlayer.playSpellingSequence(
-                          selectedKaraokeToken.phonics,
-                          playbackSpeed,
-                          () => {},
-                          () => {},
-                          useRealAudio
-                        );
-                      }
-                    }}
-                    className="flex items-center gap-1.5 text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
-                  >
-                    <Volume2 className="w-3.5 h-3.5" />
-                    <span>Nghe đánh vần</span>
-                  </button>
+            {/* Box chọn bài đọc mẫu hoặc nhập văn bản mới */}
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-base font-black text-slate-800 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-blue-600" />
+                    Kho Bài Đọc Mẫu SGK Tiếng Việt 1 (Kết Nối Tri Thức)
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">
+                    Chọn nhanh các bài thơ / câu chuyện ngắn chuẩn phân phối chương trình Lớp 1:
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 text-center text-xs">
-                  <div className="bg-blue-50 p-2.5 rounded-xl font-bold text-blue-800">
-                    Âm đầu: <span className="text-base font-black">{selectedKaraokeToken.phonics.initialConsonant || 'Khuyết'}</span>
+                <button
+                  onClick={() => setShowCustomTextInput(!showCustomTextInput)}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-black transition-all cursor-pointer border ${
+                    showCustomTextInput
+                      ? 'bg-slate-800 text-white border-slate-800'
+                      : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200'
+                  }`}
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>{showCustomTextInput ? 'Đóng ô nhập' : 'Nhập văn bản mới'}</span>
+                </button>
+              </div>
+
+              {/* 3 Bài thơ mẫu */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                {SAMPLE_POEMS.map((poem) => {
+                  const isSelected = karaokeTitle === poem.title;
+                  return (
+                    <button
+                      key={poem.id}
+                      onClick={() => handleSelectSamplePoem(poem)}
+                      className={`text-left p-4 rounded-2xl border-2 transition-all cursor-pointer space-y-1 ${
+                        isSelected
+                          ? 'border-blue-600 bg-blue-50/60 shadow-md ring-2 ring-blue-100'
+                          : 'border-slate-200/80 bg-white hover:border-blue-300 hover:bg-slate-50/50'
+                      }`}
+                    >
+                      <h4 className="text-sm font-black text-slate-900">{poem.title}</h4>
+                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{poem.text}</p>
+                      <span className="inline-block text-[10px] font-bold text-blue-600 bg-blue-100/70 px-2 py-0.5 rounded-md mt-1">
+                        {poem.note}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Ô nhập văn bản tùy chỉnh */}
+              {showCustomTextInput && (
+                <div className="pt-4 border-t border-slate-100 space-y-3 animate-fadeIn">
+                  <label className="text-xs font-black text-slate-600 uppercase tracking-wider">
+                    Nhập hoặc dán văn bản tiếng Việt bất kỳ (tối đa 50 từ):
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={karaokeRawText}
+                    onChange={(e) => setKaraokeRawText(e.target.value)}
+                    placeholder="Nhập đoạn văn..."
+                    className="w-full p-4 bg-slate-50 border-2 border-slate-200 hover:border-blue-300 focus:border-blue-500 rounded-2xl text-base font-bold text-slate-800 outline-none transition-all"
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleApplyCustomText}
+                      className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs rounded-xl shadow-md cursor-pointer transition-all active:scale-95"
+                    >
+                      Áp dụng vào Trình Đọc Karaoke
+                    </button>
                   </div>
-                  <div className="bg-orange-50 p-2.5 rounded-xl font-bold text-orange-800">
-                    Vần: <span className="text-base font-black">{selectedKaraokeToken.phonics.rime}</span>
+                </div>
+              )}
+            </div>
+
+            {/* BỘ ĐIỀU KHIỂN PLAY / PAUSE / SPEED (ControlBar) */}
+            <ControlBar
+              mode={readingMode}
+              onModeChange={(newMode) => {
+                handleStopKaraoke();
+                setReadingMode(newMode);
+              }}
+              isPlaying={isKaraokePlaying}
+              onTogglePlay={handleToggleKaraoke}
+              onReset={handleResetKaraoke}
+              speed={playbackSpeed}
+              onSpeedChange={setPlaybackSpeed}
+              currentWordIndex={activeWordIdx}
+              totalWords={karaokeTokens.length}
+            />
+
+            {/* TRÌNH HIỂN THỊ VĂN BẢN KARAOKE 60FPS (TextReader) */}
+            <TextReader
+              tokens={karaokeTokens}
+              activeWordIndex={activeWordIdx}
+              activeSubStepLabel={activeSubStepLabel}
+              readingMode={readingMode}
+              onTokenClick={handleTokenClick}
+              title={karaokeTitle}
+            />
+
+            {/* CARD CHI TIẾT TỪ ĐƯỢC CHỌN (1-Touch Interactivity FR-09) */}
+            {selectedKaraokeToken && selectedKaraokeToken.phonics && (
+              <div className="bg-white rounded-3xl p-6 md:p-8 border-2 border-blue-300 shadow-xl animate-fadeIn space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider text-blue-600">
+                      Chi tiết Ngữ Âm Từ Vừa Chạm:
+                    </span>
+                    <h3 className="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
+                      "{selectedKaraokeToken.text}"
+                    </h3>
                   </div>
-                  <div className="bg-rose-50 p-2.5 rounded-xl font-bold text-rose-800">
-                    Dấu: <span className="text-base font-black">{selectedKaraokeToken.phonics.toneName}</span>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        if (selectedKaraokeToken.phonics) {
+                          AudioSpritePlayer.playFluentWord(
+                            selectedKaraokeToken.phonics,
+                            playbackSpeed,
+                            undefined,
+                            useRealAudio
+                          );
+                        }
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-all cursor-pointer shadow-xs active:scale-95"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      <span>Đọc trơn</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (selectedKaraokeToken.phonics) {
+                          AudioSpritePlayer.playSpellingSequence(
+                            selectedKaraokeToken.phonics,
+                            playbackSpeed,
+                            () => {},
+                            () => {},
+                            useRealAudio
+                          );
+                        }
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all cursor-pointer active:scale-95"
+                    >
+                      <Layers className="w-4 h-4" />
+                      <span>Nghe đánh vần</span>
+                    </button>
                   </div>
+                </div>
+
+                {/* 3 Thẻ Badges Ngữ Âm */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                  <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                    <span className="text-xs font-bold text-blue-600 uppercase">Âm đầu</span>
+                    <p className="text-2xl font-black text-blue-900 mt-1">
+                      {selectedKaraokeToken.phonics.initialConsonant || 'Khuyết'}
+                    </p>
+                  </div>
+
+                  <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100">
+                    <span className="text-xs font-bold text-orange-600 uppercase">Vần</span>
+                    <p className="text-2xl font-black text-orange-900 mt-1">
+                      {selectedKaraokeToken.phonics.rime}
+                    </p>
+                  </div>
+
+                  <div className="bg-rose-50 p-4 rounded-2xl border border-rose-100">
+                    <span className="text-xs font-bold text-rose-600 uppercase">Dấu thanh</span>
+                    <p className="text-2xl font-black text-rose-900 mt-1">
+                      {selectedKaraokeToken.phonics.toneName}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Chuỗi công thức đánh vần */}
+                <div className="bg-slate-900 text-white p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-amber-400 font-extrabold uppercase">Quy trình đánh vần:</span>
+                    <strong className="text-base font-black text-emerald-300">
+                      {selectedKaraokeToken.phonics.spellingFormulaText}
+                    </strong>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono">
+                    [{selectedKaraokeToken.phonics.spellingFormula.join(' ➔ ')}]
+                  </span>
                 </div>
               </div>
             )}
@@ -839,7 +1059,9 @@ export const Playground: React.FC = () => {
                   <h4 className="text-sm font-bold text-slate-800">Chuyển văn bản đã quét sang Bộ Đọc</h4>
                   <button
                     onClick={() => {
+                      setKaraokeRawText(ocrTransferredText);
                       setKaraokeTokens(tokenizeVietnameseText(ocrTransferredText));
+                      setKaraokeTitle('Trang Sách Đã Quét OCR');
                       setActiveTab('karaoke');
                       audioManager.playClickSound();
                     }}

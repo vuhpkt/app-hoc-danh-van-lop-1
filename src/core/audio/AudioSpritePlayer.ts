@@ -1,10 +1,12 @@
 /**
- * Bộ phát Audio Sprite & Phonics Sequence Player
- * Hỗ trợ chuyển đổi linh hoạt giữa Real Audio Sprite và Synthetic Tone Generator
+ * Mô-đun 4: AudioSpritePlayer - Bộ điều khiển phát âm thanh cấp cao
+ * - Hỗ trợ phát từ đơn lẻ (đánh vần / đọc trơn)
+ * - Hỗ trợ phát cả câu (Đọc trơn Karaoke / Đánh vần từng từ tuần tự cả câu)
+ * - Tương thích mượt mà giữa Real Audio Sprite và Synthetic Tone Generator
  */
 import { AudioSpriteMap, PhonicsBreakdown } from '../../types';
 import { webAudioEngine, AudioSequenceItem } from './WebAudioEngine';
-import { spriteManager } from './SpriteManager';
+import { spriteManager, SpriteManager } from './SpriteManager';
 
 export const MOCK_AUDIO_SPRITE_MAP: AudioSpriteMap = {
   'b': { id: 'b', label: 'Âm b', start: 0.0, duration: 0.5, category: 'initial' },
@@ -26,6 +28,8 @@ export const MOCK_AUDIO_SPRITE_MAP: AudioSpriteMap = {
 };
 
 export class AudioSpritePlayer {
+  private static sentencePlaybackId = 0;
+
   /**
    * Chuyển đổi một PhonicsBreakdown thành danh sách các AudioSequenceItem
    */
@@ -44,8 +48,7 @@ export class AudioSpritePlayer {
   }
 
   /**
-   * Phát chuỗi đánh vần tuần tự:
-   * @param useRealAudio: true -> Dùng giọng đọc thật từ sprite-main.mp3, false -> Dùng Synth giả lập
+   * 1. Phát chuỗi đánh vần của 1 từ đơn lẻ
    */
   public static playSpellingSequence(
     breakdown: PhonicsBreakdown,
@@ -88,24 +91,179 @@ export class AudioSpritePlayer {
   }
 
   /**
-   * Phát đọc trơn (Fluent read) cả từ
+   * 2. Phát đọc trơn (Fluent read) 1 từ đơn lẻ
    */
   public static playFluentWord(
     breakdown: PhonicsBreakdown,
     speed = 1.0,
     onComplete?: () => void,
     useRealAudio = true
-  ): void {
+  ): { stop: () => void } {
     if (useRealAudio) {
       spriteManager.playAudioSegment(breakdown.raw).then(() => {
         onComplete?.();
       });
-      return;
+      return {
+        stop: () => spriteManager.stop(),
+      };
     }
 
-    webAudioEngine.playSyntheticTone(breakdown.raw, breakdown.tone, 650, speed).then(() => {
+    webAudioEngine.playSyntheticTone(breakdown.raw, breakdown.tone, 550, speed).then(() => {
       onComplete?.();
     });
+
+    return {
+      stop: () => webAudioEngine.stop(),
+    };
+  }
+
+  /**
+   * 3. PHÁT ĐỌC TRƠN CẢ CÂU (Fluent Sentence Reading - Karaoke Mode)
+   * - Phát tuần tự từng từ trong câu
+   * - Chèn khoảng nghỉ tự nhiên giữa các từ (~150ms ở tốc độ 1.0x)
+   * - Kích hoạt callback onWordChange(index) theo thời gian thực để highlight chữ
+   */
+  public static playSentenceFluent(
+    words: { text: string; breakdown?: PhonicsBreakdown }[],
+    speed = 1.0,
+    onWordChange?: (index: number) => void,
+    onComplete?: () => void,
+    useRealAudio = true
+  ): { stop: () => void } {
+    this.sentencePlaybackId++;
+    const currentId = this.sentencePlaybackId;
+
+    // Khoảng nghỉ tự nhiên giữa các từ trong câu: ~160ms ở 1.0x, ~400ms ở 0.7x, ~600ms ở 0.5x
+    const interWordGapMs = Math.round(160 + Math.max(0, 1 - speed) * 750);
+
+    const run = async () => {
+      if (useRealAudio && !spriteManager.isSpriteReady()) {
+        await spriteManager.loadSprite();
+      }
+
+      for (let i = 0; i < words.length; i++) {
+        if (currentId !== this.sentencePlaybackId) return;
+
+        const item = words[i];
+        const cleanWord = item.text.replace(/[,.!?:;]/g, '').trim();
+
+        if (!cleanWord) continue;
+
+        onWordChange?.(i);
+
+        if (useRealAudio) {
+          await spriteManager.playAudioSegment(cleanWord);
+        } else {
+          const tone = item.breakdown?.tone || 'ngang';
+          await webAudioEngine.playSyntheticTone(cleanWord, tone, 500, 1.0);
+        }
+
+        if (currentId !== this.sentencePlaybackId) return;
+
+        // Chèn khoảng nghỉ giữa 2 từ
+        if (i < words.length - 1) {
+          await new Promise((r) => setTimeout(r, interWordGapMs));
+        }
+      }
+
+      if (currentId === this.sentencePlaybackId) {
+        onWordChange?.(-1);
+        onComplete?.();
+      }
+    };
+
+    run();
+
+    return {
+      stop: () => {
+        this.sentencePlaybackId++;
+        spriteManager.stop();
+        webAudioEngine.stop();
+        onWordChange?.(-1);
+      },
+    };
+  }
+
+  /**
+   * 4. PHÁT ĐÁNH VẦN TỪNG TỪ TRONG CẢ CÂU (Spelling Sentence Reading)
+   * - Lần lượt đánh vần chi tiết từng từ trong câu
+   * - Báo cả vị trí từ đang đánh vần và mẩu âm (sub-step) đang phát để hiển thị Tooltip/Badge
+   */
+  public static playSentenceSpelling(
+    words: { text: string; breakdown?: PhonicsBreakdown }[],
+    speed = 1.0,
+    onStepChange?: (wordIdx: number, subStepIdx: number, subStepLabel: string) => void,
+    onComplete?: () => void,
+    useRealAudio = true
+  ): { stop: () => void } {
+    this.sentencePlaybackId++;
+    const currentId = this.sentencePlaybackId;
+
+    const interWordGapMs = Math.round(350 + Math.max(0, 1 - speed) * 800);
+    const intraPhonemeGapMs = SpriteManager.calculateSilencePadding(speed);
+
+    const run = async () => {
+      if (useRealAudio && !spriteManager.isSpriteReady()) {
+        await spriteManager.loadSprite();
+      }
+
+      for (let i = 0; i < words.length; i++) {
+        if (currentId !== this.sentencePlaybackId) return;
+
+        const item = words[i];
+        const breakdown = item.breakdown;
+
+        if (!breakdown || breakdown.spellingFormula.length === 0) {
+          continue;
+        }
+
+        // Phát từng mẩu âm trong công thức đánh vần của từ i
+        for (let s = 0; s < breakdown.spellingFormula.length; s++) {
+          if (currentId !== this.sentencePlaybackId) return;
+
+          const stepLabel = breakdown.spellingFormula[s];
+          onStepChange?.(i, s, stepLabel);
+
+          if (useRealAudio) {
+            await spriteManager.playAudioSegment(stepLabel);
+          } else {
+            const isLast = s === breakdown.spellingFormula.length - 1;
+            const isTone = stepLabel === breakdown.toneName && breakdown.tone !== 'ngang';
+            const stepTone = isTone || isLast ? breakdown.tone : 'ngang';
+            await webAudioEngine.playSyntheticTone(stepLabel, stepTone, 450, 1.0);
+          }
+
+          if (currentId !== this.sentencePlaybackId) return;
+
+          // Khoảng nghỉ giữa các mẩu âm trong 1 từ
+          if (s < breakdown.spellingFormula.length - 1) {
+            await new Promise((r) => setTimeout(r, intraPhonemeGapMs));
+          }
+        }
+
+        // Khoảng nghỉ dài hơn giữa 2 từ khác nhau
+        if (i < words.length - 1) {
+          onStepChange?.(i, -1, '');
+          await new Promise((r) => setTimeout(r, interWordGapMs));
+        }
+      }
+
+      if (currentId === this.sentencePlaybackId) {
+        onStepChange?.(-1, -1, '');
+        onComplete?.();
+      }
+    };
+
+    run();
+
+    return {
+      stop: () => {
+        this.sentencePlaybackId++;
+        spriteManager.stop();
+        webAudioEngine.stop();
+        onStepChange?.(-1, -1, '');
+      },
+    };
   }
 
   /**
