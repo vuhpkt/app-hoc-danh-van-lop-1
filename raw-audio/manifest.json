@@ -1,0 +1,555 @@
+[
+  {
+    "id": "b",
+    "category": "am_dau",
+    "text": "bờ",
+    "filename": "am_dau__b.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "c",
+    "category": "am_dau",
+    "text": "cờ",
+    "filename": "am_dau__c.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ch",
+    "category": "am_dau",
+    "text": "chờ",
+    "filename": "am_dau__ch.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "d",
+    "category": "am_dau",
+    "text": "dờ",
+    "filename": "am_dau__d.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "dd",
+    "category": "am_dau",
+    "text": "đờ",
+    "filename": "am_dau__dd.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "g",
+    "category": "am_dau",
+    "text": "gờ",
+    "filename": "am_dau__g.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "gh",
+    "category": "am_dau",
+    "text": "gờ",
+    "filename": "am_dau__gh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "gi",
+    "category": "am_dau",
+    "text": "gi",
+    "filename": "am_dau__gi.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "h",
+    "category": "am_dau",
+    "text": "hờ",
+    "filename": "am_dau__h.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "k",
+    "category": "am_dau",
+    "text": "kờ",
+    "filename": "am_dau__k.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "kh",
+    "category": "am_dau",
+    "text": "khờ",
+    "filename": "am_dau__kh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "l",
+    "category": "am_dau",
+    "text": "lờ",
+    "filename": "am_dau__l.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "m",
+    "category": "am_dau",
+    "text": "mờ",
+    "filename": "am_dau__m.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "n",
+    "category": "am_dau",
+    "text": "nờ",
+    "filename": "am_dau__n.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ng",
+    "category": "am_dau",
+    "text": "ngờ",
+    "filename": "am_dau__ng.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ngh",
+    "category": "am_dau",
+    "text": "ngờ",
+    "filename": "am_dau__ngh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "nh",
+    "category": "am_dau",
+    "text": "nhờ",
+    "filename": "am_dau__nh.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "p",
+    "category": "am_dau",
+    "text": "pờ",
+    "filename": "am_dau__p.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ph",
+    "category": "am_dau",
+    "text": "phờ",
+    "filename": "am_dau__ph.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "qu",
+    "category": "am_dau",
+    "text": "quờ",
+    "filename": "am_dau__qu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "r",
+    "category": "am_dau",
+    "text": "rờ",
+    "filename": "am_dau__r.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "s",
+    "category": "am_dau",
+    "text": "sờ",
+    "filename": "am_dau__s.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "t",
+    "category": "am_dau",
+    "text": "tờ",
+    "filename": "am_dau__t.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "th",
+    "category": "am_dau",
+    "text": "thờ",
+    "filename": "am_dau__th.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "tr",
+    "category": "am_dau",
+    "text": "trờ",
+    "filename": "am_dau__tr.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "v",
+    "category": "am_dau",
+    "text": "vờ",
+    "filename": "am_dau__v.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "x",
+    "category": "am_dau",
+    "text": "xờ",
+    "filename": "am_dau__x.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "a",
+    "category": "van",
+    "text": "a",
+    "filename": "van__a.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "an",
+    "category": "van",
+    "text": "an",
+    "filename": "van__an.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "at",
+    "category": "van",
+    "text": "at",
+    "filename": "van__at.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ang",
+    "category": "van",
+    "text": "ang",
+    "filename": "van__ang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "at_breve",
+    "category": "van",
+    "text": "ắt",
+    "filename": "van__at_breve.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "e",
+    "category": "van",
+    "text": "e",
+    "filename": "van__e.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "en",
+    "category": "van",
+    "text": "en",
+    "filename": "van__en.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ê",
+    "category": "van",
+    "text": "ê",
+    "filename": "van__e_hat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ên",
+    "category": "van",
+    "text": "ên",
+    "filename": "van__en_hat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "i",
+    "category": "van",
+    "text": "i",
+    "filename": "van__i.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "in",
+    "category": "van",
+    "text": "in",
+    "filename": "van__in.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "iêu",
+    "category": "van",
+    "text": "iêu",
+    "filename": "van__ieu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "o",
+    "category": "van",
+    "text": "o",
+    "filename": "van__o.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "on",
+    "category": "van",
+    "text": "on",
+    "filename": "van__on.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "oan",
+    "category": "van",
+    "text": "oan",
+    "filename": "van__oan.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ô",
+    "category": "van",
+    "text": "ô",
+    "filename": "van__o_hat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "u",
+    "category": "van",
+    "text": "u",
+    "filename": "van__u.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "uông",
+    "category": "van",
+    "text": "uông",
+    "filename": "van__uong.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "uyên",
+    "category": "van",
+    "text": "uyên",
+    "filename": "van__uyen.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ươ",
+    "category": "van",
+    "text": "ươ",
+    "filename": "van__uo.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ương",
+    "category": "van",
+    "text": "ương",
+    "filename": "van__uong_horn.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "uyu",
+    "category": "van",
+    "text": "uyu",
+    "filename": "van__uyu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ach",
+    "category": "van",
+    "text": "ach",
+    "filename": "van__ach.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ao",
+    "category": "van",
+    "text": "ao",
+    "filename": "van__ao.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "im",
+    "category": "van",
+    "text": "im",
+    "filename": "van__im.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ai",
+    "category": "van",
+    "text": "ai",
+    "filename": "van__ai.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ngang",
+    "category": "thanh",
+    "text": "thanh ngang",
+    "filename": "thanh__ngang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "huyen",
+    "category": "thanh",
+    "text": "huyền",
+    "filename": "thanh__huyen.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "sac",
+    "category": "thanh",
+    "text": "sắc",
+    "filename": "thanh__sac.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "hoi",
+    "category": "thanh",
+    "text": "hỏi",
+    "filename": "thanh__hoi.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "nga",
+    "category": "thanh",
+    "text": "ngã",
+    "filename": "thanh__nga.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "nang",
+    "category": "thanh",
+    "text": "nặng",
+    "filename": "thanh__nang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "truong_ngang",
+    "category": "tu",
+    "text": "trương",
+    "filename": "tu__truong_ngang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "truong",
+    "category": "tu",
+    "text": "trường",
+    "filename": "tu__truong.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "uong",
+    "category": "tu",
+    "text": "uống",
+    "filename": "tu__uong.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "giat_ngang",
+    "category": "tu",
+    "text": "giăt",
+    "filename": "tu__giat_ngang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "giat",
+    "category": "tu",
+    "text": "giặt",
+    "filename": "tu__giat.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "quang",
+    "category": "tu",
+    "text": "quang",
+    "filename": "tu__quang.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "khuyu",
+    "category": "tu",
+    "text": "khuỷu",
+    "filename": "tu__khuyu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "nguyen",
+    "category": "tu",
+    "text": "nguyễn",
+    "filename": "tu__nguyen.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "be",
+    "category": "tu",
+    "text": "bé",
+    "filename": "tu__be.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "hoc",
+    "category": "tu",
+    "text": "học",
+    "filename": "tu__hoc.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "bai",
+    "category": "tu",
+    "text": "bài",
+    "filename": "tu__bai.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "vui",
+    "category": "tu",
+    "text": "vui",
+    "filename": "tu__vui.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "cham",
+    "category": "tu",
+    "text": "chăm",
+    "filename": "tu__cham.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "chi",
+    "category": "tu",
+    "text": "chỉ",
+    "filename": "tu__chi.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ca",
+    "category": "tu",
+    "text": "cá",
+    "filename": "tu__ca.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "hoa",
+    "category": "tu",
+    "text": "hoa",
+    "filename": "tu__hoa.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "sach",
+    "category": "tu",
+    "text": "sách",
+    "filename": "tu__sach.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "yeu",
+    "category": "tu",
+    "text": "yêu",
+    "filename": "tu__yeu.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "an",
+    "category": "tu",
+    "text": "ăn",
+    "filename": "tu__an.mp3",
+    "sizeBytes": 10656
+  },
+  {
+    "id": "ba",
+    "category": "tu",
+    "text": "bà",
+    "filename": "tu__ba.mp3",
+    "sizeBytes": 10656
+  }
+]
