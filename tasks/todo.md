@@ -16,20 +16,20 @@
   - **Verify:** Chạy `npm test` (`node --test test/*.test.js`) passed 100%.
   - **Files:** `scripts/slice-rare-rimes.js`, `raw-audio/van__uyu.mp3`, `src/core/audio/SpriteManager.ts`, `test/test_uyu_slice.test.js`.
 
-- [ ] **Task 2: Audit & Sinh đầy đủ 100% các âm/vần/từ chuẩn SGK Kết Nối Tri Thức**
-  - **Mô tả:** Bổ sung các vần ghép, tiếng đệm, từ đặc biệt còn thiếu vào `scripts/generate-tts-audio.js` (bao gồm các vần như `uyu`, `oen`, `oet`, `uyn`, `uyt`, các tiếng trung gian như `khuyu`, `khuỷu`, `trương`, `trường`, `quang`, `giặt`...) để đạt độ phủ 100% chương trình SGK Lớp 1.
+- [x] **Task 2: Audit & Sinh đầy đủ 100% các âm/vần/từ chuẩn SGK Kết Nối Tri Thức (Zalo AI)**
+  - **Mô tả:** Tải toàn bộ 189 âm vị chuẩn bằng giọng Nữ miền Bắc Zalo AI TTS API, bao gồm vần "uyu" trực tiếp.
   - **Acceptance:**
-    - Script `scripts/generate-tts-audio.js` chạy không lỗi.
-    - Toàn bộ danh mục âm thanh trong `danh_muc_am_thanh_lop_1.md` đều có file mp3 tương ứng trong `raw-audio/`.
-  - **Verify:** Chạy `npm run generate:audio`.
-  - **Files:** `scripts/generate-tts-audio.js`, `danh_muc_am_thanh_lop_1.md`, `raw-audio/manifest.json`.
+    - [x] Script `scripts/generate-zalo-tts.js` chạy 100% thành công với 189 file.
+    - [x] Toàn bộ danh mục âm thanh trong `danh_muc_am_thanh_lop_1.md` đều có file mp3 tương ứng trong `raw-audio/`.
+  - **Verify:** Đã tải 189/189 file về `raw-audio/` và lưu `manifest.json`.
+  - **Files:** `scripts/generate-zalo-tts.js`, `danh_muc_am_thanh_lop_1.md`, `raw-audio/manifest.json`.
 
-- [ ] **Task 3: Đóng gói lại Audio Sprite Master & Cập nhật Audio Map**
+- [x] **Task 3: Đóng gói lại Audio Sprite Master & Cập nhật Audio Map**
   - **Mô tả:** Chạy quy trình đóng gói Audio Sprite (`scripts/build-audio-sprite.js`) với Smart Natural Decay (-52dB tail + 50ms), Hann windowing 12ms, hard zero 32 mẫu đầu/cuối của PCM, tạo ra `public/audio/sprite-main.mp3`, `sprite-main.webm` và `public/audio/audio-map.json`.
   - **Acceptance:**
-    - `public/audio/audio-map.json` chứa key `van__uyu` và toàn bộ các âm vị lớp 1.
-    - File sprite được nén chuẩn xác, không có độ trễ bất thường.
-  - **Verify:** Chạy `npm run build:sprite` và kiểm tra key `van__uyu` trong `audio-map.json`.
+    - [x] `public/audio/audio-map.json` chứa key `van__uyu` (start: 40.598s, end: 41.284s, duration: 0.686s).
+    - [x] File sprite master được đóng gói thành công (100.27s, mp3: 784KB, webm: 512KB).
+  - **Verify:** Chạy `npm run build:sprite` hoàn tất 189/189 clips.
   - **Files:** `scripts/build-audio-sprite.js`, `public/audio/audio-map.json`, `public/audio/sprite-main.mp3`, `public/audio/sprite-main.webm`.
 
 - [ ] **Task 4: Unit Test kiểm thử Phonics Parser & Sprite Mapping cho từ khó**
