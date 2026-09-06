@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "node --test test/*.test.js",
     "generate:audio": "node scripts/generate-tts-audio.js",
+    "generate:zalo": "node scripts/generate-zalo-tts.js",
     "build:sprite": "node scripts/build-audio-sprite.js"
   },
   "dependencies": {

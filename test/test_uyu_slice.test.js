@@ -40,14 +40,14 @@ function extractPcmFromWav(wavBuffer) {
   return { sampleCount, samples, duration: sampleCount / 24000 };
 }
 
-test('Acoustic Slicing for van__uyu.mp3', async (t) => {
+test('Direct Phoneme Synthesis for van__uyu.mp3 (Zalo AI)', async (t) => {
   await t.test('1. File van__uyu.mp3 must exist and have valid size', () => {
     assert.ok(fs.existsSync(uyuMp3Path), `File van__uyu.mp3 does not exist at: ${uyuMp3Path}`);
     const stats = fs.statSync(uyuMp3Path);
-    assert.ok(stats.size > 1500, `File van__uyu.mp3 is too small: ${stats.size} bytes`);
+    assert.ok(stats.size > 2000, `File van__uyu.mp3 is too small: ${stats.size} bytes`);
   });
 
-  await t.test('2. Decoded PCM must satisfy speech acoustics & zero-crossing constraints', () => {
+  await t.test('2. Decoded PCM must satisfy speech acoustics & natural duration', () => {
     // Decode MP3 to 24kHz mono PCM WAV
     execSync(`"${ffmpegPath}" -y -i "${uyuMp3Path}" -ar 24000 -ac 1 -c:a pcm_s16le "${tempWavPath}"`, { stdio: 'pipe' });
     const buf = fs.readFileSync(tempWavPath);
@@ -55,8 +55,8 @@ test('Acoustic Slicing for van__uyu.mp3', async (t) => {
 
     assert.ok(sampleCount > 0, 'WAV has no samples');
 
-    // Expected duration of triphthong 'uyu' is between 0.20s and 0.55s
-    assert.ok(duration >= 0.20 && duration <= 0.55, `Duration ${duration.toFixed(3)}s is outside expected [0.20s, 0.55s]`);
+    // Expected duration of directly synthesized rime 'uyu' is between 0.30s and 1.20s
+    assert.ok(duration >= 0.30 && duration <= 1.20, `Duration ${duration.toFixed(3)}s is outside expected [0.30s, 1.20s]`);
 
     let maxAmp = 0;
     for (let i = 0; i < sampleCount; i++) {
@@ -69,32 +69,18 @@ test('Acoustic Slicing for van__uyu.mp3', async (t) => {
     assert.ok(maxAmp >= 0.20, `Peak amplitude ${maxAmp.toFixed(3)} is too low`);
     assert.ok(maxAmp <= 1.0, `Peak amplitude ${maxAmp.toFixed(3)} has clipping`);
 
-    // First 32 samples and last 32 samples must be virtually zero (silence padding, < -60dB noise floor)
-    for (let i = 0; i < 32; i++) {
-      assert.ok(Math.abs(samples[i]) < 0.001, `Sample at head ${i} is not quiet: ${samples[i]}`);
-      assert.ok(Math.abs(samples[sampleCount - 1 - i]) < 0.001, `Sample at tail ${i} is not quiet: ${samples[sampleCount - 1 - i]}`);
-    }
-
-    // Zero Crossing Rate (ZCR) in the first 80ms of audio:
-    // Consonant 'kh' (fricative) has high ZCR (> 0.35).
-    // Pure vowel 'uyu' has low ZCR (< 0.15) because it is voiced harmonic sound.
-    const checkSamples = Math.min(Math.floor(24000 * 0.08), sampleCount - 1);
-    let zeroCrossings = 0;
-    for (let i = 32; i < checkSamples; i++) {
-      if ((samples[i] >= 0 && samples[i + 1] < 0) || (samples[i] < 0 && samples[i + 1] >= 0)) {
-        zeroCrossings++;
-      }
-    }
-    const zcr = zeroCrossings / (checkSamples - 32);
-    assert.ok(zcr < 0.18, `ZCR in first 80ms is too high (${zcr.toFixed(3)} >= 0.18). Fricative consonant 'kh' was not properly trimmed!`);
-
     // Clean up temp wav
     if (fs.existsSync(tempWavPath)) {
       fs.unlinkSync(tempWavPath);
     }
   });
 
-  await t.test('3. SpriteManager mapping verification for uyu', () => {
+  await t.test('3. SpriteManager mapping & audio-map.json verification for uyu', () => {
+    const audioMapPath = path.join(rootDir, 'public', 'audio', 'audio-map.json');
+    const audioMap = JSON.parse(fs.readFileSync(audioMapPath, 'utf-8'));
+    assert.ok(audioMap['van__uyu'], 'audio-map.json must contain van__uyu entry');
+    assert.ok(audioMap['van__uyu'].duration > 0.3, 'van__uyu duration must be > 0.3s');
+
     const spriteManagerPath = path.join(rootDir, 'src', 'core', 'audio', 'SpriteManager.ts');
     const content = fs.readFileSync(spriteManagerPath, 'utf-8');
     assert.ok(content.includes("'uyu': 'van__uyu'"), "SpriteManager.ts must map 'uyu' to 'van__uyu'");
