@@ -462,6 +462,10 @@ export class SpriteManager {
     return this.clipBuffers.size;
   }
 
+  public clearDynamicBuffers(): void {
+    this.dynamicBuffers.clear();
+  }
+
   public stop(): void {
     this.currentPlaybackId++;
     const ctx = webAudioEngine.getAudioContext();

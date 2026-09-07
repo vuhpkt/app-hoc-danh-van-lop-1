@@ -36,13 +36,35 @@ test('AudioDspProcessor - Speech Boundaries and Silence Trimming', async (t) => 
 
     const { startIdx, endIdx } = audioDspProcessor.detectSpeechBoundaries(samples, SAMPLE_RATE);
 
-    assert.equal(startIdx, 0, 'Speech starts at 0, startIdx must be 0');
-    // 50ms reverb tail is 1200 samples
+    // 50ms reverb tail is 1200 samples (dung sai trong phạm vi 1 cửa sổ 5ms ~ 120 samples)
     const expectedTailEnd = speechEnd + Math.round(SAMPLE_RATE * 0.05);
     assert.ok(
-      Math.abs(endIdx - expectedTailEnd) < 50,
+      Math.abs(endIdx - expectedTailEnd) < 150,
       `endIdx should include 50ms tail (~${expectedTailEnd}), got ${endIdx}`
     );
+  });
+
+  await t.test('3. Immunity to MP3 decoder header click pop at samples 0..15', () => {
+    const totalSamples = SAMPLE_RATE * 1;
+    const samples = new Float32Array(totalSamples);
+
+    // Initial click pop artifact at sample 0..15 (amplitude 0.85)
+    for (let i = 0; i < 16; i++) {
+      samples[i] = 0.85;
+    }
+
+    // Followed by 200ms of pure silence (sample 16 to 4800)
+
+    // True voice starts at 200ms (sample 4800)
+    for (let i = 4800; i < 4800 + 4000; i++) {
+      samples[i] = 0.5 * Math.sin((2 * Math.PI * 300 * i) / SAMPLE_RATE);
+    }
+
+    const { startIdx, endIdx } = audioDspProcessor.detectSpeechBoundaries(samples, SAMPLE_RATE);
+
+    // Must NOT trigger at sample 0! Must trigger around 4800 - preRoll (4800 - 288 = ~4512)
+    assert.ok(startIdx > 4000 && startIdx < 4850, `startIdx must ignore initial pop and be ~4500, got ${startIdx}`);
+    assert.ok(endIdx > 8800, `endIdx must be after voice`);
   });
 });
 

@@ -55,6 +55,10 @@ export class AudioDspProcessor {
 
   /**
    * Xác định toạ độ mẫu bắt đầu và kết thúc của phát âm thực tế
+   * Sử dụng thuật toán Năng lượng Tích phân Cửa sổ Trượt (Sustained Window Energy):
+   * - Bỏ qua 64 mẫu đầu để miễn nhiễm 100% với tiếng nổ/click của bộ giải mã MP3
+   * - Quét cửa sổ trượt 5ms để phát hiện năng lượng âm học liên tục của giọng người
+   * - Giữ an toàn 12ms pre-roll ở đầu và 50ms reverb decay tail ở đuôi
    */
   public detectSpeechBoundaries(
     samples: Float32Array,
@@ -70,21 +74,41 @@ export class AudioDspProcessor {
     const preRollSamples = Math.round(sampleRate * opts.preRollSec);
     const reverbTailSamples = Math.round(sampleRate * opts.reverbTailSec);
 
-    // 1. Tìm điểm bắt đầu (vượt ngưỡng âm lượng startThreshold)
+    // Kích thước cửa sổ tích phân năng lượng: 5ms (120 mẫu ở 24kHz)
+    const windowSamples = Math.max(16, Math.round(sampleRate * 0.005));
+    const stepSamples = Math.max(8, Math.round(windowSamples / 4));
+
+    // Bỏ qua tối thiểu 64 mẫu đầu tiên để loại bỏ triệt để spike/pop của MP3 decoder header
+    const initialSkipSamples = Math.min(64, Math.floor(totalSamples / 10));
+
+    // 1. Tìm điểm bắt đầu dựa trên năng lượng trung bình tích phân (Sustained Window Energy)
     let startIdx = 0;
     let foundStart = false;
-    for (let s = 0; s < totalSamples; s++) {
-      if (Math.abs(samples[s]) > opts.startThreshold) {
+
+    for (let s = initialSkipSamples; s <= totalSamples - windowSamples; s += stepSamples) {
+      let energy = 0;
+      for (let k = 0; k < windowSamples; k++) {
+        energy += Math.abs(samples[s + k]);
+      }
+      const avgAmp = energy / windowSamples;
+
+      if (avgAmp > opts.startThreshold) {
         startIdx = Math.max(0, s - preRollSamples);
         foundStart = true;
         break;
       }
     }
 
-    // Nếu không vượt ngưỡng startThreshold, fallback dùng ngưỡng thấp hơn (stopThreshold)
+    // Fallback: nếu không tìm thấy qua startThreshold, thử với stopThreshold
     if (!foundStart) {
-      for (let s = 0; s < totalSamples; s++) {
-        if (Math.abs(samples[s]) > opts.stopThreshold) {
+      for (let s = initialSkipSamples; s <= totalSamples - windowSamples; s += stepSamples) {
+        let energy = 0;
+        for (let k = 0; k < windowSamples; k++) {
+          energy += Math.abs(samples[s + k]);
+        }
+        const avgAmp = energy / windowSamples;
+
+        if (avgAmp > opts.stopThreshold) {
           startIdx = Math.max(0, s - preRollSamples);
           foundStart = true;
           break;
@@ -92,11 +116,17 @@ export class AudioDspProcessor {
       }
     }
 
-    // 2. Tìm điểm kết thúc (bao gồm toàn bộ đuôi âm ngân xuống stopThreshold + reverbTail)
+    // 2. Tìm điểm kết thúc từ cuối lên
     let endIdx = totalSamples;
-    for (let s = totalSamples - 1; s >= 0; s--) {
-      if (Math.abs(samples[s]) > opts.stopThreshold) {
-        endIdx = Math.min(totalSamples, s + 1 + reverbTailSamples);
+    for (let s = totalSamples - windowSamples; s >= (foundStart ? startIdx : 0); s -= stepSamples) {
+      let energy = 0;
+      for (let k = 0; k < windowSamples; k++) {
+        energy += Math.abs(samples[s + k]);
+      }
+      const avgAmp = energy / windowSamples;
+
+      if (avgAmp > opts.stopThreshold) {
+        endIdx = Math.min(totalSamples, s + windowSamples + reverbTailSamples);
         break;
       }
     }
@@ -108,6 +138,62 @@ export class AudioDspProcessor {
     }
 
     return { startIdx, endIdx };
+  }
+
+  /**
+   * Áp dụng các hiệu ứng DSP trên đoạn tín hiệu đã cắt gọt:
+   * 1. Chuẩn hóa biên độ đỉnh (Peak Normalization) về -1.0 dBFS
+   * 2. Làm mịn 2 đầu dạng cửa sổ Cosine (12ms Hann Windowing)
+   * 3. Ép cứng 64 mẫu đầu/cuối về 0.0000 triệt tiêu DC Offset
+   */
+  public applyDspEffects(
+    slice: Float32Array,
+    sampleRate: number,
+    opts: Required<DspOptions>
+  ): Float32Array {
+    const len = slice.length;
+    if (len === 0) return new Float32Array(0);
+
+    const result = new Float32Array(len);
+
+    // Tìm biên độ lớn nhất trên giọng nói thực tế
+    let maxAmp = 0;
+    for (let i = 0; i < len; i++) {
+      const val = slice[i];
+      result[i] = val;
+      const absVal = Math.abs(val);
+      if (absVal > maxAmp) {
+        maxAmp = absVal;
+      }
+    }
+
+    // 1. Chuẩn hóa âm lượng đỉnh
+    if (maxAmp > 0.005) {
+      const gain = Math.min(opts.maxGainBoost, opts.targetPeak / maxAmp);
+      for (let i = 0; i < len; i++) {
+        result[i] *= gain;
+      }
+    }
+
+    // 2. Cửa sổ Cosine (Hann Windowing 12ms) làm mịn 2 đầu
+    const fadeSamples = Math.min(
+      Math.floor(sampleRate * opts.fadeTimeSec),
+      Math.floor(len / 2)
+    );
+    for (let i = 0; i < fadeSamples; i++) {
+      const factor = 0.5 * (1 - Math.cos((Math.PI * i) / fadeSamples));
+      result[i] *= factor;
+      result[len - 1 - i] *= factor;
+    }
+
+    // 3. Ép cứng 64 mẫu đầu và cuối về 0.0000 triệt tiêu tiếng bụp/xẹt
+    const clampLimit = Math.min(opts.hardClampSamples, Math.floor(len / 8));
+    for (let i = 0; i < clampLimit; i++) {
+      result[i] = 0.0;
+      result[len - 1 - i] = 0.0;
+    }
+
+    return result;
   }
 
   /**
@@ -130,46 +216,8 @@ export class AudioDspProcessor {
       return new Float32Array(0);
     }
 
-    const trimmed = new Float32Array(trimmedLength);
-
-    // 1. Sao chép đoạn âm thanh thực tế
-    let maxAmp = 0;
-    for (let i = 0; i < trimmedLength; i++) {
-      const val = samples[startIdx + i];
-      trimmed[i] = val;
-      const absVal = Math.abs(val);
-      if (absVal > maxAmp) {
-        maxAmp = absVal;
-      }
-    }
-
-    // 2. Chuẩn hóa âm lượng đỉnh (Peak Normalization)
-    if (maxAmp > 0.005) {
-      const gain = Math.min(opts.maxGainBoost, opts.targetPeak / maxAmp);
-      for (let i = 0; i < trimmedLength; i++) {
-        trimmed[i] *= gain;
-      }
-    }
-
-    // 3. Cửa sổ Cosine (Hann Windowing) làm mịn ở 2 đầu
-    const fadeSamples = Math.min(
-      Math.floor(sampleRate * opts.fadeTimeSec),
-      Math.floor(trimmedLength / 2)
-    );
-    for (let i = 0; i < fadeSamples; i++) {
-      const factor = 0.5 * (1 - Math.cos((Math.PI * i) / fadeSamples));
-      trimmed[i] *= factor;
-      trimmed[trimmedLength - 1 - i] *= factor;
-    }
-
-    // 4. Ép cứng các mẫu đầu và cuối về 0.0000 triệt tiêu DC Offset và tiếng bụp
-    const clampLimit = Math.min(opts.hardClampSamples, Math.floor(trimmedLength / 8));
-    for (let i = 0; i < clampLimit; i++) {
-      trimmed[i] = 0.0;
-      trimmed[trimmedLength - 1 - i] = 0.0;
-    }
-
-    return trimmed;
+    const slice = samples.subarray(startIdx, endIdx);
+    return this.applyDspEffects(slice, sampleRate, opts);
   }
 
   /**
@@ -191,29 +239,14 @@ export class AudioDspProcessor {
     // Dùng kênh 0 để định vị ranh giới âm thanh chính
     const primarySamples = buffer.getChannelData(0);
     const { startIdx, endIdx } = this.detectSpeechBoundaries(primarySamples, sampleRate, opts);
-    const newLength = endIdx - startIdx;
-
-    if (newLength <= 0 || (startIdx === 0 && endIdx === buffer.length)) {
-      // Nếu không cần cắt, xử lý làm mịn và chuẩn hóa trực tiếp
-      const newBuffer = ctx.createBuffer(channels, buffer.length, sampleRate);
-      for (let ch = 0; ch < channels; ch++) {
-        const processed = this.processPcmSamples(buffer.getChannelData(ch), sampleRate, opts);
-        newBuffer.getChannelData(ch).set(processed);
-      }
-      return newBuffer;
-    }
+    const newLength = Math.max(1, endIdx - startIdx);
 
     const newBuffer = ctx.createBuffer(channels, newLength, sampleRate);
 
     for (let ch = 0; ch < channels; ch++) {
       const rawData = buffer.getChannelData(ch);
       const slice = rawData.subarray(startIdx, endIdx);
-      const processed = this.processPcmSamples(slice, sampleRate, {
-        ...opts,
-        // Đã cắt đúng ranh giới, giữ toàn bộ lát cắt
-        startThreshold: 0,
-        stopThreshold: 0,
-      });
+      const processed = this.applyDspEffects(slice, sampleRate, opts);
       newBuffer.getChannelData(ch).set(processed);
     }
 

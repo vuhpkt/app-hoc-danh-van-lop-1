@@ -112,8 +112,14 @@ export class LessonAudioSyncer {
       });
 
       try {
-        const audioBuffer = await zaloTtsClient.fetchAudioBuffer(word);
-        await audioCacheService.saveClip(word, audioBuffer);
+        if (typeof window !== 'undefined') {
+          // Trên trình duyệt: Nạp qua spriteManager để chạy đầy đủ DSP (cắt khoảng lặng, Hann windowing, chuẩn hóa peak)
+          await spriteManager.preloadAudio(word);
+        } else {
+          // Môi trường test Node.js
+          const audioBuffer = await zaloTtsClient.fetchAudioBuffer(word);
+          await audioCacheService.saveClip(word, audioBuffer);
+        }
         newlyDownloaded++;
 
         // Delay nhẹ 200ms giữa các request để đảm bảo an toàn quota

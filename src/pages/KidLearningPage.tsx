@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Sparkles, PlusCircle, RefreshCw } from 'lucide-react';
+import { Sparkles, PlusCircle, RefreshCw, Trash2, CheckCircle2 } from 'lucide-react';
 import { Token, ReadingMode } from '../types/index.ts';
 import { tokenizeVietnameseText } from '../core/parser/vietnamesePhonics.ts';
 import { AudioSpritePlayer } from '../core/audio/AudioSpritePlayer.ts';
 import { audioManager } from '../core/audio/AudioManager.ts';
+import { audioCacheService } from '../core/audio/AudioCacheService.ts';
+import { spriteManager } from '../core/audio/SpriteManager.ts';
 import { KidReaderBoard } from '../components/kid/KidReaderBoard.tsx';
 import { KidControlBar } from '../components/shared/KidControlBar.tsx';
 import { PhonicsBadgeModal } from '../components/kid/PhonicsBadgeModal.tsx';
@@ -47,8 +49,20 @@ export const KidLearningPage: React.FC = () => {
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [showOcrModal, setShowOcrModal] = useState<boolean>(false);
   const [preparingInfo, setPreparingInfo] = useState<{ current: number; total: number; word: string } | null>(null);
+  const [cacheMessage, setCacheMessage] = useState<string | null>(null);
 
   const playbackControllerRef = useRef<{ stop: () => void } | null>(null);
+
+  const handleClearAudioCache = async () => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ âm thanh tải về trước đây để làm mới kho âm thanh theo chuẩn DSP mới nhất không?')) {
+      handleStop();
+      await audioCacheService.clear();
+      spriteManager.clearDynamicBuffers();
+      audioManager.playSuccessChime();
+      setCacheMessage('Đã làm mới sạch kho âm! Các từ mới sẽ được xử lý DSP chất lượng cao nhất.');
+      setTimeout(() => setCacheMessage(null), 4500);
+    }
+  };
 
   const handleSelectLesson = (lesson: typeof GRADE1_LESSONS[0]) => {
     handleStop();
@@ -170,14 +184,33 @@ export const KidLearningPage: React.FC = () => {
           </div>
         </div>
 
-        <button
-          onClick={() => setShowOcrModal(!showOcrModal)}
-          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer active:scale-95 self-start sm:self-center"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>Quét Thêm Trang Sách (OCR)</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={handleClearAudioCache}
+            className="flex items-center gap-1.5 px-3.5 py-3 rounded-2xl bg-white hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95"
+            title="Xóa kho âm thanh cũ để nạp lại bản xử lý DSP chất lượng cao"
+          >
+            <Trash2 className="w-4 h-4 text-rose-500" />
+            <span className="hidden md:inline">Làm Mới Kho Âm</span>
+          </button>
+
+          <button
+            onClick={() => setShowOcrModal(!showOcrModal)}
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer active:scale-95"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Quét Thêm Trang Sách (OCR)</span>
+          </button>
+        </div>
       </header>
+
+      {/* THÔNG BÁO DỌN DẸP KHO ÂM THÀNH CÔNG */}
+      {cacheMessage && (
+        <div className="p-3.5 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-center gap-2.5 text-emerald-800 text-xs font-bold animate-fadeIn shadow-xs">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>{cacheMessage}</span>
+        </div>
+      )}
 
       {/* MODAL QUÉT TRANG SÁCH OCR */}
       {showOcrModal && (

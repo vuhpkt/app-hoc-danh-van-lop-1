@@ -19,13 +19,15 @@ import {
   Edit3,
   CloudDownload,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Trash2
 } from 'lucide-react';
 import { PhonicsBreakdown, Token, ReadingMode } from '../types';
 import { parseVietnamesePhonics, tokenizeVietnameseText } from '../core/parser/vietnamesePhonics';
 import { audioManager } from '../core/audio/AudioManager';
 import { webAudioEngine } from '../core/audio/WebAudioEngine';
 import { spriteManager, SpriteManager } from '../core/audio/SpriteManager';
+import { audioCacheService } from '../core/audio/AudioCacheService';
 import { AudioSpritePlayer } from '../core/audio/AudioSpritePlayer';
 import { LessonAudioSyncer, SyncProgressInfo } from '../core/audio/LessonAudioSyncer';
 import { PhonicsPlayer } from '../components/PhonicsPlayer';
@@ -369,6 +371,28 @@ export const Playground: React.FC = () => {
     } catch (err) {
       console.error('Lỗi khi đồng bộ âm thanh Zalo AI:', err);
       setSyncStatus(prev => ({ ...prev, isSyncing: false }));
+    }
+  };
+
+  const handleClearCache = async () => {
+    if (window.confirm('Bạn có muốn xóa toàn bộ kho âm thanh ngoại tuyến để tải lại theo chuẩn DSP chất lượng cao nhất không?')) {
+      await audioCacheService.clear();
+      spriteManager.clearDynamicBuffers();
+      audioManager.playSuccessChime();
+      // Quét lại trạng thái từ
+      const words = LessonAudioSyncer.extractUniqueWords(karaokeRawText);
+      const missing: string[] = [];
+      for (const w of words) {
+        const available = await LessonAudioSyncer.isWordAvailable(w);
+        if (!available) missing.push(w);
+      }
+      setSyncStatus({
+        isChecking: false,
+        isSyncing: false,
+        missingWords: missing,
+        totalUnique: words.length,
+        progress: null,
+      });
     }
   };
 
@@ -1339,9 +1363,18 @@ export const Playground: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Nút tải âm thanh khi có từ còn thiếu */}
-                {syncStatus.missingWords.length > 0 && (
-                  <div className="flex items-center gap-2">
+                {/* Nhóm nút tác vụ ngoại tuyến */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleClearCache}
+                    className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-rose-600 bg-white hover:bg-rose-50 border border-slate-200 transition-all cursor-pointer active:scale-95 shadow-xs"
+                    title="Xóa cache âm thanh ngoại tuyến để tải lại bản xử lý DSP chất lượng cao"
+                  >
+                    <Trash2 className="w-4 h-4 text-rose-500" />
+                    <span>Xóa cache âm</span>
+                  </button>
+
+                  {syncStatus.missingWords.length > 0 && (
                     <button
                       onClick={handleSyncLessonAudio}
                       disabled={syncStatus.isSyncing}
@@ -1358,8 +1391,8 @@ export const Playground: React.FC = () => {
                           : `Tải âm thanh Zalo AI (${syncStatus.missingWords.length} từ)`}
                       </span>
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               {/* Progress bar khi đang tải */}
