@@ -5,7 +5,7 @@
  * - Tự động unlock AudioContext trên thiết bị di động
  */
 
-import { ToneType } from '../../types';
+import type { ToneType } from '../../types/index.ts';
 
 export interface AudioSequenceItem {
   id: string;
@@ -85,6 +85,7 @@ export class WebAudioEngine {
    * Tự động unlock AudioContext ngay khi có tương tác đầu tiên của người dùng
    */
   private setupAutoplayUnlock(): void {
+    if (typeof window === 'undefined') return;
     const unlockHandler = () => {
       if (this.isUnlocked) return;
       try {

@@ -137,6 +137,8 @@ const AUDIO_DATASET = [
   { key: 'van__oay', text: 'oay' },
   { key: 'van__uay', text: 'uây' },
   { key: 'van__ue', text: 'uê' },
+  { key: 'van__oeo', text: 'oeo' },
+  { key: 'van__uya', text: 'uya' },
   { key: 'van__uyu', text: 'uyu' },
   { key: 'van__ui_horn_i', text: 'uôi' },
 
@@ -151,10 +153,12 @@ const AUDIO_DATASET = [
   { key: 'van__o_hat_m', text: 'ôm' },
   { key: 'van__o_horn_m', text: 'ơm' },
   { key: 'van__um', text: 'um' },
+  { key: 'van__u_horn_m', text: 'ưm' },
   { key: 'van__iem', text: 'iêm' },
   { key: 'van__yem', text: 'yêm' },
   { key: 'van__uom_hat', text: 'uôm' },
   { key: 'van__uom_horn', text: 'ươm' },
+  { key: 'van__oam', text: 'oam' },
   { key: 'van__an', text: 'an' },
   { key: 'van__a_breve_n', text: 'ăn' },
   { key: 'van__a_hat_n', text: 'ân' },
@@ -165,6 +169,7 @@ const AUDIO_DATASET = [
   { key: 'van__o_hat_n', text: 'ôn' },
   { key: 'van__o_horn_n', text: 'ơn' },
   { key: 'van__un', text: 'un' },
+  { key: 'van__u_horn_n', text: 'ưn' },
   { key: 'van__ien', text: 'iên' },
   { key: 'van__yen', text: 'yên' },
   { key: 'van__uan_hat', text: 'uôn' },
@@ -172,15 +177,19 @@ const AUDIO_DATASET = [
   { key: 'van__oan', text: 'oan' },
   { key: 'van__oan_breve', text: 'oăn' },
   { key: 'van__uan_hat_a', text: 'uân' },
+  { key: 'van__uen', text: 'uên' },
   { key: 'van__uyen', text: 'uyên' },
   { key: 'van__ang', text: 'ang' },
   { key: 'van__a_breve_ng', text: 'ăng' },
   { key: 'van__a_hat_ng', text: 'âng' },
+  { key: 'van__eng', text: 'eng' },
+  { key: 'van__e_hat_ng', text: 'êng' },
   { key: 'van__ong', text: 'ong' },
   { key: 'van__o_hat_ng', text: 'ông' },
   { key: 'van__ung', text: 'ung' },
   { key: 'van__u_horn_ng', text: 'ưng' },
   { key: 'van__ieng', text: 'iêng' },
+  { key: 'van__yeng', text: 'yêng' },
   { key: 'van__uong_hat', text: 'uông' },
   { key: 'van__uong_horn', text: 'ương' },
   { key: 'van__oang', text: 'oang' },
@@ -192,64 +201,88 @@ const AUDIO_DATASET = [
   { key: 'van__oanh', text: 'oanh' },
   { key: 'van__uynh', text: 'uynh' },
 
-  // Nhóm 4: Vần kết thúc bằng phụ âm tắc p, t, c, ch (~50 vần)
-  { key: 'van__ap', text: 'ap' },
-  { key: 'van__a_breve_p', text: 'ăp' },
-  { key: 'van__a_hat_p', text: 'âp' },
-  { key: 'van__ep', text: 'ep' },
-  { key: 'van__e_hat_p', text: 'êp' },
-  { key: 'van__ip', text: 'ip' },
-  { key: 'van__op', text: 'op' },
-  { key: 'van__o_hat_p', text: 'ôp' },
-  { key: 'van__o_horn_p', text: 'ơp' },
-  { key: 'van__up', text: 'up' },
-  { key: 'van__u_horn_p', text: 'ưp' },
-  { key: 'van__iep', text: 'iêp' },
-  { key: 'van__uop_hat', text: 'uôp' },
-  { key: 'van__uop_horn', text: 'ươp' },
-  { key: 'van__at', text: 'at' },
-  { key: 'van__a_breve_t', text: 'ăt' },
-  { key: 'van__a_hat_t', text: 'ât' },
-  { key: 'van__et', text: 'et' },
-  { key: 'van__e_hat_t', text: 'êt' },
-  { key: 'van__it', text: 'it' },
-  { key: 'van__ot', text: 'ot' },
-  { key: 'van__o_hat_t', text: 'ôt' },
-  { key: 'van__o_horn_t', text: 'ơt' },
-  { key: 'van__ut', text: 'ut' },
-  { key: 'van__u_horn_t', text: 'ưt' },
-  { key: 'van__iet', text: 'iêt' },
-  { key: 'van__uot_hat', text: 'uôt' },
-  { key: 'van__uot_horn', text: 'ươt' },
-  { key: 'van__oat', text: 'oat' },
-  { key: 'van__oat_breve', text: 'oăt' },
-  { key: 'van__uat_hat', text: 'uât' },
-  { key: 'van__uyet', text: 'uyêt' },
-  { key: 'van__ac', text: 'ac' },
-  { key: 'van__a_breve_c', text: 'ăc' },
-  { key: 'van__a_hat_c', text: 'âc' },
-  { key: 'van__oc', text: 'oc' },
-  { key: 'van__o_hat_c', text: 'ôc' },
-  { key: 'van__uc', text: 'uc' },
-  { key: 'van__u_horn_c', text: 'ưc' },
-  { key: 'van__iec', text: 'iêc' },
-  { key: 'van__uoc_hat', text: 'uôc' },
-  { key: 'van__uoc_horn', text: 'ươc' },
-  { key: 'van__oac', text: 'oac' },
-  { key: 'van__oac_breve', text: 'oăc' },
-  { key: 'van__ach', text: 'ach' },
-  { key: 'van__e_hat_ch', text: 'êch' },
-  { key: 'van__ich', text: 'ich' },
-  { key: 'van__oach', text: 'oach' },
-  { key: 'van__uych', text: 'uych' },
+  // Nhóm 4: Vần kết thúc bằng phụ âm tắc p, t, c, ch (44 vần) - Đọc bằng dạng thanh sắc
+  // Kết thúc -p:
+  { key: 'van__ap', text: 'áp' },
+  { key: 'van__a_breve_p', text: 'ắp' },
+  { key: 'van__a_hat_p', text: 'ấp' },
+  { key: 'van__ep', text: 'ép' },
+  { key: 'van__e_hat_p', text: 'ếp' },
+  { key: 'van__ip', text: 'íp' },
+  { key: 'van__op', text: 'óp' },
+  { key: 'van__o_hat_p', text: 'ốp' },
+  { key: 'van__o_horn_p', text: 'ớp' },
+  { key: 'van__up', text: 'úp' },
+  { key: 'van__u_horn_p', text: 'úp' },
+  { key: 'van__iep', text: 'iếp' },
+  { key: 'van__uop_hat', text: 'uốp' },
+  { key: 'van__uop_horn', text: 'ướp' },
+
+  // Kết thúc -t:
+  { key: 'van__at', text: 'át' },
+  { key: 'van__a_breve_t', text: 'ắt' },
+  { key: 'van__a_hat_t', text: 'ất' },
+  { key: 'van__et', text: 'ét' },
+  { key: 'van__e_hat_t', text: 'ết' },
+  { key: 'van__it', text: 'ít' },
+  { key: 'van__ot', text: 'ót' },
+  { key: 'van__o_hat_t', text: 'ốt' },
+  { key: 'van__o_horn_t', text: 'ớt' },
+  { key: 'van__ut', text: 'út' },
+  { key: 'van__u_horn_t', text: 'ứt' },
+  { key: 'van__iet', text: 'iết' },
+  { key: 'van__uot_hat', text: 'uốt' },
+  { key: 'van__uot_horn', text: 'ướt' },
+  { key: 'van__oat', text: 'oát' },
+  { key: 'van__oat_breve', text: 'oắt' },
+  { key: 'van__uat_hat', text: 'uất' },
+  { key: 'van__uyet', text: 'uyết' },
+  { key: 'van__uyt', text: 'uýt' },
+
+  // Kết thúc -c:
+  { key: 'van__ac', text: 'ác' },
+  { key: 'van__a_breve_c', text: 'ắc' },
+  { key: 'van__a_hat_c', text: 'ấc' },
+  { key: 'van__ec', text: 'éc' },
+  { key: 'van__e_hat_c', text: 'ếc' },
+  { key: 'van__oc', text: 'óc' },
+  { key: 'van__o_hat_c', text: 'ốc' },
+  { key: 'van__uc', text: 'úc' },
+  { key: 'van__u_horn_c', text: 'ức' },
+  { key: 'van__iec', text: 'iếc' },
+  { key: 'van__uoc_hat', text: 'uốc' },
+  { key: 'van__uoc_horn', text: 'ước' },
+  { key: 'van__oac', text: 'oác' },
+  { key: 'van__oac_breve', text: 'oắc' },
+
+  // Kết thúc -ch:
+  { key: 'van__ach', text: 'ách' },
+  { key: 'van__e_hat_ch', text: 'ếch' },
+  { key: 'van__ich', text: 'ích' },
+  { key: 'van__oach', text: 'oách' },
+  { key: 'van__uych', text: 'uých' },
 
   // ==========================================
-  // 4. TIẾNG TRUNG GIAN & TỪ ĐẶC BIỆT
+  // 4. TIẾNG TRUNG GIAN & TỪ ĐẶC BIỆT SGK LỚP 1
   // ==========================================
+  { key: 'tu__giat_sac', text: 'giắt' },
+  { key: 'tu__giat', text: 'giặt' },
+  { key: 'tu__hoc_sac', text: 'hóc' },
+  { key: 'tu__hoc', text: 'học' },
+  { key: 'tu__vit_sac', text: 'vít' },
+  { key: 'tu__vit', text: 'vịt' },
+  { key: 'tu__mat_sac', text: 'mắt' },
+  { key: 'tu__mat', text: 'mặt' },
+  { key: 'tu__quat_sac', text: 'quát' },
+  { key: 'tu__quat', text: 'quạt' },
+  { key: 'tu__chuot_sac', text: 'chuốt' },
+  { key: 'tu__chuot', text: 'chuột' },
+  { key: 'tu__bat', text: 'bắt' },
+  { key: 'tu__hat', text: 'hát' },
+  { key: 'tu__sach', text: 'sách' },
+  { key: 'tu__quoc', text: 'quốc' },
   { key: 'tu__truong_ngang', text: 'trương' },
   { key: 'tu__truong', text: 'trường' },
-  { key: 'tu__giat_ngang', text: 'giăt' },
-  { key: 'tu__giat', text: 'giặt' },
   { key: 'tu__quang', text: 'quang' },
   { key: 'tu__khuyu_ngang', text: 'khuyu' },
   { key: 'tu__khuyu', text: 'khuỷu' },
@@ -257,6 +290,16 @@ const AUDIO_DATASET = [
   { key: 'tu__chich', text: 'chích' },
   { key: 'tu__choe', text: 'chòe' },
   { key: 'tu__huych', text: 'huých' },
+  { key: 'tu__chim', text: 'chim' },
+  { key: 'tu__hoa', text: 'hoa' },
+  { key: 'tu__me_ngang', text: 'me' },
+  { key: 'tu__me', text: 'mẹ' },
+  { key: 'tu__be_ngang', text: 'be' },
+  { key: 'tu__be', text: 'bé' },
+  { key: 'tu__ban_ngang', text: 'ban' },
+  { key: 'tu__ban', text: 'bạn' },
+  { key: 'tu__it_nang', text: 'ịt' },
+  { key: 'tu__ac_nang', text: 'ạc' },
 ];
 
 async function delay(ms) {
@@ -333,6 +376,29 @@ async function main() {
     fs.mkdirSync(RAW_DIR, { recursive: true });
   }
 
+  // Đọc manifest cũ nếu có để nhận diện mục đã đổi text cần tải lại
+  const oldManifestMap = new Map();
+  if (fs.existsSync(MANIFEST_FILE)) {
+    try {
+      const oldList = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf-8'));
+      for (const entry of oldList) {
+        oldManifestMap.set(entry.key, entry);
+      }
+    } catch {}
+  }
+
+  // Dọn dẹp các file rác cũ đã bị loại khỏi danh mục
+  const garbageFiles = ['tu__giat_ngang.mp3'];
+  for (const gf of garbageFiles) {
+    const gfPath = path.join(RAW_DIR, gf);
+    if (fs.existsSync(gfPath)) {
+      try {
+        fs.unlinkSync(gfPath);
+        console.log(`🗑️ Đã xóa file rác cũ: ${gf}`);
+      } catch {}
+    }
+  }
+
   const manifest = [];
   let successCount = 0;
   let skipCount = 0;
@@ -350,10 +416,17 @@ async function main() {
         const filename = `${item.key}.mp3`;
         const targetPath = path.join(RAW_DIR, filename);
 
-        if (!isOverwrite && fs.existsSync(targetPath) && fs.statSync(targetPath).size > 1024) {
+        const oldEntry = oldManifestMap.get(item.key);
+        const textChanged = !oldEntry || oldEntry.text !== item.text;
+
+        if (!isOverwrite && !textChanged && fs.existsSync(targetPath) && fs.statSync(targetPath).size > 1024) {
           skipCount++;
           manifest.push({ key: item.key, filename, text: item.text });
           return;
+        }
+
+        if (textChanged && oldEntry) {
+          console.log(`  [${String(itemIndex).padStart(3, '0')}/${datasetToRun.length}] 🔄 Cập nhật text mới cho ${item.key}: "${oldEntry.text}" -> "${item.text}"`);
         }
 
         try {

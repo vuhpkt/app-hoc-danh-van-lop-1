@@ -26,32 +26,32 @@
   - **Files:** `src/core/parser/vietnamesePhonics.ts`.
   - **Scope:** Small (1 file).
 
-- [ ] **Task 3: Cập nhật Script Zalo AI TTS & Thu Âm Lại Toàn Bộ Âm Chuẩn Không Rác**
+- [x] **Task 3: Cập nhật Script Zalo AI TTS & Thu Âm Lại Toàn Bộ Âm Chuẩn Không Rác**
   - **Mô tả:** Cập nhật `AUDIO_DATASET` trong `scripts/generate-zalo-tts.js` đồng bộ với danh mục chuẩn. Chạy tải lại bằng Zalo AI TTS API các vần $p, t, c, ch$ và tiếng đệm mới với cờ `--overwrite`.
   - **Acceptance:**
-    - [ ] Toàn bộ các file âm thanh vần $p, t, c, ch$ và tiếng đệm được tải thành công từ Zalo AI.
-    - [ ] File `raw-audio/van__a_breve_t.mp3` phát rõ âm `ắt`.
-    - [ ] File `raw-audio/tu__giat_sac.mp3` phát rõ âm `giắt`.
-    - [ ] Không có file nào dưới 1.5KB hoặc bị lỗi HTTP.
+    - [x] Toàn bộ các file âm thanh vần $p, t, c, ch$ và tiếng đệm được tải thành công từ Zalo AI.
+    - [x] File `raw-audio/van__a_breve_t.mp3` phát rõ âm `ắt`.
+    - [x] File `raw-audio/tu__giat_sac.mp3` phát rõ âm `giắt`.
+    - [x] Không có file nào dưới 1.5KB hoặc bị lỗi HTTP.
   - **Files:** `scripts/generate-zalo-tts.js`, `raw-audio/manifest.json`, `raw-audio/`.
   - **Scope:** Small-Medium (script + audio assets).
 
-- [ ] **Task 4: Cập nhật SpriteManager Mapping & Đóng gói Audio Sprite Master mới**
+- [x] **Task 4: Cập nhật SpriteManager Mapping & Đóng gói Audio Sprite Master mới**
   - **Mô tả:** Cập nhật `TOKEN_TO_SPRITE_KEY_MAP` trong `SpriteManager.ts` hỗ trợ cả 2 dạng token (hiển thị `ăt` và âm thanh `ắt`), ánh xạ các tiếng đệm mang thanh sắc. Chạy `scripts/build-audio-sprite.js` đóng gói lại `sprite-main.mp3`, `sprite-main.webm` và `audio-map.json`.
   - **Acceptance:**
-    - [ ] `audio-map.json` chứa đầy đủ các phân đoạn mới.
-    - [ ] Audio sprite master nghe rõ ràng, không click/pop.
+    - [x] `audio-map.json` chứa đầy đủ các phân đoạn mới.
+    - [x] Audio sprite master nghe rõ ràng, không click/pop.
   - **Files:** `src/core/audio/SpriteManager.ts`, `scripts/build-audio-sprite.js`, `public/audio/audio-map.json`, `public/audio/sprite-main.mp3`, `public/audio/sprite-main.webm`.
   - **Scope:** Medium (2 code files + 3 generated public assets).
 
-- [ ] **Task 5: Xây dựng Bộ Test Suite Tự Động Toàn Diện (`test/audio_pedagogy.test.js`)**
+- [x] **Task 5: Xây dựng Bộ Test Suite Tự Động Toàn Diện (`test/audio_pedagogy.test.js`)**
   - **Mô tả:** Viết test suite kiểm chứng tự động: (1) Quét danh mục 0% từ rác, (2) Kiểm tra 25+ trường hợp từ bóc tách ngữ âm đúng chuẩn, (3) 100% bước trong công thức resolve thành công tới audio clip trong `audio-map.json`, (4) Kiểm tra biên độ sóng PCM đạt chuẩn không clipping.
   - **Acceptance:**
-    - [ ] Lệnh `npm test` chạy pass 100% tất cả các bài kiểm tra.
+    - [x] Lệnh `npm test` chạy pass 100% tất cả các bài kiểm tra (18/18 tests passed).
   - **Files:** `test/audio_pedagogy.test.js`.
   - **Scope:** Small (1 test file).
 
-### ─── CHECKPOINT 1: Kho âm thanh hoàn chỉnh & Sạch 100% âm rác, Đạt chuẩn Sư phạm ───
+### ─── CHECKPOINT 1: Kho âm thanh hoàn chỉnh & Sạch 100% âm rác, Đạt chuẩn Sư phạm [ĐÃ ĐẠT 100%] ───
 
 ---
 

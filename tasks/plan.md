@@ -27,34 +27,34 @@ Kế hoạch triển khai chia nhỏ toàn bộ dự án thành các task độc
 
 ## 3. Danh sách Nhiệm vụ (Task List by Phases)
 
-### Phase 1: Chuẩn Hóa Ngữ Âm Sư Phạm & Hoàn Thiện Kho Âm Thanh Sạch (Ưu tiên Cao nhất)
+### Phase 1: Chuẩn Hóa Ngữ Âm Sư Phạm & Hoàn Thiện Kho Âm Thanh Sạch (Ưu tiên Cao nhất) [HOÀN THÀNH 100%]
 
-- [ ] **Task 1: Rà soát & Chuẩn hóa Danh mục Âm thanh Sư phạm (`danh_muc_am_thanh_lop_1.md`)**
+- [x] **Task 1: Rà soát & Chuẩn hóa Danh mục Âm thanh Sư phạm (`danh_muc_am_thanh_lop_1.md`)**
   - **Mô tả:** Chuyển toàn bộ 44 vần kết thúc bằng $p, t, c, ch$ sang dạng thanh sắc (`ắt, ất, ắc, ấc, áp, ắp, ấp...`) cho text gửi TTS. Loại bỏ từ ma vô nghĩa `giăt` thay bằng tiếng đệm có nghĩa `giắt`. Bổ sung các tiếng đệm mang thanh sắc và từ mẫu cốt lõi của SGK Tiếng Việt 1.
   - **Acceptance:** 100% mục trong danh mục có text gửi TTS là từ/chuỗi tiếng Việt có nghĩa trong từ điển; 0% từ vô nghĩa không dấu thuộc nhóm $p, t, c, ch$.
   - **Files:** `danh_muc_am_thanh_lop_1.md`.
 
-- [ ] **Task 2: Tái cấu trúc Bộ máy Bóc tách Ngữ âm (`vietnamesePhonics.ts`) theo Chuẩn $p, t, c, ch$**
+- [x] **Task 2: Tái cấu trúc Bộ máy Bóc tách Ngữ âm (`vietnamesePhonics.ts`) theo Chuẩn $p, t, c, ch$**
   - **Mô tả:** Cập nhật thuật toán bóc tách và sinh công thức đánh vần: tiếng khép tắc thanh nặng sinh công thức `gi - ắt - giắt - nặng - giặt`, tiếng khép tắc thanh sắc sinh công thức rút gọn 3 bước `b - ắt - bắt`, xử lý từ khuyết âm đầu.
   - **Acceptance:** `parseVietnamesePhonics('giặt').spellingFormula` trả về `['gi', 'ắt', 'giắt', 'nặng', 'giặt']`; `parseVietnamesePhonics('bắt').spellingFormula` trả về `['b', 'ắt', 'bắt']`; `quốc` trả về `['qu', 'ốc', 'quốc']`.
   - **Files:** `src/core/parser/vietnamesePhonics.ts`.
 
-- [ ] **Task 3: Cập nhật Script Zalo AI TTS & Thu Âm Lại Toàn Bộ Âm Chuẩn Không Rác**
+- [x] **Task 3: Cập nhật Script Zalo AI TTS & Thu Âm Lại Toàn Bộ Âm Chuẩn Không Rác**
   - **Mô tả:** Cập nhật `AUDIO_DATASET` trong `scripts/generate-zalo-tts.js` đồng bộ với danh mục chuẩn. Chạy tải lại bằng Zalo AI TTS API các vần $p, t, c, ch$ và tiếng đệm mới với cờ `--overwrite`.
   - **Acceptance:** Toàn bộ các file âm thanh vần $p, t, c, ch$ và tiếng đệm được tải thành công từ Zalo AI; file `van__a_breve_t.mp3` phát rõ âm `ắt`; `tu__giat_sac.mp3` phát rõ âm `giắt`; 0 file nào dưới 1.5KB.
   - **Files:** `scripts/generate-zalo-tts.js`, `raw-audio/manifest.json`, `raw-audio/`.
 
-- [ ] **Task 4: Cập nhật SpriteManager Mapping & Đóng gói Audio Sprite Master mới**
+- [x] **Task 4: Cập nhật SpriteManager Mapping & Đóng gói Audio Sprite Master mới**
   - **Mô tả:** Cập nhật `TOKEN_TO_SPRITE_KEY_MAP` trong `SpriteManager.ts` hỗ trợ cả 2 dạng token (hiển thị `ăt` và âm thanh `ắt`), ánh xạ các tiếng đệm mang thanh sắc. Chạy `scripts/build-audio-sprite.js` đóng gói lại `sprite-main.mp3`, `sprite-main.webm` và `audio-map.json`.
   - **Acceptance:** `audio-map.json` chứa đầy đủ các phân đoạn mới; Audio sprite master nghe rõ ràng, không click/pop.
   - **Files:** `src/core/audio/SpriteManager.ts`, `scripts/build-audio-sprite.js`, `public/audio/audio-map.json`, `public/audio/sprite-main.mp3`, `public/audio/sprite-main.webm`.
 
-- [ ] **Task 5: Xây dựng Bộ Test Suite Tự Động Toàn Diện (`test/audio_pedagogy.test.js`)**
+- [x] **Task 5: Xây dựng Bộ Test Suite Tự Động Toàn Diện (`test/audio_pedagogy.test.js`)**
   - **Mô tả:** Viết test suite kiểm chứng tự động: (1) Quét danh mục 0% từ rác, (2) Kiểm tra 25+ trường hợp từ bóc tách ngữ âm đúng chuẩn, (3) 100% bước trong công thức resolve thành công tới audio clip trong `audio-map.json`, (4) Kiểm tra biên độ sóng PCM đạt chuẩn không clipping.
-  - **Acceptance:** Lệnh `npm test` chạy pass 100% tất cả các bài kiểm tra.
+  - **Acceptance:** Lệnh `npm test` chạy pass 100% tất cả các bài kiểm tra (18/18 tests passed).
   - **Files:** `test/audio_pedagogy.test.js`.
 
-### ─── CHECKPOINT 1: Kho âm thanh hoàn chỉnh & Sạch 100% âm rác, Đạt chuẩn Sư phạm ───
+### ─── CHECKPOINT 1: Kho âm thanh hoàn chỉnh & Sạch 100% âm rác, Đạt chuẩn Sư phạm [ĐÃ ĐẠT 100%] ───
 
 ---
 

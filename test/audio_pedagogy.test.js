@@ -1,6 +1,44 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import ffmpegPath from 'ffmpeg-static';
+import { execSync } from 'node:child_process';
 import { parseVietnamesePhonics } from '../src/core/parser/vietnamesePhonics.ts';
+import { SpriteManager } from '../src/core/audio/SpriteManager.ts';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.join(__dirname, '..');
+
+function extractPcmFromWav(wavBuffer) {
+  let offset = 12;
+  let dataOffset = -1;
+  let dataSize = 0;
+
+  while (offset < wavBuffer.length - 8) {
+    const chunkId = wavBuffer.toString('ascii', offset, offset + 4);
+    const chunkSize = wavBuffer.readUInt32LE(offset + 4);
+    if (chunkId === 'data') {
+      dataOffset = offset + 8;
+      dataSize = chunkSize;
+      break;
+    }
+    offset += 8 + chunkSize;
+  }
+
+  if (dataOffset === -1) {
+    throw new Error('Could not find data chunk in WAV file');
+  }
+
+  const sampleCount = Math.floor(dataSize / 2);
+  const samples = new Float32Array(sampleCount);
+  for (let i = 0; i < sampleCount; i++) {
+    samples[i] = wavBuffer.readInt16LE(dataOffset + i * 2) / 32768.0;
+  }
+  return { sampleCount, samples, duration: sampleCount / 24000 };
+}
 
 test('Phonics Parser - Checked Syllables (p, t, c, ch) & Pedagogical Rules', async (t) => {
   await t.test('1. Checked syllables with THANH NẶNG must use sắc rime and sắc intermediate syllable', () => {
@@ -84,4 +122,106 @@ test('Phonics Parser - Checked Syllables (p, t, c, ch) & Pedagogical Rules', asy
     const khuyu = parseVietnamesePhonics('khuỷu');
     assert.deepEqual(khuyu.spellingFormula, ['kh', 'uyu', 'khuyu', 'hỏi', 'khuỷu']);
   });
+});
+
+test('Dataset Audit - Zero Garbage Words in Manifest & Audio Catalog', async (t) => {
+  await t.test('1. Manifest must NOT contain non-words or unaccented checked syllables', () => {
+    const manifestPath = path.join(rootDir, 'raw-audio', 'manifest.json');
+    assert.ok(fs.existsSync(manifestPath), 'manifest.json must exist');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+
+    // Check for garbage keys
+    const giatNgang = manifest.find((item) => item.key === 'tu__giat_ngang');
+    assert.equal(giatNgang, undefined, 'tu__giat_ngang (giăt) must be completely removed');
+
+    // Forbidden unaccented checked rimes (non-words without tone marks)
+    const FORBIDDEN_NON_WORDS = new Set(['giăt', 'ăt', 'ăc', 'âc', 'ăp', 'âp', 'oăt', 'oăc']);
+
+    for (const item of manifest) {
+      assert.ok(
+        !FORBIDDEN_NON_WORDS.has(item.text),
+        `Found forbidden non-word in manifest: key="${item.key}", text="${item.text}"`
+      );
+    }
+  });
+
+  await t.test('2. All checked rimes in manifest must carry acute (sắc) mark for proper TTS', () => {
+    const manifestPath = path.join(rootDir, 'raw-audio', 'manifest.json');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    const manifestMap = new Map(manifest.map((item) => [item.key, item.text]));
+
+    assert.equal(manifestMap.get('van__a_breve_t'), 'ắt', 'van__a_breve_t must be ắt');
+    assert.equal(manifestMap.get('van__a_hat_t'), 'ất', 'van__a_hat_t must be ất');
+    assert.equal(manifestMap.get('van__a_breve_c'), 'ắc', 'van__a_breve_c must be ắc');
+    assert.equal(manifestMap.get('van__a_hat_c'), 'ấc', 'van__a_hat_c must be ấc');
+    assert.equal(manifestMap.get('van__a_breve_p'), 'ắp', 'van__a_breve_p must be ắp');
+    assert.equal(manifestMap.get('van__a_hat_p'), 'ấp', 'van__a_hat_p must be ấp');
+    assert.equal(manifestMap.get('van__oat_breve'), 'oắt', 'van__oat_breve must be oắt');
+    assert.equal(manifestMap.get('van__oac_breve'), 'oắc', 'van__oac_breve must be oắc');
+    assert.equal(manifestMap.get('tu__giat_sac'), 'giắt', 'tu__giat_sac must be giắt');
+  });
+});
+
+test('Sprite Mapping & Audio Map Resolution - 100% Coverage for Grade 1 Core Words', async (t) => {
+  const audioMapPath = path.join(rootDir, 'public', 'audio', 'audio-map.json');
+  assert.ok(fs.existsSync(audioMapPath), 'public/audio/audio-map.json must exist');
+  const audioMap = JSON.parse(fs.readFileSync(audioMapPath, 'utf-8'));
+  const sm = SpriteManager.getInstance();
+
+  const TEST_WORDS = [
+    'giặt', 'học', 'vịt', 'mặt', 'quạt', 'chuột',
+    'bắt', 'hát', 'sách', 'chích', 'quốc',
+    'trường', 'chim', 'hoa', 'mẹ', 'bé', 'bạn',
+    'khuỷu', 'ít', 'ịt', 'áp', 'ạc',
+  ];
+
+  await t.test('1. Every step in spelling formula of all test words resolves to an audio-map segment', () => {
+    for (const word of TEST_WORDS) {
+      const breakdown = parseVietnamesePhonics(word);
+      for (const step of breakdown.spellingFormula) {
+        const spriteKey = sm.resolveSpriteKey(step);
+        assert.ok(spriteKey, `Could not resolve sprite key for step "${step}" in word "${word}"`);
+        const segment = audioMap[spriteKey];
+        assert.ok(segment, `Sprite key "${spriteKey}" (step "${step}") not found in audio-map.json`);
+        assert.ok(segment.duration > 0.1, `Segment duration for "${spriteKey}" is too short: ${segment.duration}s`);
+      }
+    }
+  });
+});
+
+test('Acoustic Quality Verification for Master Audio Clips', async (t) => {
+  const tempWav = path.join(__dirname, 'temp_verify_pedagogy.wav');
+
+  const CLIPS_TO_VERIFY = [
+    { filename: 'van__a_breve_t.mp3', label: 'ắt' },
+    { filename: 'tu__giat_sac.mp3', label: 'giắt' },
+    { filename: 'tu__giat.mp3', label: 'giặt' },
+  ];
+
+  for (const { filename, label } of CLIPS_TO_VERIFY) {
+    await t.test(`Acoustic verify for ${filename} ("${label}")`, () => {
+      const filePath = path.join(rootDir, 'raw-audio', filename);
+      assert.ok(fs.existsSync(filePath), `File ${filename} must exist`);
+
+      execSync(`"${ffmpegPath}" -y -i "${filePath}" -ar 24000 -ac 1 -c:a pcm_s16le "${tempWav}"`, { stdio: 'pipe' });
+      const buf = fs.readFileSync(tempWav);
+      const { sampleCount, samples, duration } = extractPcmFromWav(buf);
+
+      assert.ok(sampleCount > 0, 'WAV has no samples');
+      assert.ok(duration >= 0.30 && duration <= 1.50, `Duration ${duration.toFixed(3)}s out of bounds`);
+
+      let maxAmp = 0;
+      for (let i = 0; i < sampleCount; i++) {
+        const amp = Math.abs(samples[i]);
+        if (amp > maxAmp) maxAmp = amp;
+      }
+
+      assert.ok(maxAmp >= 0.20, `Peak amplitude ${maxAmp.toFixed(3)} is too low`);
+      assert.ok(maxAmp <= 1.0, `Peak amplitude ${maxAmp.toFixed(3)} has clipping`);
+    });
+  }
+
+  if (fs.existsSync(tempWav)) {
+    fs.unlinkSync(tempWav);
+  }
 });
