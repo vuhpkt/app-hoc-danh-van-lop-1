@@ -3,8 +3,8 @@
  * Chuẩn phương pháp SGK Kết nối tri thức với cuộc sống - Lớp 1
  */
 
-import { PhonicsBreakdown, ToneType, Token } from '../../types';
-import { TONES } from './vietnameseRules';
+import type { PhonicsBreakdown, ToneType, Token } from '../../types/index.ts';
+import { TONES } from './vietnameseRules.ts';
 
 // Bảng ánh xạ nguyên âm có dấu về nguyên âm gốc + loại thanh điệu
 const VOWEL_TONE_MAP: Record<string, { base: string; tone: ToneType }> = {
@@ -108,12 +108,12 @@ const BASE_VOWELS = new Set(['a', 'ă', 'â', 'e', 'ê', 'i', 'o', 'ô', 'ơ', '
 export const LOOKUP_SPECIAL_WORDS: Record<string, Partial<PhonicsBreakdown>> = {
   'quốc': {
     initialConsonant: 'qu',
-    rime: 'ôc',
+    rime: 'ốc',
     tone: 'sac',
     toneName: 'sắc',
-    baseWord: 'quôc',
-    spellingFormula: ['qu', 'ôc', 'quôc', 'sắc', 'quốc'],
-    spellingFormulaText: 'qu - ôc - quôc - sắc - quốc',
+    baseWord: 'quốc',
+    spellingFormula: ['qu', 'ốc', 'quốc'],
+    spellingFormulaText: 'qu - ốc - quốc',
   },
   'gì': {
     initialConsonant: 'gi',
@@ -265,6 +265,78 @@ export function extractInitialAndRime(unaccentedWord: string): { initialConsonan
 }
 
 /**
+ * Tập các phụ âm cuối tắc
+ */
+export const STOP_CONSONANTS = new Set(['p', 't', 'c', 'ch']);
+
+/**
+ * Kiểm tra xem vần có phải là vần khép tắc (kết thúc bằng p, t, c, ch) hay không
+ */
+export function isCheckedRime(rime: string): boolean {
+  if (!rime) return false;
+  const clean = rime.toLowerCase().trim();
+  if (clean.endsWith('ch')) return true;
+  const lastChar = clean.slice(-1);
+  return lastChar === 'p' || lastChar === 't' || lastChar === 'c';
+}
+
+/**
+ * Bảng chuyển đổi vần khép tắc không dấu sang dạng có thanh SẮC chuẩn
+ */
+export const CHECKED_RIME_TO_SAC_MAP: Record<string, string> = {
+  // -p
+  'ap': 'áp', 'ăp': 'ắp', 'âp': 'ấp', 'ep': 'ép', 'êp': 'ếp',
+  'ip': 'íp', 'op': 'óp', 'ôp': 'ốp', 'ơp': 'ớp', 'up': 'úp',
+  'ưp': 'úp', 'iep': 'iếp', 'iêp': 'iếp', 'uop': 'uốp', 'uôp': 'uốp',
+  'ươp': 'ướp', 'uop_horn': 'ướp',
+  // -t
+  'at': 'át', 'ăt': 'ắt', 'ât': 'ất', 'et': 'ét', 'êt': 'ết',
+  'it': 'ít', 'ot': 'ót', 'ôt': 'ốt', 'ơt': 'ớt', 'ut': 'út',
+  'ưt': 'ứt', 'iet': 'iết', 'iêt': 'iết', 'yet': 'yết', 'yêt': 'yết',
+  'uot': 'uốt', 'uôt': 'uốt', 'ươt': 'ướt',
+  'oat': 'oát', 'oăt': 'oắt', 'uat': 'uất', 'uât': 'uất',
+  'uyet': 'uyết', 'uyêt': 'uyết', 'uyt': 'uýt',
+  // -c
+  'ac': 'ác', 'ăc': 'ắc', 'âc': 'ấc', 'ec': 'éc', 'êc': 'ếc',
+  'oc': 'óc', 'ôc': 'ốc', 'uc': 'úc', 'ưc': 'ức',
+  'iec': 'iếc', 'iêc': 'iếc', 'uoc': 'uốc', 'uôc': 'uốc', 'ươc': 'ước',
+  'oac': 'oác', 'oăc': 'oắc',
+  // -ch
+  'ach': 'ách', 'êch': 'ếch', 'ich': 'ích', 'oach': 'oách', 'uych': 'uých',
+};
+
+/**
+ * Lấy dạng thanh sắc của vần khép tắc
+ */
+export function getCheckedRimeSac(rime: string): string {
+  const clean = rime.toLowerCase().trim();
+  return CHECKED_RIME_TO_SAC_MAP[clean] || clean;
+}
+
+/**
+ * Bảng ánh xạ chuyển nguyên âm mang thanh NẶNG sang thanh SẮC
+ */
+const NANG_TO_SAC_VOWEL_MAP: Record<string, string> = {
+  'ạ': 'á', 'ặ': 'ắ', 'ậ': 'ấ',
+  'ẹ': 'é', 'ệ': 'ế',
+  'ị': 'í',
+  'ọ': 'ó', 'ộ': 'ố', 'ợ': 'ớ',
+  'ụ': 'ú', 'ự': 'ứ',
+};
+
+/**
+ * Chuyển một từ/tiếng mang thanh NẶNG sang tiếng đệm mang thanh SẮC tương ứng
+ * Ví dụ: giặt -> giắt, học -> hóc, vịt -> vít, mặt -> mắt, quạt -> quát, chuột -> chuốt
+ */
+export function convertNangToSac(word: string): string {
+  let res = '';
+  for (const char of word.normalize('NFC')) {
+    res += NANG_TO_SAC_VOWEL_MAP[char] || char;
+  }
+  return res;
+}
+
+/**
  * 3. Sinh công thức đánh vần từng bước chuẩn SGK Kết nối tri thức
  */
 export function generateSpellingFormula(
@@ -276,10 +348,57 @@ export function generateSpellingFormula(
   rawWord: string
 ): { formula: string[]; formulaText: string; ruleDescription: string } {
   const hasInitial = Boolean(initialConsonant);
-  const isNgang = tone === 'ngang';
   const cleanRaw = rawWord.trim();
+  const isChecked = isCheckedRime(rime);
 
-  // TH 1: Có âm đầu + Có dấu thanh (khác ngang)
+  // =========================================================================
+  // NHÓM 1: ÂM TIẾT KHÉP TẮC KẾT THÚC BẰNG P, T, C, CH (Checked Syllables)
+  // Chỉ đi với 2 thanh: SẮC hoặc NẶNG
+  // =========================================================================
+  if (isChecked) {
+    const sacRime = getCheckedRimeSac(rime);
+
+    // TH 1.1: Thanh NẶNG (ví dụ: giặt, học, vịt, mặt, quạt, chuột)
+    if (tone === 'nang') {
+      const intermediateSacWord = convertNangToSac(cleanRaw);
+      if (hasInitial) {
+        const formula = [initialConsonant, sacRime, intermediateSacWord, 'nặng', cleanRaw];
+        const formulaText = `${initialConsonant} - ${sacRime} - ${intermediateSacWord} - nặng - ${cleanRaw}`;
+        const ruleDescription = `Âm đầu "${initialConsonant}" ghép với vần "${sacRime}" thành tiếng "${intermediateSacWord}", thêm thanh nặng được từ "${cleanRaw}".`;
+        return { formula, formulaText, ruleDescription };
+      } else {
+        // Khuyết âm đầu mang thanh nặng: ví dụ ạc, ịt, ục
+        const formula = [sacRime, 'nặng', cleanRaw];
+        const formulaText = `${sacRime} - nặng - ${cleanRaw}`;
+        const ruleDescription = `Tiếng khuyết âm đầu, vần "${sacRime}" thêm thanh nặng được từ "${cleanRaw}".`;
+        return { formula, formulaText, ruleDescription };
+      }
+    }
+
+    // TH 1.2: Thanh SẮC (ví dụ: bắt, hát, sách, chích, quốc)
+    if (tone === 'sac') {
+      if (hasInitial) {
+        const formula = [initialConsonant, sacRime, cleanRaw];
+        const formulaText = `${initialConsonant} - ${sacRime} - ${cleanRaw}`;
+        const ruleDescription = `Âm đầu "${initialConsonant}" ghép với vần "${sacRime}" được từ "${cleanRaw}".`;
+        return { formula, formulaText, ruleDescription };
+      } else {
+        // Khuyết âm đầu mang thanh sắc: ví dụ ít, áp, óc -> Đọc trơn
+        const formula = [cleanRaw];
+        const formulaText = `${cleanRaw} (đọc trơn)`;
+        const ruleDescription = `Tiếng khuyết âm đầu mang thanh sắc, phát âm trơn vần "${cleanRaw}".`;
+        return { formula, formulaText, ruleDescription };
+      }
+    }
+  }
+
+  // =========================================================================
+  // NHÓM 2: ÂM TIẾT MỞ HOẶC KẾT THÚC BẰNG BÁN ÂM / ÂM MŨI (M, N, NG, NH)
+  // Đi với cả 6 thanh: ngang, huyền, sắc, hỏi, ngã, nặng
+  // =========================================================================
+  const isNgang = tone === 'ngang';
+
+  // TH 2.1: Có âm đầu + Có dấu thanh (huyền, sắc, hỏi, ngã, nặng)
   // Ví dụ "trường": ["tr", "ương", "trương", "huyền", "trường"]
   // "toán": ["t", "oan", "toan", "sắc", "toán"]
   if (hasInitial && !isNgang) {
@@ -289,7 +408,7 @@ export function generateSpellingFormula(
     return { formula, formulaText, ruleDescription };
   }
 
-  // TH 2: Có âm đầu + Thanh ngang (không dấu)
+  // TH 2.2: Có âm đầu + Thanh ngang (không dấu)
   // Ví dụ "chim": ["ch", "im", "chim"]
   // "hoa": ["h", "oa", "hoa"]
   if (hasInitial && isNgang) {
@@ -299,7 +418,7 @@ export function generateSpellingFormula(
     return { formula, formulaText, ruleDescription };
   }
 
-  // TH 3: Không có âm đầu + Có dấu thanh (khác ngang)
+  // TH 2.3: Không có âm đầu + Có dấu thanh (khác ngang)
   // Ví dụ "uống": ["uông", "sắc", "uống"]
   // "áo": ["ao", "sắc", "áo"]
   if (!hasInitial && !isNgang) {
@@ -309,7 +428,7 @@ export function generateSpellingFormula(
     return { formula, formulaText, ruleDescription };
   }
 
-  // TH 4: Không có âm đầu + Thanh ngang (không dấu)
+  // TH 2.4: Không có âm đầu + Thanh ngang (không dấu)
   // Ví dụ "ăn", "yêu", "ông": Đọc trơn
   const formula = [cleanRaw];
   const formulaText = `${cleanRaw} (đọc trơn)`;
@@ -362,11 +481,16 @@ export function parseVietnamesePhonics(rawInput: string): PhonicsBreakdown {
   // 3. Tách Âm đầu và Vần
   const { initialConsonant, rime, baseWord } = extractInitialAndRime(unaccentedWord);
 
+  let effectiveBaseWord = baseWord;
+  if (isCheckedRime(rime) && tone === 'nang') {
+    effectiveBaseWord = convertNangToSac(lowerInput);
+  }
+
   // 4. Tạo chuỗi đánh vần
   const { formula, formulaText, ruleDescription } = generateSpellingFormula(
     initialConsonant,
     rime,
-    baseWord,
+    effectiveBaseWord,
     tone,
     toneName,
     lowerInput
@@ -379,7 +503,7 @@ export function parseVietnamesePhonics(rawInput: string): PhonicsBreakdown {
     rime,
     tone,
     toneName,
-    baseWord,
+    baseWord: effectiveBaseWord,
     spellingFormula: formula,
     spellingFormulaText: formulaText,
     ruleDescription,

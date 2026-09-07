@@ -1,7 +1,7 @@
 /**
  * Quy chuẩn Ngữ âm Tiếng Việt Lớp 1 - SGK Kết nối tri thức với cuộc sống
  */
-import { ToneInfo, ToneType } from '../../types';
+import type { ToneInfo, ToneType } from '../../types/index.ts';
 
 // Danh sách 22 Âm đầu chính thức theo SGK Tiếng Việt 1
 export const INITIAL_CONSONANTS = [
