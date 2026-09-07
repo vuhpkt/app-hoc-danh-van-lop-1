@@ -2,7 +2,7 @@
  * src/core/audio/ZaloTtsClient.ts
  * 
  * Client gọi Zalo AI Text-to-Speech API trực tiếp từ trình duyệt
- * Sử dụng giọng Nữ Bắc Ngọc Huyền (Speaker ID: 2), tốc độ 0.9x cho trẻ Lớp 1
+ * Sử dụng giọng Nữ Bắc Ngọc Huyền (Speaker ID: 2), tốc độ 0.8x chuẩn ngữ điệu sư phạm Lớp 1
  */
 
 export interface ZaloTtsResponse {
@@ -18,7 +18,7 @@ export class ZaloTtsClient {
   private endpoint = 'https://api.zalo.ai/v1/tts/synthesize';
   private defaultApiKey = 'yVryikwVR8F9V5ei1C6b0yT5k17XE59P';
   private speakerId = '2'; // Nữ Bắc Ngọc Huyền
-  private speed = '0.9';
+  private speed = '0.8';
 
   private constructor() {}
 
@@ -41,6 +41,14 @@ export class ZaloTtsClient {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('zalo_tts_api_key', key.trim());
     }
+  }
+
+  public getSpeed(): string {
+    return this.speed;
+  }
+
+  public setSpeed(speed: string): void {
+    this.speed = speed;
   }
 
   /**

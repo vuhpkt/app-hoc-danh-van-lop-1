@@ -36,5 +36,6 @@ test('ZaloTtsClient - Config and Dynamic Fallback Readiness', () => {
   assert.ok(zaloTtsClient, 'zaloTtsClient must be defined');
   const apiKey = zaloTtsClient.getApiKey();
   assert.ok(apiKey && apiKey.length > 10, 'Zalo AI API key must be configured and valid');
+  assert.equal(zaloTtsClient.getSpeed(), '0.8', 'Zalo AI TTS default speed must be set to 0.8 for Grade 1 kids');
   assert.equal(typeof zaloTtsClient.fetchAudioBuffer, 'function');
 });

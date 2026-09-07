@@ -41,8 +41,8 @@ const SPEAKER_ID = speakerIdArg ? speakerIdArg.split('=')[1].trim() : '2';
 const limitArg = process.argv.find((arg) => arg.startsWith('--limit='));
 const LIMIT = limitArg ? parseInt(limitArg.split('=')[1].trim(), 10) : 0;
 
-// Tốc độ: 0.9x cho trẻ lớp 1 dễ nghe
-const SPEED = '0.9';
+// Tốc độ: 0.8x cho trẻ lớp 1 phát âm chuẩn xác, rõ nguyên âm và thanh điệu
+const SPEED = '0.8';
 
 // BẢNG DANH MỤC CHUẨN 100% TỪ danh_muc_am_thanh_lop_1.md (189 items)
 const AUDIO_DATASET = [
