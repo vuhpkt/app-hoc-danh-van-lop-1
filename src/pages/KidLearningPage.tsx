@@ -1,0 +1,230 @@
+import React, { useState, useRef } from 'react';
+import { Sparkles, PlusCircle } from 'lucide-react';
+import { Token, ReadingMode } from '../types/index.ts';
+import { tokenizeVietnameseText } from '../core/parser/vietnamesePhonics.ts';
+import { AudioSpritePlayer } from '../core/audio/AudioSpritePlayer.ts';
+import { audioManager } from '../core/audio/AudioManager.ts';
+import { KidReaderBoard } from '../components/kid/KidReaderBoard.tsx';
+import { KidControlBar } from '../components/shared/KidControlBar.tsx';
+import { PhonicsBadgeModal } from '../components/kid/PhonicsBadgeModal.tsx';
+import { OCRUploader } from '../components/OCRUploader.tsx';
+
+export const GRADE1_LESSONS = [
+  {
+    id: 'lesson-1',
+    title: 'Bài 1: Trường học của em',
+    text: 'Trường học của em khang trang. Tiếng chim hót líu lo trên cành cây. Bé học bài vui vẻ.',
+    note: 'SGK Kết nối tri thức - Âm tr, kh, ch, v',
+  },
+  {
+    id: 'lesson-2',
+    title: 'Bài 2: Vè chim chích',
+    text: 'Ve vẻ vè ve. Cái vè chim chích. Bắt sâu đầu cành. Giúp ích cho cây.',
+    note: 'Thơ đồng dao - Luyện dấu thanh & âm ch, v',
+  },
+  {
+    id: 'lesson-3',
+    title: 'Bài 3: Bé ngoan chăm chỉ',
+    text: 'Bé ngoan bé học chăm chỉ. Cô giáo khen bé hoa điểm mười.',
+    note: 'Chủ đề trường lớp - Luyện vần oan, am, iêm',
+  },
+  {
+    id: 'lesson-4',
+    title: 'Bài 4: Luyện âm khó & vần tắc',
+    text: 'Bé giặt khăn sạch. Chú vịt bơi nhanh. Bé gập khuỷu tay. Bắt con cá nhỏ.',
+    note: 'Luyện âm tắc giặt, vịt, bắt và vần hiếm khuỷu tay',
+  },
+];
+
+export const KidLearningPage: React.FC = () => {
+  const [currentLesson, setCurrentLesson] = useState(GRADE1_LESSONS[0]);
+  const [tokens, setTokens] = useState<Token[]>(() => tokenizeVietnameseText(GRADE1_LESSONS[0].text));
+  const [activeWordIdx, setActiveWordIdx] = useState<number>(-1);
+  const [activeSubStepLabel, setActiveSubStepLabel] = useState<string>('');
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [readingMode, setReadingMode] = useState<ReadingMode>('fluent');
+  const [speed, setSpeed] = useState<number>(0.85);
+  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+  const [showOcrModal, setShowOcrModal] = useState<boolean>(false);
+
+  const playbackControllerRef = useRef<{ stop: () => void } | null>(null);
+
+  const handleSelectLesson = (lesson: typeof GRADE1_LESSONS[0]) => {
+    handleStop();
+    setCurrentLesson(lesson);
+    setTokens(tokenizeVietnameseText(lesson.text));
+    audioManager.playClickSound();
+  };
+
+  const handleStop = () => {
+    if (playbackControllerRef.current) {
+      playbackControllerRef.current.stop();
+      playbackControllerRef.current = null;
+    }
+    setIsPlaying(false);
+    setActiveWordIdx(-1);
+    setActiveSubStepLabel('');
+  };
+
+  const handleTogglePlay = () => {
+    if (isPlaying) {
+      handleStop();
+      return;
+    }
+
+    setIsPlaying(true);
+    setActiveWordIdx(0);
+    setSelectedToken(null);
+    audioManager.playClickSound();
+
+    const wordsData = tokens.map((t) => ({
+      text: t.text,
+      breakdown: t.phonics,
+    }));
+
+    if (readingMode === 'fluent') {
+      // 1. Đọc trơn cả câu
+      playbackControllerRef.current = AudioSpritePlayer.playSentenceFluent(
+        wordsData,
+        speed,
+        (idx) => {
+          setActiveWordIdx(idx);
+        },
+        () => {
+          setIsPlaying(false);
+          setActiveWordIdx(-1);
+          audioManager.playSuccessChime();
+        }
+      );
+    } else {
+      // 2. Đánh vần từng từ trong câu
+      playbackControllerRef.current = AudioSpritePlayer.playSentenceSpelling(
+        wordsData,
+        speed,
+        (wIdx, _subIdx, subLabel) => {
+          setActiveWordIdx(wIdx);
+          setActiveSubStepLabel(subLabel);
+        },
+        () => {
+          setIsPlaying(false);
+          setActiveWordIdx(-1);
+          setActiveSubStepLabel('');
+          audioManager.playSuccessChime();
+        }
+      );
+    }
+  };
+
+  const handleTokenClick = (token: Token) => {
+    handleStop();
+    setSelectedToken(token);
+    audioManager.playClickSound();
+  };
+
+  const handleOcrResult = (result: any) => {
+    const text = result.sanitizedText || result.rawText;
+    if (text) {
+      const customLesson = {
+        id: `custom-${Date.now()}`,
+        title: 'Trang Sách Vừa Quét OCR',
+        text,
+        note: 'Bài đọc phụ huynh tải lên',
+      };
+      setCurrentLesson(customLesson);
+      setTokens(tokenizeVietnameseText(text));
+      setShowOcrModal(false);
+      audioManager.playSuccessChime();
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-white to-orange-50/30 p-4 sm:p-6 md:p-10 space-y-6 max-w-5xl mx-auto">
+      {/* HEADER BÉ HỌC */}
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+        <div className="flex items-center gap-3">
+          <div className="w-14 h-14 rounded-3xl bg-amber-400 text-amber-950 flex items-center justify-center font-black shadow-lg shadow-amber-200/80">
+            <Sparkles className="w-8 h-8" />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Bé Tập Đọc & Đánh Vần
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 font-bold mt-0.5">
+              Chuẩn SGK Tiếng Việt Lớp 1 (Kết Nối Tri Thức)
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setShowOcrModal(!showOcrModal)}
+          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer active:scale-95 self-start sm:self-center"
+        >
+          <PlusCircle className="w-4 h-4" />
+          <span>Quét Thêm Trang Sách (OCR)</span>
+        </button>
+      </header>
+
+      {/* MODAL QUÉT TRANG SÁCH OCR */}
+      {showOcrModal && (
+        <div className="p-4 bg-purple-50/60 rounded-3xl border-2 border-purple-200 animate-fadeIn">
+          <OCRUploader onScanComplete={handleOcrResult} />
+        </div>
+      )}
+
+      {/* DANH SÁCH 4 BÀI ĐỌC MẪU */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        {GRADE1_LESSONS.map((lesson) => {
+          const isSelected = currentLesson.id === lesson.id;
+          return (
+            <button
+              key={lesson.id}
+              onClick={() => handleSelectLesson(lesson)}
+              className={`p-3.5 rounded-2xl text-left border-2 transition-all cursor-pointer space-y-1 ${
+                isSelected
+                  ? 'bg-amber-100/80 border-amber-400 shadow-md ring-2 ring-amber-200'
+                  : 'bg-white border-slate-200 hover:border-amber-300 hover:bg-amber-50/40'
+              }`}
+            >
+              <h3 className="text-xs sm:text-sm font-black text-slate-900 line-clamp-1">
+                {lesson.title}
+              </h3>
+              <p className="text-[11px] text-slate-500 line-clamp-1">{lesson.text}</p>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* BẢNG ĐIỀU KHIỂN BÉ HỌC */}
+      <KidControlBar
+        isPlaying={isPlaying}
+        readingMode={readingMode}
+        speed={speed}
+        onTogglePlay={handleTogglePlay}
+        onReset={handleStop}
+        onModeChange={(m) => {
+          handleStop();
+          setReadingMode(m);
+        }}
+        onSpeedChange={setSpeed}
+      />
+
+      {/* BẢNG BÀI ĐỌC TYPOGRAPHY LỚN */}
+      <KidReaderBoard
+        tokens={tokens}
+        title={currentLesson.title}
+        activeWordIndex={activeWordIdx}
+        activeSubStepLabel={activeSubStepLabel}
+        readingMode={readingMode}
+        onTokenClick={handleTokenClick}
+      />
+
+      {/* POPUP BÓC TÁCH NGỮ ÂM 3 MÀU KHI CHẠM VÀO TỪ */}
+      {selectedToken && (
+        <PhonicsBadgeModal
+          token={selectedToken}
+          onClose={() => setSelectedToken(null)}
+        />
+      )}
+    </div>
+  );
+};
