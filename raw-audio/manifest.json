@@ -1123,5 +1123,275 @@
     "key": "tu__ac_nang",
     "filename": "tu__ac_nang.mp3",
     "text": "ạc"
+  },
+  {
+    "key": "tu__cua",
+    "filename": "tu__cua.mp3",
+    "text": "của"
+  },
+  {
+    "key": "tu__cua_ngang",
+    "filename": "tu__cua_ngang.mp3",
+    "text": "cua"
+  },
+  {
+    "key": "tu__em",
+    "filename": "tu__em.mp3",
+    "text": "em"
+  },
+  {
+    "key": "tu__khang",
+    "filename": "tu__khang.mp3",
+    "text": "khang"
+  },
+  {
+    "key": "tu__trang",
+    "filename": "tu__trang.mp3",
+    "text": "trang"
+  },
+  {
+    "key": "tu__tieng_ngang",
+    "filename": "tu__tieng_ngang.mp3",
+    "text": "tiêng"
+  },
+  {
+    "key": "tu__tieng",
+    "filename": "tu__tieng.mp3",
+    "text": "tiếng"
+  },
+  {
+    "key": "tu__hot",
+    "filename": "tu__hot.mp3",
+    "text": "hót"
+  },
+  {
+    "key": "tu__liu_sac",
+    "filename": "tu__liu_sac.mp3",
+    "text": "líu"
+  },
+  {
+    "key": "tu__liu",
+    "filename": "tu__liu.mp3",
+    "text": "liu"
+  },
+  {
+    "key": "tu__lo",
+    "filename": "tu__lo.mp3",
+    "text": "lo"
+  },
+  {
+    "key": "tu__canh_huyen",
+    "filename": "tu__canh_huyen.mp3",
+    "text": "cành"
+  },
+  {
+    "key": "tu__tren",
+    "filename": "tu__tren.mp3",
+    "text": "trên"
+  },
+  {
+    "key": "tu__cay",
+    "filename": "tu__cay.mp3",
+    "text": "cây"
+  },
+  {
+    "key": "tu__canh",
+    "filename": "tu__canh.mp3",
+    "text": "canh"
+  },
+  {
+    "key": "tu__bai_huyen",
+    "filename": "tu__bai_huyen.mp3",
+    "text": "bài"
+  },
+  {
+    "key": "tu__bai",
+    "filename": "tu__bai.mp3",
+    "text": "bai"
+  },
+  {
+    "key": "tu__vui",
+    "filename": "tu__vui.mp3",
+    "text": "vui"
+  },
+  {
+    "key": "tu__ve_hoi",
+    "filename": "tu__ve_hoi.mp3",
+    "text": "vẻ"
+  },
+  {
+    "key": "tu__ve_huyen",
+    "filename": "tu__ve_huyen.mp3",
+    "text": "vè"
+  },
+  {
+    "key": "tu__ve",
+    "filename": "tu__ve.mp3",
+    "text": "ve"
+  },
+  {
+    "key": "tu__cai_ngang",
+    "filename": "tu__cai_ngang.mp3",
+    "text": "cai"
+  },
+  {
+    "key": "tu__cai",
+    "filename": "tu__cai.mp3",
+    "text": "cái"
+  },
+  {
+    "key": "tu__sau",
+    "filename": "tu__sau.mp3",
+    "text": "sâu"
+  },
+  {
+    "key": "tu__dau_huyen",
+    "filename": "tu__dau_huyen.mp3",
+    "text": "đầu"
+  },
+  {
+    "key": "tu__dau",
+    "filename": "tu__dau.mp3",
+    "text": "đâu"
+  },
+  {
+    "key": "tu__giup",
+    "filename": "tu__giup.mp3",
+    "text": "giúp"
+  },
+  {
+    "key": "tu__cho",
+    "filename": "tu__cho.mp3",
+    "text": "cho"
+  },
+  {
+    "key": "tu__ngoan",
+    "filename": "tu__ngoan.mp3",
+    "text": "ngoan"
+  },
+  {
+    "key": "tu__cham",
+    "filename": "tu__cham.mp3",
+    "text": "chăm"
+  },
+  {
+    "key": "tu__chi_hoi",
+    "filename": "tu__chi_hoi.mp3",
+    "text": "chỉ"
+  },
+  {
+    "key": "tu__chi",
+    "filename": "tu__chi.mp3",
+    "text": "chi"
+  },
+  {
+    "key": "tu__co",
+    "filename": "tu__co.mp3",
+    "text": "cô"
+  },
+  {
+    "key": "tu__giao_sac",
+    "filename": "tu__giao_sac.mp3",
+    "text": "giáo"
+  },
+  {
+    "key": "tu__giao",
+    "filename": "tu__giao.mp3",
+    "text": "giao"
+  },
+  {
+    "key": "tu__diem_hoi",
+    "filename": "tu__diem_hoi.mp3",
+    "text": "điểm"
+  },
+  {
+    "key": "tu__khen",
+    "filename": "tu__khen.mp3",
+    "text": "khen"
+  },
+  {
+    "key": "tu__muoi_huyen",
+    "filename": "tu__muoi_huyen.mp3",
+    "text": "mười"
+  },
+  {
+    "key": "tu__diem",
+    "filename": "tu__diem.mp3",
+    "text": "điêm"
+  },
+  {
+    "key": "tu__khan",
+    "filename": "tu__khan.mp3",
+    "text": "khăn"
+  },
+  {
+    "key": "tu__muoi",
+    "filename": "tu__muoi.mp3",
+    "text": "mươi"
+  },
+  {
+    "key": "tu__sach_nang",
+    "filename": "tu__sach_nang.mp3",
+    "text": "sạch"
+  },
+  {
+    "key": "tu__chu_sac",
+    "filename": "tu__chu_sac.mp3",
+    "text": "chú"
+  },
+  {
+    "key": "tu__boi",
+    "filename": "tu__boi.mp3",
+    "text": "bơi"
+  },
+  {
+    "key": "tu__chu",
+    "filename": "tu__chu.mp3",
+    "text": "chu"
+  },
+  {
+    "key": "tu__gap_sac",
+    "filename": "tu__gap_sac.mp3",
+    "text": "gấp"
+  },
+  {
+    "key": "tu__nhanh",
+    "filename": "tu__nhanh.mp3",
+    "text": "nhanh"
+  },
+  {
+    "key": "tu__tay",
+    "filename": "tu__tay.mp3",
+    "text": "tay"
+  },
+  {
+    "key": "tu__gap_nang",
+    "filename": "tu__gap_nang.mp3",
+    "text": "gập"
+  },
+  {
+    "key": "tu__con",
+    "filename": "tu__con.mp3",
+    "text": "con"
+  },
+  {
+    "key": "tu__ca_sac",
+    "filename": "tu__ca_sac.mp3",
+    "text": "cá"
+  },
+  {
+    "key": "tu__ca",
+    "filename": "tu__ca.mp3",
+    "text": "ca"
+  },
+  {
+    "key": "tu__nho_hoi",
+    "filename": "tu__nho_hoi.mp3",
+    "text": "nhỏ"
+  },
+  {
+    "key": "tu__nho",
+    "filename": "tu__nho.mp3",
+    "text": "nho"
   }
 ]

@@ -187,6 +187,25 @@ test('Sprite Mapping & Audio Map Resolution - 100% Coverage for Grade 1 Core Wor
       }
     }
   });
+
+  await t.test('2. 100% of words in all 4 Grade 1 sample poems resolve in audio-map for Fluent Karaoke', () => {
+    const SAMPLE_POEMS_TEXTS = [
+      'Trường học của em khang trang. Tiếng chim hót líu lo trên cành cây. Bé học bài vui vẻ.',
+      'Ve vẻ vè ve. Cái vè chim chích. Bắt sâu đầu cành. Giúp ích cho cây.',
+      'Bé ngoan bé học chăm chỉ. Cô giáo khen bé hoa điểm mười.',
+      'Bé giặt khăn sạch. Chú vịt bơi nhanh. Bé gập khuỷu tay. Bắt con cá nhỏ.',
+    ];
+
+    for (const poem of SAMPLE_POEMS_TEXTS) {
+      const words = poem.split(/\s+/).map((w) => w.replace(/[,.!?:;]/g, '').trim()).filter(Boolean);
+      for (const word of words) {
+        const spriteKey = sm.resolveSpriteKey(word);
+        assert.ok(spriteKey, `Could not resolve sprite key for poem word: "${word}"`);
+        const segment = audioMap[spriteKey];
+        assert.ok(segment, `Poem word "${word}" (key: "${spriteKey}") not found in audio-map.json`);
+      }
+    }
+  });
 });
 
 test('Acoustic Quality Verification for Master Audio Clips', async (t) => {

@@ -11,6 +11,7 @@
  */
 
 import { webAudioEngine } from './WebAudioEngine.ts';
+import { audioCacheService } from './AudioCacheService.ts';
 
 export interface SpriteSegmentInfo {
   start: number;
@@ -280,13 +281,63 @@ const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
   'bạn': 'tu__ban',
   'ịt': 'tu__it_nang',
   'ạc': 'tu__ac_nang',
+
+  // ==========================================
+  // 5. TOÀN BỘ TỪ VỰNG 4 BÀI ĐỌC MẪU SGK LỚP 1
+  // ==========================================
+  // Bài 1: Trường học của em
+  'của': 'tu__cua', 'cua': 'tu__cua_ngang',
+  'khang': 'tu__khang',
+  'trang': 'tu__trang',
+  'tiếng': 'tu__tieng', 'tiêng': 'tu__tieng_ngang', 'tieng': 'tu__tieng_ngang',
+  'hót': 'tu__hot',
+  'líu': 'tu__liu_sac', 'liu': 'tu__liu',
+  'lo': 'tu__lo',
+  'trên': 'tu__tren', 'tren': 'tu__tren',
+  'cành': 'tu__canh_huyen', 'canh': 'tu__canh',
+  'cây': 'tu__cay', 'cay': 'tu__cay',
+  'bài': 'tu__bai_huyen', 'bai': 'tu__bai',
+  'vui': 'tu__vui',
+  'vẻ': 'tu__ve_hoi', 've': 'tu__ve',
+
+  // Bài 2: Vè chim chích
+  'vè': 'tu__ve_huyen',
+  'cái': 'tu__cai', 'cai': 'tu__cai_ngang',
+  'sâu': 'tu__sau',
+  'đầu': 'tu__dau_huyen', 'đâu': 'tu__dau', 'dau': 'tu__dau',
+  'giúp': 'tu__giup',
+  'cho': 'tu__cho',
+
+  // Bài 3: Bé ngoan chăm chỉ
+  'ngoan': 'tu__ngoan',
+  'chăm': 'tu__cham',
+  'chỉ': 'tu__chi_hoi', 'chi': 'tu__chi',
+  'cô': 'tu__co',
+  'giáo': 'tu__giao_sac', 'giao': 'tu__giao',
+  'khen': 'tu__khen',
+  'điểm': 'tu__diem_hoi', 'điêm': 'tu__diem', 'diem': 'tu__diem',
+  'mười': 'tu__muoi_huyen', 'mươi': 'tu__muoi', 'muoi': 'tu__muoi',
+
+  // Bài 4: Luyện âm khó & vần tắc
+  'khăn': 'tu__khan',
+  'sạch': 'tu__sach_nang',
+  'chú': 'tu__chu_sac', 'chu': 'tu__chu',
+  'bơi': 'tu__boi',
+  'nhanh': 'tu__nhanh',
+  'gấp': 'tu__gap_sac', 'gập': 'tu__gap_nang',
+  'tay': 'tu__tay',
+  'con': 'tu__con',
+  'cá': 'tu__ca_sac', 'ca': 'tu__ca',
+  'nhỏ': 'tu__nho_hoi', 'nho': 'tu__nho',
 };
+
 
 export class SpriteManager {
   private static instance: SpriteManager;
   private masterBuffer: AudioBuffer | null = null;
   private audioMap: AudioSpriteMap | null = null;
   private clipBuffers: Map<string, AudioBuffer> = new Map();
+  private dynamicBuffers: Map<string, AudioBuffer> = new Map();
   private isLoaded = false;
   private isLoading = false;
   private currentPlaybackId = 0;
@@ -438,18 +489,49 @@ export class SpriteManager {
 
   /**
    * Phát một phân đoạn âm thanh với Lookahead Audio Scheduling (25ms buffer) & Smooth Gain Envelope
+   * Hỗ trợ đa tầng: (1) Master Sprite -> (2) IndexedDB Audio Cache -> (3) Web Speech API Fallback
    */
-  public playAudioSegment(spriteKeyOrToken: string): Promise<void> {
-    return new Promise((resolve) => {
-      const spriteKey = this.resolveSpriteKey(spriteKeyOrToken) || spriteKeyOrToken;
-      const clipBuffer = this.clipBuffers.get(spriteKey);
+  public async playAudioSegment(spriteKeyOrToken: string): Promise<void> {
+    const clean = spriteKeyOrToken.toLowerCase().trim();
+    const spriteKey = this.resolveSpriteKey(clean) || clean;
+    let clipBuffer = this.clipBuffers.get(spriteKey) || this.dynamicBuffers.get(clean);
 
-      if (!this.isSpriteReady() || !clipBuffer) {
-        console.warn(`⚠️ Không tìm thấy audio clip cho: "${spriteKeyOrToken}" (key: ${spriteKey})`);
-        resolve();
-        return;
+    // 1. Nếu chưa có trong Master Sprite, kiểm tra trong IndexedDB Audio Cache
+    if (!clipBuffer) {
+      const cachedData = await audioCacheService.getClip(clean);
+      if (cachedData) {
+        const ctx = webAudioEngine.getAudioContext();
+        try {
+          clipBuffer = await ctx.decodeAudioData(cachedData.slice(0));
+          this.dynamicBuffers.set(clean, clipBuffer);
+        } catch (err) {
+          console.warn(`Lỗi giải mã audio cho từ cache "${clean}":`, err);
+        }
+      }
+    }
+
+    // 2. Nếu vẫn chưa có clip, fallback sang Web Speech API trên trình duyệt
+    if (!clipBuffer) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        return new Promise((resolve) => {
+          try {
+            const utterance = new SpeechSynthesisUtterance(clean);
+            utterance.lang = 'vi-VN';
+            utterance.rate = 0.9;
+            utterance.onend = () => resolve();
+            utterance.onerror = () => resolve();
+            window.speechSynthesis.speak(utterance);
+          } catch {
+            resolve();
+          }
+        });
       }
 
+      console.warn(`⚠️ Không tìm thấy audio clip cho: "${spriteKeyOrToken}" (key: ${spriteKey})`);
+      return;
+    }
+
+    return new Promise((resolve) => {
       const ctx = webAudioEngine.getAudioContext();
       const source = ctx.createBufferSource();
       const gainNode = ctx.createGain();
@@ -495,6 +577,7 @@ export class SpriteManager {
       }, totalDurationMs);
     });
   }
+
 
   public async playPhonicsSequence(
     tokensOrKeys: string[],

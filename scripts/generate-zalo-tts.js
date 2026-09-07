@@ -300,7 +300,73 @@ const AUDIO_DATASET = [
   { key: 'tu__ban', text: 'bạn' },
   { key: 'tu__it_nang', text: 'ịt' },
   { key: 'tu__ac_nang', text: 'ạc' },
+
+  // ==========================================
+  // 5. TOÀN BỘ TỪ VỰNG 4 BÀI ĐỌC MẪU SGK LỚP 1
+  // ==========================================
+  // Bài 1: Trường học của em
+  { key: 'tu__cua', text: 'của' },
+  { key: 'tu__cua_ngang', text: 'cua' },
+  { key: 'tu__em', text: 'em' },
+  { key: 'tu__khang', text: 'khang' },
+  { key: 'tu__trang', text: 'trang' },
+  { key: 'tu__tieng', text: 'tiếng' },
+  { key: 'tu__tieng_ngang', text: 'tiêng' },
+  { key: 'tu__hot', text: 'hót' },
+  { key: 'tu__liu_sac', text: 'líu' },
+  { key: 'tu__liu', text: 'liu' },
+  { key: 'tu__lo', text: 'lo' },
+  { key: 'tu__tren', text: 'trên' },
+  { key: 'tu__canh_huyen', text: 'cành' },
+  { key: 'tu__canh', text: 'canh' },
+  { key: 'tu__cay', text: 'cây' },
+  { key: 'tu__bai_huyen', text: 'bài' },
+  { key: 'tu__bai', text: 'bai' },
+  { key: 'tu__vui', text: 'vui' },
+  { key: 'tu__ve_hoi', text: 'vẻ' },
+  { key: 'tu__ve', text: 've' },
+
+  // Bài 2: Vè chim chích
+  { key: 'tu__ve_huyen', text: 'vè' },
+  { key: 'tu__cai', text: 'cái' },
+  { key: 'tu__cai_ngang', text: 'cai' },
+  { key: 'tu__sau', text: 'sâu' },
+  { key: 'tu__dau_huyen', text: 'đầu' },
+  { key: 'tu__dau', text: 'đâu' },
+  { key: 'tu__giup', text: 'giúp' },
+  { key: 'tu__cho', text: 'cho' },
+
+  // Bài 3: Bé ngoan chăm chỉ
+  { key: 'tu__ngoan', text: 'ngoan' },
+  { key: 'tu__cham', text: 'chăm' },
+  { key: 'tu__chi_hoi', text: 'chỉ' },
+  { key: 'tu__chi', text: 'chi' },
+  { key: 'tu__co', text: 'cô' },
+  { key: 'tu__giao_sac', text: 'giáo' },
+  { key: 'tu__giao', text: 'giao' },
+  { key: 'tu__khen', text: 'khen' },
+  { key: 'tu__diem_hoi', text: 'điểm' },
+  { key: 'tu__diem', text: 'điêm' },
+  { key: 'tu__muoi_huyen', text: 'mười' },
+  { key: 'tu__muoi', text: 'mươi' },
+
+  // Bài 4: Luyện âm khó & vần tắc
+  { key: 'tu__khan', text: 'khăn' },
+  { key: 'tu__sach_nang', text: 'sạch' },
+  { key: 'tu__chu_sac', text: 'chú' },
+  { key: 'tu__chu', text: 'chu' },
+  { key: 'tu__boi', text: 'bơi' },
+  { key: 'tu__nhanh', text: 'nhanh' },
+  { key: 'tu__gap_sac', text: 'gấp' },
+  { key: 'tu__gap_nang', text: 'gập' },
+  { key: 'tu__tay', text: 'tay' },
+  { key: 'tu__con', text: 'con' },
+  { key: 'tu__ca_sac', text: 'cá' },
+  { key: 'tu__ca', text: 'ca' },
+  { key: 'tu__nho_hoi', text: 'nhỏ' },
+  { key: 'tu__nho', text: 'nho' },
 ];
+
 
 async function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

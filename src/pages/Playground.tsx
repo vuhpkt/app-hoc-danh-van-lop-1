@@ -16,7 +16,9 @@ import {
   Radio,
   SlidersHorizontal,
   Headphones,
-  Edit3
+  Edit3,
+  CloudDownload,
+  AlertCircle
 } from 'lucide-react';
 import { PhonicsBreakdown, Token, ReadingMode } from '../types';
 import { parseVietnamesePhonics, tokenizeVietnameseText } from '../core/parser/vietnamesePhonics';
@@ -24,6 +26,7 @@ import { audioManager } from '../core/audio/AudioManager';
 import { webAudioEngine } from '../core/audio/WebAudioEngine';
 import { spriteManager, SpriteManager } from '../core/audio/SpriteManager';
 import { AudioSpritePlayer } from '../core/audio/AudioSpritePlayer';
+import { LessonAudioSyncer, SyncProgressInfo } from '../core/audio/LessonAudioSyncer';
 import { PhonicsPlayer } from '../components/PhonicsPlayer';
 import { TextReader } from '../components/TextReader';
 import { ControlBar } from '../components/ControlBar';
@@ -288,6 +291,84 @@ export const Playground: React.FC = () => {
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(0.8);
   const [selectedKaraokeToken, setSelectedKaraokeToken] = useState<Token | null>(null);
   const [showCustomTextInput, setShowCustomTextInput] = useState<boolean>(false);
+
+  const [syncStatus, setSyncStatus] = useState<{
+    isChecking: boolean;
+    isSyncing: boolean;
+    missingWords: string[];
+    totalUnique: number;
+    progress: SyncProgressInfo | null;
+  }>({
+    isChecking: false,
+    isSyncing: false,
+    missingWords: [],
+    totalUnique: 0,
+    progress: null,
+  });
+
+  // Tự động kiểm tra độ sẵn sàng âm thanh mỗi khi bài đọc hoặc văn bản thay đổi
+  useEffect(() => {
+    let cancelled = false;
+    const checkAvailability = async () => {
+      const words = LessonAudioSyncer.extractUniqueWords(karaokeRawText);
+      if (words.length === 0) {
+        if (!cancelled) setSyncStatus({ isChecking: false, isSyncing: false, missingWords: [], totalUnique: 0, progress: null });
+        return;
+      }
+      const missing: string[] = [];
+      for (const w of words) {
+        const available = await LessonAudioSyncer.isWordAvailable(w);
+        if (!available) {
+          missing.push(w);
+        }
+      }
+      if (!cancelled) {
+        setSyncStatus(prev => ({
+          ...prev,
+          isChecking: false,
+          missingWords: missing,
+          totalUnique: words.length,
+        }));
+      }
+    };
+    checkAvailability();
+    return () => {
+      cancelled = true;
+    };
+  }, [karaokeRawText]);
+
+  const handleSyncLessonAudio = async () => {
+    if (syncStatus.isSyncing || syncStatus.missingWords.length === 0) return;
+    setSyncStatus(prev => ({ ...prev, isSyncing: true, progress: null }));
+    audioManager.playClickSound();
+
+    try {
+      await LessonAudioSyncer.syncLesson(karaokeRawText, (progress) => {
+        setSyncStatus(prev => ({ ...prev, progress }));
+      });
+      audioManager.playSuccessChime();
+
+      // Cập nhật lại sau khi đồng bộ
+      const words = LessonAudioSyncer.extractUniqueWords(karaokeRawText);
+      const remainingMissing: string[] = [];
+      for (const w of words) {
+        const available = await LessonAudioSyncer.isWordAvailable(w);
+        if (!available) {
+          remainingMissing.push(w);
+        }
+      }
+      setSyncStatus({
+        isChecking: false,
+        isSyncing: false,
+        missingWords: remainingMissing,
+        totalUnique: words.length,
+        progress: null,
+      });
+    } catch (err) {
+      console.error('Lỗi khi đồng bộ âm thanh Zalo AI:', err);
+      setSyncStatus(prev => ({ ...prev, isSyncing: false }));
+    }
+  };
 
   const sentenceControllerRef = useRef<{ stop: () => void } | null>(null);
 
@@ -1203,6 +1284,82 @@ export const Playground: React.FC = () => {
                     >
                       Áp dụng vào Trình Đọc Karaoke
                     </button>
+                  </div>
+                </div>
+              )}
+
+              {/* TRẠNG THÁI ÂM THANH NGOẠI TUYẾN CỦA BÀI ĐỌC (OFFLINE AUDIO STATUS) */}
+              <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2.5 rounded-xl ${
+                    syncStatus.missingWords.length === 0
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : 'bg-amber-100 text-amber-700'
+                  }`}>
+                    {syncStatus.missingWords.length === 0 ? (
+                      <CheckCircle2 className="w-5 h-5" />
+                    ) : (
+                      <AlertCircle className="w-5 h-5" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">
+                        Kho Âm Thanh Ngoại Tuyến (Offline Audio)
+                      </h4>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        syncStatus.missingWords.length === 0
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-amber-100 text-amber-800'
+                      }`}>
+                        {syncStatus.missingWords.length === 0
+                          ? '100% Sẵn Sàng'
+                          : `Thiếu ${syncStatus.missingWords.length} từ`}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {syncStatus.missingWords.length === 0
+                        ? `Toàn bộ ${syncStatus.totalUnique} từ trong bài đều đã có giọng Zalo AI (Nữ Bắc Ngọc Huyền). Đọc mượt không cần mạng.`
+                        : `Còn ${syncStatus.missingWords.length} từ mới chưa có file âm thanh: [ ${syncStatus.missingWords.slice(0, 5).join(', ')}${syncStatus.missingWords.length > 5 ? '...' : ''} ]`}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Nút tải âm thanh khi có từ còn thiếu */}
+                {syncStatus.missingWords.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleSyncLessonAudio}
+                      disabled={syncStatus.isSyncing}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black text-white shadow-md transition-all cursor-pointer ${
+                        syncStatus.isSyncing
+                          ? 'bg-blue-400 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95'
+                      }`}
+                    >
+                      <CloudDownload className={`w-4 h-4 ${syncStatus.isSyncing ? 'animate-bounce' : ''}`} />
+                      <span>
+                        {syncStatus.isSyncing
+                          ? `Đang tải: ${syncStatus.progress?.percent || 0}%`
+                          : `Tải âm thanh Zalo AI (${syncStatus.missingWords.length} từ)`}
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Progress bar khi đang tải */}
+              {syncStatus.isSyncing && syncStatus.progress && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 space-y-1.5 animate-fadeIn mt-2">
+                  <div className="flex justify-between text-xs font-bold text-blue-800">
+                    <span>Đang tải âm thanh cho từ "{syncStatus.progress.word}"...</span>
+                    <span>{syncStatus.progress.current}/{syncStatus.progress.total} ({syncStatus.progress.percent}%)</span>
+                  </div>
+                  <div className="w-full h-2 bg-blue-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-600 transition-all duration-300 rounded-full"
+                      style={{ width: `${syncStatus.progress.percent}%` }}
+                    />
                   </div>
                 </div>
               )}

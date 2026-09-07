@@ -1123,5 +1123,275 @@
     "start": 115.689,
     "end": 116.119,
     "duration": 0.43
+  },
+  "tu__cua": {
+    "start": 116.119,
+    "end": 116.595,
+    "duration": 0.476
+  },
+  "tu__cua_ngang": {
+    "start": 116.595,
+    "end": 117.073,
+    "duration": 0.478
+  },
+  "tu__em": {
+    "start": 117.073,
+    "end": 117.546,
+    "duration": 0.473
+  },
+  "tu__khang": {
+    "start": 117.546,
+    "end": 118.12,
+    "duration": 0.574
+  },
+  "tu__trang": {
+    "start": 118.12,
+    "end": 118.755,
+    "duration": 0.635
+  },
+  "tu__tieng_ngang": {
+    "start": 118.755,
+    "end": 119.344,
+    "duration": 0.589
+  },
+  "tu__tieng": {
+    "start": 119.344,
+    "end": 119.95,
+    "duration": 0.606
+  },
+  "tu__hot": {
+    "start": 119.95,
+    "end": 120.396,
+    "duration": 0.446
+  },
+  "tu__liu_sac": {
+    "start": 120.396,
+    "end": 120.986,
+    "duration": 0.59
+  },
+  "tu__liu": {
+    "start": 120.986,
+    "end": 121.576,
+    "duration": 0.59
+  },
+  "tu__lo": {
+    "start": 121.576,
+    "end": 122.086,
+    "duration": 0.51
+  },
+  "tu__canh_huyen": {
+    "start": 122.086,
+    "end": 122.659,
+    "duration": 0.573
+  },
+  "tu__tren": {
+    "start": 122.659,
+    "end": 123.265,
+    "duration": 0.606
+  },
+  "tu__cay": {
+    "start": 123.265,
+    "end": 123.726,
+    "duration": 0.461
+  },
+  "tu__canh": {
+    "start": 123.726,
+    "end": 124.252,
+    "duration": 0.526
+  },
+  "tu__bai_huyen": {
+    "start": 124.252,
+    "end": 124.81,
+    "duration": 0.558
+  },
+  "tu__bai": {
+    "start": 124.81,
+    "end": 125.368,
+    "duration": 0.558
+  },
+  "tu__vui": {
+    "start": 125.368,
+    "end": 125.894,
+    "duration": 0.526
+  },
+  "tu__ve_hoi": {
+    "start": 125.894,
+    "end": 126.387,
+    "duration": 0.493
+  },
+  "tu__ve_huyen": {
+    "start": 126.387,
+    "end": 126.849,
+    "duration": 0.462
+  },
+  "tu__ve": {
+    "start": 126.849,
+    "end": 127.325,
+    "duration": 0.476
+  },
+  "tu__cai_ngang": {
+    "start": 127.325,
+    "end": 127.835,
+    "duration": 0.51
+  },
+  "tu__cai": {
+    "start": 127.835,
+    "end": 128.377,
+    "duration": 0.542
+  },
+  "tu__sau": {
+    "start": 128.377,
+    "end": 128.935,
+    "duration": 0.558
+  },
+  "tu__dau_huyen": {
+    "start": 128.935,
+    "end": 129.509,
+    "duration": 0.574
+  },
+  "tu__dau": {
+    "start": 129.509,
+    "end": 130.051,
+    "duration": 0.542
+  },
+  "tu__giup": {
+    "start": 130.051,
+    "end": 130.577,
+    "duration": 0.526
+  },
+  "tu__cho": {
+    "start": 130.577,
+    "end": 131.119,
+    "duration": 0.542
+  },
+  "tu__ngoan": {
+    "start": 131.119,
+    "end": 131.681,
+    "duration": 0.562
+  },
+  "tu__cham": {
+    "start": 131.681,
+    "end": 132.255,
+    "duration": 0.574
+  },
+  "tu__chi_hoi": {
+    "start": 132.255,
+    "end": 132.861,
+    "duration": 0.606
+  },
+  "tu__chi": {
+    "start": 132.861,
+    "end": 133.451,
+    "duration": 0.59
+  },
+  "tu__co": {
+    "start": 133.451,
+    "end": 133.911,
+    "duration": 0.46
+  },
+  "tu__giao_sac": {
+    "start": 133.911,
+    "end": 134.517,
+    "duration": 0.606
+  },
+  "tu__giao": {
+    "start": 134.517,
+    "end": 135.091,
+    "duration": 0.574
+  },
+  "tu__diem_hoi": {
+    "start": 135.091,
+    "end": 135.665,
+    "duration": 0.574
+  },
+  "tu__khen": {
+    "start": 135.665,
+    "end": 136.239,
+    "duration": 0.574
+  },
+  "tu__muoi_huyen": {
+    "start": 136.239,
+    "end": 136.861,
+    "duration": 0.622
+  },
+  "tu__diem": {
+    "start": 136.861,
+    "end": 137.467,
+    "duration": 0.606
+  },
+  "tu__khan": {
+    "start": 137.467,
+    "end": 138.025,
+    "duration": 0.558
+  },
+  "tu__muoi": {
+    "start": 138.025,
+    "end": 138.615,
+    "duration": 0.59
+  },
+  "tu__sach_nang": {
+    "start": 138.615,
+    "end": 139.125,
+    "duration": 0.51
+  },
+  "tu__chu_sac": {
+    "start": 139.125,
+    "end": 139.699,
+    "duration": 0.574
+  },
+  "tu__boi": {
+    "start": 139.699,
+    "end": 140.241,
+    "duration": 0.542
+  },
+  "tu__chu": {
+    "start": 140.241,
+    "end": 140.815,
+    "duration": 0.574
+  },
+  "tu__gap_sac": {
+    "start": 140.815,
+    "end": 141.245,
+    "duration": 0.43
+  },
+  "tu__nhanh": {
+    "start": 141.245,
+    "end": 141.883,
+    "duration": 0.638
+  },
+  "tu__tay": {
+    "start": 141.883,
+    "end": 142.425,
+    "duration": 0.542
+  },
+  "tu__gap_nang": {
+    "start": 142.425,
+    "end": 142.886,
+    "duration": 0.461
+  },
+  "tu__con": {
+    "start": 142.886,
+    "end": 143.361,
+    "duration": 0.475
+  },
+  "tu__ca_sac": {
+    "start": 143.361,
+    "end": 143.87,
+    "duration": 0.509
+  },
+  "tu__ca": {
+    "start": 143.87,
+    "end": 144.342,
+    "duration": 0.472
+  },
+  "tu__nho_hoi": {
+    "start": 144.342,
+    "end": 144.9,
+    "duration": 0.558
+  },
+  "tu__nho": {
+    "start": 144.9,
+    "end": 145.442,
+    "duration": 0.542
   }
 }
