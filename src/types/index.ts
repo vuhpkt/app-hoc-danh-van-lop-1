@@ -58,3 +58,42 @@ export interface OCRResult {
   confidence?: number;
   lines: string[];
 }
+
+export interface Lesson {
+  id: string;
+  title: string;
+  content: string;
+  note?: string;
+  tokens?: Token[];
+  createdAt?: number;
+}
+
+export interface OCRProgress {
+  status: string;
+  progress: number; // 0 đến 1
+}
+
+export interface OCRScanResult {
+  imageUrl?: string;
+  rawText: string;
+  sanitizedText: string;
+  confidence: number;
+  lines: string[];
+}
+
+export interface PreprocessOptions {
+  contrast?: number;      // e.g. 1.5
+  threshold?: number;     // 0 đến 255
+  grayscale?: boolean;
+  invert?: boolean;
+}
+
+export interface KidReaderState {
+  isPlaying: boolean;
+  activeWordIndex: number;
+  activeSubStepLabel?: string;
+  selectedToken?: Token | null;
+  mode: ReadingMode;
+  speed: number;
+}
+

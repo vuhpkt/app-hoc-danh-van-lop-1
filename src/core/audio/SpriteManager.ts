@@ -404,6 +404,10 @@ export class SpriteManager {
     return this.audioMap;
   }
 
+  public getLoadedClipCount(): number {
+    return this.clipBuffers.size;
+  }
+
   public stop(): void {
     this.currentPlaybackId++;
     const ctx = webAudioEngine.getAudioContext();

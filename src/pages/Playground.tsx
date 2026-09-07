@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { PhonicsBreakdown, Token, ReadingMode } from '../types';
 import { parseVietnamesePhonics, tokenizeVietnameseText } from '../core/parser/vietnamesePhonics';
-import { INITIAL_CONSONANTS, COMMON_RIMES, TONES } from '../core/parser/vietnameseRules';
 import { audioManager } from '../core/audio/AudioManager';
 import { webAudioEngine } from '../core/audio/WebAudioEngine';
 import { spriteManager, SpriteManager } from '../core/audio/SpriteManager';
@@ -51,30 +50,115 @@ const SAMPLE_POEMS = [
     text: 'Bé ngoan bé học chăm chỉ. Cô giáo khen bé hoa điểm mười.',
     note: 'Chủ đề trường lớp - Luyện vần oan, am, iêm',
   },
+  {
+    id: 'poem-4',
+    title: 'Bài 4: Luyện âm khó & vần tắc',
+    text: 'Bé giặt khăn sạch. Chú vịt bơi nhanh. Bé gập khuỷu tay. Bắt con cá nhỏ.',
+    note: 'Luyện âm tắc giặt, vịt, bắt và vần hiếm khuỷu tay',
+  },
+];
+
+// Danh sách từ mẫu kiểm tra toàn diện mọi quy tắc sư phạm Lớp 1
+export const TEST_CORE_WORDS = [
+  { word: 'giặt', note: 'Khép tắc + Nặng (gi - ắt - giắt - nặng - giặt)' },
+  { word: 'học', note: 'Khép tắc + Nặng (h - óc - hóc - nặng - học)' },
+  { word: 'vịt', note: 'Khép tắc + Nặng (v - ít - vít - nặng - vịt)' },
+  { word: 'mặt', note: 'Khép tắc + Nặng (m - ắt - mắt - nặng - mặt)' },
+  { word: 'quạt', note: 'Khép tắc + Nặng (qu - át - quát - nặng - quạt)' },
+  { word: 'chuột', note: 'Khép tắc + Nặng (ch - uốt - chuốt - nặng - chuột)' },
+  { word: 'bắt', note: 'Khép tắc + Sắc (b - ắt - bắt, 3 bước)' },
+  { word: 'quốc', note: 'Khép tắc + Sắc (qu - ốc - quốc, 3 bước)' },
+  { word: 'sách', note: 'Khép tắc + Sắc (s - ách - sách, 3 bước)' },
+  { word: 'khuỷu', note: 'Vần hiếm uyu (kh - uyu - khuỷu)' },
+  { word: 'trường', note: 'Âm ghép tr + vần ương + huyền' },
+  { word: 'nguyễn', note: 'Âm ghép ng + vần uyên + ngã' },
+  { word: 'uống', note: 'Khuyết âm đầu + uông + sắc' },
+  { word: 'ít', note: 'Khuyết âm đầu khép tắc (đọc trơn)' },
+  { word: 'hoa', note: 'Âm đầu h + vần oa + ngang' },
+  { word: 'bé', note: 'Âm đầu b + vần e + sắc' },
+];
+
+// Bảng dữ liệu âm thanh 225 Clips Zalo AI
+export const SB_INITIALS = [
+  'b', 'c', 'ch', 'd', 'đ', 'g', 'gh', 'gi', 'h', 'k', 'kh', 
+  'l', 'm', 'n', 'ng', 'ngh', 'nh', 'p', 'ph', 'qu', 'r', 
+  's', 't', 'th', 'tr', 'v', 'x'
+];
+
+export const SB_CHECKED_RIMES = [
+  // Tận cùng t (18 vần)
+  'ắt', 'ất', 'ét', 'ết', 'ít', 'ót', 'ốt', 'ớt', 'út', 'ứt', 
+  'iết', 'uốt', 'ướt', 'oát', 'oắt', 'uất', 'uyết', 'uýt',
+  // Tận cùng c (14 vần)
+  'ác', 'ắc', 'ấc', 'éc', 'ếc', 'óc', 'ốc', 'úc', 'ức', 
+  'iếc', 'uốc', 'ước', 'oác', 'oắc',
+  // Tận cùng ch (5 vần)
+  'ách', 'ếch', 'ích', 'oách', 'uých',
+  // Tận cùng p (13 vần)
+  'áp', 'ắp', 'ấp', 'ép', 'ếp', 'íp', 'óp', 'ốp', 'ớp', 'úp', 
+  'iếp', 'uốp', 'ướp'
+];
+
+export const SB_OPEN_NASAL_RIMES = [
+  // Vần đơn & nguyên âm đôi
+  'a', 'ă', 'â', 'e', 'ê', 'i', 'y', 'o', 'ô', 'ơ', 'u', 'ư', 'ia', 'ya', 'iê', 'yê', 'ua', 'uô', 'ưa', 'ươ',
+  // Vần bán âm
+  'ai', 'ay', 'ây', 'ao', 'au', 'âu', 'eo', 'êu', 'iu', 'oi', 'ôi', 'ơi', 'ui', 'ưi', 'oai', 'oay', 'uôi', 'ươi', 'ươu', 
+  // Vần hiếm đặc biệt
+  'uyu',
+  // Vần mũi
+  'am', 'ăm', 'âm', 'em', 'êm', 'im', 'om', 'ôm', 'ơm', 'um', 'ươm', 'iêm', 'yêm', 'uôm',
+  'an', 'ăn', 'ân', 'en', 'ên', 'in', 'on', 'ôn', 'ơn', 'un', 'ưn', 'oan', 'oăn', 'uân', 'uôn', 'ươn', 'iên', 'yên', 'uyên',
+  'ang', 'ăng', 'âng', 'eng', 'oang', 'oăng', 'uông', 'ương', 'iêng', 'yêng', 'anh', 'ênh', 'inh', 'oanh', 'uynh'
+];
+
+export const SB_TONES = [
+  { name: 'ngang', label: 'Không dấu (Ngang)', symbol: '—', desc: 'Thanh bằng phẳng' },
+  { name: 'huyền', label: 'Thanh Huyền', symbol: '`', desc: 'Giáng nhẹ' },
+  { name: 'sắc', label: 'Thanh Sắc', symbol: '´', desc: 'Vút lên cao' },
+  { name: 'hỏi', label: 'Thanh Hỏi', symbol: '?', desc: 'Xuống rồi lên' },
+  { name: 'ngã', label: 'Thanh Ngã', symbol: '~', desc: 'Lên cao có gãy' },
+  { name: 'nặng', label: 'Thanh Nặng', symbol: '.', desc: 'Xuống thấp nghẽn' },
+];
+
+export const SB_INTERMEDIATES_AND_WORDS = [
+  // Tiếng đệm sắc cho từ khép tắc thanh nặng
+  { label: 'giắt (đệm sắc)', token: 'giắt', type: 'diem' },
+  { label: 'hóc (đệm sắc)', token: 'hóc', type: 'diem' },
+  { label: 'vít (đệm sắc)', token: 'vít', type: 'diem' },
+  { label: 'mắt (đệm sắc)', token: 'mắt', type: 'diem' },
+  { label: 'quát (đệm sắc)', token: 'quát', type: 'diem' },
+  { label: 'chuốt (đệm sắc)', token: 'chuốt', type: 'diem' },
+  // Từ đích mẫu
+  { label: 'giặt', token: 'giặt', type: 'word' },
+  { label: 'học', token: 'học', type: 'word' },
+  { label: 'vịt', token: 'vịt', type: 'word' },
+  { label: 'mặt', token: 'mặt', type: 'word' },
+  { label: 'quạt', token: 'quạt', type: 'word' },
+  { label: 'chuột', token: 'chuột', type: 'word' },
+  { label: 'bắt', token: 'bắt', type: 'word' },
+  { label: 'quốc', token: 'quốc', type: 'word' },
+  { label: 'sách', token: 'sách', type: 'word' },
+  { label: 'khuỷu', token: 'khuỷu', type: 'word' },
+  { label: 'chim', token: 'chim', type: 'word' },
+  { label: 'hoa', token: 'hoa', type: 'word' },
+  { label: 'bé', token: 'bé', type: 'word' },
+  { label: 'mẹ', token: 'mẹ', type: 'word' },
+  { label: 'bạn', token: 'bạn', type: 'word' },
+  { label: 'trường', token: 'trường', type: 'word' },
 ];
 
 export const Playground: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('parser');
+  const [activeTab, setActiveTab] = useState<TabType>('audio'); // Mặc định mở tab audio để người dùng test ngay
 
   // --- State Tab 1: Test Parser ---
-  const [inputWord, setInputWord] = useState<string>('trường');
-  const [currentBreakdown, setCurrentBreakdown] = useState<PhonicsBreakdown>(() => parseVietnamesePhonics('trường'));
+  const [inputWord, setInputWord] = useState<string>('giặt');
+  const [currentBreakdown, setCurrentBreakdown] = useState<PhonicsBreakdown>(() => parseVietnamesePhonics('giặt'));
   const [parserStepActive, setParserStepActive] = useState<number>(-1);
   const [showJsonInspector, setShowJsonInspector] = useState<boolean>(false);
 
-  // Danh sách từ mẫu kiểm tra
-  const sampleWords = [
-    { word: 'trường', note: 'Âm đầu tr + vần ương + thanh huyền' },
-    { word: 'nguyễn', note: 'Âm đầu ng + vần uyên + thanh ngã' },
-    { word: 'uống', note: 'Khuyết âm đầu + vần uông + thanh sắc' },
-    { word: 'khuỷu', note: 'Âm đầu kh + vần uyu + thanh hỏi' },
-    { word: 'quang', note: 'Âm đầu qu + vần ang + thanh ngang' },
-    { word: 'giặt', note: 'Âm đầu gi + vần ăt + thanh nặng' },
-    { word: 'gìn', note: 'Âm đầu gi + rime in (chữ i kép)' },
-    { word: 'quốc', note: 'Từ đặc biệt (qu + ôc + sắc)' },
-    { word: 'yêu', note: 'Khuyết âm đầu + thanh ngang (đọc trơn)' },
-    { word: 'áo', note: 'Khuyết âm đầu + ao + thanh sắc' },
-  ];
+  const sampleWords = TEST_CORE_WORDS;
+
 
   const handleSelectWord = (word: string) => {
     setInputWord(word);
@@ -116,14 +200,15 @@ export const Playground: React.FC = () => {
   };
 
   // --- State Tab 2: Test Audio Engine ---
-  const [audioInputWord, setAudioInputWord] = useState<string>('trường');
-  const [audioBreakdown, setAudioBreakdown] = useState<PhonicsBreakdown>(() => parseVietnamesePhonics('trường'));
+  const [audioInputWord, setAudioInputWord] = useState<string>('giặt');
+  const [audioBreakdown, setAudioBreakdown] = useState<PhonicsBreakdown>(() => parseVietnamesePhonics('giặt'));
   const [audioActiveStepIdx, setAudioActiveStepIdx] = useState<number>(-1);
   const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
   const [audioSpeed, setAudioSpeed] = useState<number>(0.8); // 0.3x -> 1.0x
   const [useRealAudio, setUseRealAudio] = useState<boolean>(true); // Toggle Real Sprite vs Mock Synth
   const [spriteLoaded, setSpriteLoaded] = useState<boolean>(false);
   const [activeSoundboardKey, setActiveSoundboardKey] = useState<string | null>(null);
+  const [soundboardTab, setSoundboardTab] = useState<'initial' | 'checked_rime' | 'open_nasal_rime' | 'tones' | 'words_diem'>('checked_rime');
 
   // Tự động nạp Audio Sprite khi khởi động
   useEffect(() => {
@@ -346,7 +431,7 @@ export const Playground: React.FC = () => {
                 </span>
               </h1>
               <p className="text-xs text-slate-500 font-semibold">
-                Mô-đun 4: Karaoke Text Highlight 60fps & Bộ Điều Khiển Player
+                Phòng Thí Nghiệm Ngữ Âm & Thẩm Định Âm Thanh Sư Phạm (Zalo AI TTS)
               </p>
             </div>
           </div>
@@ -355,7 +440,7 @@ export const Playground: React.FC = () => {
             {spriteLoaded ? (
               <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold shadow-xs">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Audio Sprite (79 clips) Sẵn Sàng</span>
+                <span>Audio Sprite Master ({spriteManager.getLoadedClipCount() || 225} clips) Sẵn Sàng</span>
               </div>
             ) : (
               <div className="flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-xl text-xs font-bold shadow-xs">
@@ -541,15 +626,15 @@ export const Playground: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Mô-đun Web Audio Sprite Loader
+                      Kho Âm Thanh Zalo AI TTS (225 Clips Sạch)
                     </span>
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
                       <Headphones className="w-3 h-3" />
-                      Giọng Đọc Sư Phạm Chuẩn
+                      Giọng Nữ Bắc Ngọc Huyền (Speaker ID 2)
                     </span>
                   </div>
                   <h2 className="text-2xl font-black text-slate-900 mt-1">
-                    Trình Phát Âm Thanh Sprite Đánh Vần
+                    Trình Kiểm Âm & Thẩm Định Phát Âm Sư Phạm
                   </h2>
                 </div>
 
@@ -575,38 +660,45 @@ export const Playground: React.FC = () => {
                     }`}
                   >
                     <Radio className="w-3.5 h-3.5" />
-                    <span>Audio Sprite Thật</span>
+                    <span>Zalo AI Sprite Thật</span>
                   </button>
                 </div>
               </div>
 
               {/* Input nhập từ để test audio */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-500">Từ cần phát:</span>
-                  <input
-                    type="text"
-                    value={audioInputWord}
-                    onChange={(e) => handleAudioWordChange(e.target.value)}
-                    placeholder="Nhập từ..."
-                    className="px-4 py-2 bg-slate-50 border-2 border-slate-200 hover:border-blue-400 focus:border-blue-500 rounded-xl text-base font-black text-slate-800 outline-none w-40 transition-all"
-                  />
+              <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-500">Nhập từ kiểm tra:</span>
+                    <input
+                      type="text"
+                      value={audioInputWord}
+                      onChange={(e) => handleAudioWordChange(e.target.value)}
+                      placeholder="Nhập từ..."
+                      className="px-4 py-2 bg-slate-50 border-2 border-slate-200 hover:border-blue-400 focus:border-blue-500 rounded-xl text-base font-black text-slate-800 outline-none w-48 transition-all"
+                    />
+                  </div>
+
+                  <span className="text-xs text-slate-500">
+                    💡 Gợi ý: Kiểm tra từ có vần khép tắc (<code className="text-rose-600 font-bold">giặt, học, vịt, chuột</code>) và vần hiếm (<code className="text-purple-600 font-bold">khuỷu</code>).
+                  </span>
                 </div>
 
                 {/* Nút từ mẫu nhanh */}
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-xs font-bold text-slate-400">Chọn nhanh:</span>
-                  {['trường', 'nguyễn', 'uống', 'khuỷu', 'quang', 'giặt', 'sách', 'hoa', 'bé', 'học'].map((w) => (
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="text-xs font-bold text-slate-400 mr-1">Thử nhanh từ mẫu:</span>
+                  {TEST_CORE_WORDS.map((item) => (
                     <button
-                      key={w}
-                      onClick={() => handleAudioWordChange(w)}
+                      key={item.word}
+                      onClick={() => handleAudioWordChange(item.word)}
+                      title={item.note}
                       className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                        audioInputWord.toLowerCase() === w
-                          ? 'bg-purple-600 text-white shadow-sm'
-                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        audioInputWord.toLowerCase() === item.word.toLowerCase()
+                          ? 'bg-purple-600 text-white shadow-md scale-105 ring-2 ring-purple-200'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
                       }`}
                     >
-                      {w}
+                      {item.word}
                     </button>
                   ))}
                 </div>
@@ -624,7 +716,7 @@ export const Playground: React.FC = () => {
 
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">
-                      Nguồn: {useRealAudio ? '🎙️ Hoài My Neural (Sprite)' : '🎛️ Beep Synth'}
+                      Nguồn: {useRealAudio ? '🎙️ Zalo AI (Ngọc Huyền)' : '🎛️ Beep Synth'}
                     </span>
 
                     {isAudioPlaying ? (
@@ -645,6 +737,7 @@ export const Playground: React.FC = () => {
                   {audioBreakdown.spellingFormula.map((step, idx) => {
                     const isStepActive = audioActiveStepIdx === idx;
                     const isLast = idx === audioBreakdown.spellingFormula.length - 1;
+                    const isIntermediate = audioBreakdown.spellingFormula.length === 5 && idx === 2;
                     const resolvedKey = spriteManager.resolveSpriteKey(step);
 
                     return (
@@ -653,6 +746,8 @@ export const Playground: React.FC = () => {
                           className={`px-5 py-3 rounded-2xl text-xl font-black transition-all duration-150 border-2 relative group cursor-pointer ${
                             isStepActive
                               ? 'bg-amber-400 text-slate-950 border-amber-200 scale-120 shadow-xl shadow-amber-500/30 ring-4 ring-amber-300/50 -translate-y-1'
+                              : isIntermediate
+                              ? 'bg-purple-900/60 text-purple-200 border-purple-400/60 hover:bg-purple-800/80 shadow-xs'
                               : isLast
                               ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500/40 hover:bg-emerald-600/50'
                               : 'bg-slate-800/80 text-slate-200 border-slate-700 hover:bg-slate-700/80'
@@ -664,8 +759,14 @@ export const Playground: React.FC = () => {
                               webAudioEngine.playSyntheticTone(step, 'ngang', 400, 1.0);
                             }
                           }}
+                          title={`Bấm để nghe riêng: "${step}"`}
                         >
                           <span>{step}</span>
+                          {isIntermediate && (
+                            <span className="block text-[9px] font-bold text-purple-300 uppercase tracking-tighter text-center">
+                              tiếng đệm sắc
+                            </span>
+                          )}
                           {resolvedKey && (
                             <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-slate-950 text-[10px] text-slate-400 font-mono px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow border border-slate-800">
                               key: {resolvedKey}
@@ -682,17 +783,17 @@ export const Playground: React.FC = () => {
 
                 <div className="text-xs text-slate-300 font-mono bg-slate-950/50 p-3 rounded-xl border border-slate-700/60 flex items-center justify-between flex-wrap gap-2">
                   <span>
-                    Công thức: <strong className="text-amber-300">{audioBreakdown.spellingFormulaText}</strong>
+                    Công thức đánh vần: <strong className="text-amber-300">{audioBreakdown.spellingFormulaText}</strong>
                   </span>
                   <span className="text-slate-400">
-                    Toạ độ Sprite Map: <strong className="text-emerald-400">{audioBreakdown.spellingFormula.map((s) => spriteManager.resolveSpriteKey(s) || s).join(' ➔ ')}</strong>
+                    Toạ độ Sprite: <strong className="text-emerald-400">{audioBreakdown.spellingFormula.map((s) => spriteManager.resolveSpriteKey(s) || s).join(' ➔ ')}</strong>
                   </span>
                 </div>
               </div>
 
-              {/* Thanh Điều Khiển: Phát Đánh Vần, Phát Đọc Trơn, Stop, Slider Tốc độ */}
+              {/* Thanh Điều Khiển: Phát Đánh Vần, Phát Đọc Trơn, Nghe Tiếng Đệm Riêng, Stop, Slider Tốc độ */}
               <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <button
                     onClick={handlePlayAudioSpelling}
                     disabled={isAudioPlaying}
@@ -719,6 +820,26 @@ export const Playground: React.FC = () => {
                     <span>Phát Đọc Trơn</span>
                   </button>
 
+                  {/* Nút kiểm tra tiếng đệm sắc nếu là từ thanh nặng khép tắc */}
+                  {audioBreakdown.spellingFormula.length === 5 && (
+                    <button
+                      onClick={() => {
+                        const intermediate = audioBreakdown.spellingFormula[2];
+                        if (useRealAudio) {
+                          spriteManager.playAudioSegment(intermediate);
+                        } else {
+                          webAudioEngine.playSyntheticTone(intermediate, 'sac', 450, 1.0);
+                        }
+                      }}
+                      disabled={isAudioPlaying}
+                      className="flex items-center gap-2 px-4 py-3 rounded-2xl font-extrabold text-sm text-purple-900 bg-purple-100 hover:bg-purple-200 border border-purple-300 transition-all cursor-pointer shadow-xs active:scale-95"
+                      title={`Nghe riêng tiếng đệm sắc "${audioBreakdown.spellingFormula[2]}"`}
+                    >
+                      <Volume2 className="w-4 h-4 text-purple-700" />
+                      <span>Nghe Đệm Sắc ("{audioBreakdown.spellingFormula[2]}")</span>
+                    </button>
+                  )}
+
                   <button
                     onClick={handleStopAudio}
                     title="Dừng âm thanh"
@@ -737,7 +858,7 @@ export const Playground: React.FC = () => {
                     <input
                       type="range"
                       min="0.3"
-                      max="1.0"
+                      max="1.2"
                       step="0.1"
                       value={audioSpeed}
                       onChange={(e) => setAudioSpeed(parseFloat(e.target.value))}
@@ -749,100 +870,263 @@ export const Playground: React.FC = () => {
                   </div>
 
                   <span className="text-[11px] font-bold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-lg border border-blue-100">
-                    Khoảng nghỉ: {calculatedGapMs}ms (Giọng tự nhiên)
+                    Khoảng nghỉ: {calculatedGapMs}ms
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Soundboard Bàn Phím Âm Thanh Thử Nghiệm Từng Ký Tự */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* 1. Bàn phím Âm Đầu */}
-              <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-blue-600">
-                    22 Âm Đầu (Hoài My Voice)
-                  </h4>
-                  <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md font-bold">
-                    Fade 8ms
-                  </span>
+            {/* BẢNG THẨM ÂM 225 CLIPS ZALO AI (SOUNDBOARD PHÂN LOẠI 5 DANH MỤC) */}
+            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200/80 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div>
+                  <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <Headphones className="w-5 h-5 text-purple-600" />
+                    Bảng Thẩm Âm Chi Tiết (Toàn Bộ 225 Clips Zalo AI)
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Bấm vào bất kỳ âm vị nào dưới đây để nghe trực tiếp phát âm giọng Nữ Bắc Ngọc Huyền:
+                  </p>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {INITIAL_CONSONANTS.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => playSoundboardItem(c, 'ngang')}
-                      className={`p-2.5 rounded-xl text-center font-black text-sm transition-all cursor-pointer ${
-                        activeSoundboardKey === c
-                          ? 'bg-blue-600 text-white scale-105 shadow'
-                          : 'bg-blue-50/70 text-blue-800 hover:bg-blue-100 active:scale-95'
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
+
+                {/* Thanh chọn 5 danh mục Soundboard */}
+                <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/60">
+                  <button
+                    onClick={() => setSoundboardTab('checked_rime')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      soundboardTab === 'checked_rime'
+                        ? 'bg-rose-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    44 Vần Tắc (Sắc)
+                  </button>
+                  <button
+                    onClick={() => setSoundboardTab('initial')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      soundboardTab === 'initial'
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    26 Âm Đầu
+                  </button>
+                  <button
+                    onClick={() => setSoundboardTab('open_nasal_rime')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      soundboardTab === 'open_nasal_rime'
+                        ? 'bg-orange-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Vần Mở & Mũi & uyu
+                  </button>
+                  <button
+                    onClick={() => setSoundboardTab('tones')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      soundboardTab === 'tones'
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    6 Dấu Thanh
+                  </button>
+                  <button
+                    onClick={() => setSoundboardTab('words_diem')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      soundboardTab === 'words_diem'
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Tiếng Đệm & Từ Mẫu
+                  </button>
                 </div>
               </div>
 
-              {/* 2. Bàn phím Vần Thông Dụng */}
-              <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-orange-600">
-                    Vần Tiêu Biểu (Lớp 1)
-                  </h4>
-                  <span className="text-[10px] bg-orange-50 text-orange-600 px-2 py-0.5 rounded-md font-bold">
-                    Nguyên vẹn
-                  </span>
-                </div>
-                <div className="grid grid-cols-4 gap-2 max-h-[300px] overflow-y-auto pr-1">
-                  {COMMON_RIMES.slice(0, 24).map((r) => (
-                    <button
-                      key={r}
-                      onClick={() => playSoundboardItem(r, 'ngang')}
-                      className={`p-2.5 rounded-xl text-center font-black text-sm transition-all cursor-pointer ${
-                        activeSoundboardKey === r
-                          ? 'bg-orange-500 text-white scale-105 shadow'
-                          : 'bg-orange-50/70 text-orange-800 hover:bg-orange-100 active:scale-95'
-                      }`}
-                    >
-                      {r}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {/* Danh mục 1: 44 Vần Khép Tắc mang thanh Sắc */}
+              {soundboardTab === 'checked_rime' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-rose-700 bg-rose-50 px-3 py-1 rounded-xl border border-rose-200">
+                      44 Vần Tắc (Tận cùng p, t, c, ch - 100% Phát Âm Sắc Sư Phạm)
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium">
+                      Bấm vào âm để nghe rõ âm sắc không có rác
+                    </span>
+                  </div>
 
-              {/* 3. Bàn phím 6 Dấu Thanh */}
-              <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-rose-600">
-                    6 Dấu Thanh (Hoài My Voice)
-                  </h4>
-                  <span className="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-bold">
-                    Thanh điệu
-                  </span>
+                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2.5">
+                    {SB_CHECKED_RIMES.map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => playSoundboardItem(r, 'sac')}
+                        className={`p-3 rounded-2xl text-center font-black text-base transition-all cursor-pointer border ${
+                          activeSoundboardKey === r
+                            ? 'bg-rose-600 text-white scale-110 shadow-lg ring-4 ring-rose-200 border-rose-600'
+                            : 'bg-rose-50/70 text-rose-900 border-rose-200/80 hover:bg-rose-100 hover:border-rose-300 active:scale-95'
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  {Object.values(TONES).map((t) => (
-                    <button
-                      key={t.type}
-                      onClick={() => playSoundboardItem(t.name, t.type)}
-                      className={`w-full p-2.5 rounded-xl flex items-center justify-between font-bold text-sm transition-all cursor-pointer ${
-                        activeSoundboardKey === t.name
-                          ? 'bg-rose-600 text-white shadow'
-                          : 'bg-rose-50/70 text-rose-800 hover:bg-rose-100 active:scale-98'
-                      }`}
-                    >
-                      <span>Thanh {t.name}</span>
-                      <span className="font-mono text-base font-black px-2 py-0.5 bg-white/60 rounded">
-                        {t.symbol || '—'}
-                      </span>
-                    </button>
-                  ))}
+              )}
+
+              {/* Danh mục 2: 26 Âm Đầu */}
+              {soundboardTab === 'initial' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-blue-700 bg-blue-50 px-3 py-1 rounded-xl border border-blue-200">
+                      26 Âm Đầu (Đơn & Ghép: tr, ng, ngh, nh, ch, qu, gi, kh...)
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium">
+                      Phát âm theo phương pháp sư phạm
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2.5">
+                    {SB_INITIALS.map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => playSoundboardItem(c, 'ngang')}
+                        className={`p-3 rounded-2xl text-center font-black text-base transition-all cursor-pointer border ${
+                          activeSoundboardKey === c
+                            ? 'bg-blue-600 text-white scale-110 shadow-lg ring-4 ring-blue-200 border-blue-600'
+                            : 'bg-blue-50/70 text-blue-900 border-blue-200/80 hover:bg-blue-100 hover:border-blue-300 active:scale-95'
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Danh mục 3: Vần Mở, Vần Mũi & Vần "uyu" */}
+              {soundboardTab === 'open_nasal_rime' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-orange-700 bg-orange-50 px-3 py-1 rounded-xl border border-orange-200">
+                      Vần Mở, Vần Bán Âm & Vần Mũi (Có Vần Hiếm uyu)
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium">
+                      Tổng hợp các vần thanh ngang tự nhiên
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2.5 max-h-[360px] overflow-y-auto pr-1">
+                    {SB_OPEN_NASAL_RIMES.map((r) => {
+                      const isRare = r === 'uyu';
+                      return (
+                        <button
+                          key={r}
+                          onClick={() => playSoundboardItem(r, 'ngang')}
+                          className={`p-3 rounded-2xl text-center font-black text-base transition-all cursor-pointer border relative ${
+                            activeSoundboardKey === r
+                              ? 'bg-orange-600 text-white scale-110 shadow-lg ring-4 ring-orange-200 border-orange-600'
+                              : isRare
+                              ? 'bg-purple-100 text-purple-900 border-purple-300 hover:bg-purple-200 ring-2 ring-purple-300'
+                              : 'bg-orange-50/70 text-orange-900 border-orange-200/80 hover:bg-orange-100 hover:border-orange-300 active:scale-95'
+                          }`}
+                        >
+                          {r}
+                          {isRare && (
+                            <span className="block text-[8px] font-bold text-purple-700 uppercase tracking-tighter">
+                              hiếm
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Danh mục 4: 6 Dấu Thanh */}
+              {soundboardTab === 'tones' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 bg-purple-50 px-3 py-1 rounded-xl border border-purple-200">
+                      6 Dấu Thanh Tiếng Việt
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium">
+                      Tên gọi chuẩn sư phạm của từng thanh điệu
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {SB_TONES.map((t) => (
+                      <button
+                        key={t.name}
+                        onClick={() => playSoundboardItem(t.name, t.name as any)}
+                        className={`p-4 rounded-2xl flex items-center justify-between transition-all cursor-pointer border ${
+                          activeSoundboardKey === t.name
+                            ? 'bg-purple-600 text-white scale-105 shadow-lg ring-4 ring-purple-200 border-purple-600'
+                            : 'bg-purple-50/70 text-purple-900 border-purple-200 hover:bg-purple-100 hover:border-purple-300 active:scale-98'
+                        }`}
+                      >
+                        <div className="text-left">
+                          <h4 className="font-black text-base">{t.label}</h4>
+                          <p className={`text-xs ${activeSoundboardKey === t.name ? 'text-purple-100' : 'text-slate-500'}`}>
+                            {t.desc}
+                          </p>
+                        </div>
+                        <span className={`font-mono text-2xl font-black px-3 py-1 rounded-xl ${
+                          activeSoundboardKey === t.name ? 'bg-white/20 text-white' : 'bg-white text-purple-800 border border-purple-200'
+                        }`}>
+                          {t.symbol}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Danh mục 5: Tiếng Đệm Sắc & Từ Mẫu */}
+              {soundboardTab === 'words_diem' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
+                      Tiếng Đệm Sắc & Từ Mẫu SGK Lớp 1
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium">
+                      Kiểm tra độ vang và trong trẻo của các tiếng đệm sắc
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                    {SB_INTERMEDIATES_AND_WORDS.map((item) => {
+                      const isDiem = item.type === 'diem';
+                      return (
+                        <button
+                          key={item.token}
+                          onClick={() => playSoundboardItem(item.token, isDiem ? 'sac' : 'ngang')}
+                          className={`p-3 rounded-2xl text-center font-black transition-all cursor-pointer border ${
+                            activeSoundboardKey === item.token
+                              ? 'bg-emerald-600 text-white scale-110 shadow-lg ring-4 ring-emerald-200 border-emerald-600'
+                              : isDiem
+                              ? 'bg-purple-50 text-purple-900 border-purple-200 hover:bg-purple-100 active:scale-95'
+                              : 'bg-emerald-50/70 text-emerald-900 border-emerald-200 hover:bg-emerald-100 active:scale-95'
+                          }`}
+                        >
+                          <span className="text-base">{item.token}</span>
+                          <span className={`block text-[9px] font-bold uppercase tracking-tighter ${
+                            isDiem ? 'text-purple-600' : 'text-emerald-600'
+                          }`}>
+                            {isDiem ? 'tiếng đệm' : 'từ mẫu'}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
+
 
         {/* ============================================================ */}
         {/* TAB 3: TEST KARAOKE & TEXT READER HIGHLIGHT (MÔ-ĐUN 4) */}
@@ -875,8 +1159,8 @@ export const Playground: React.FC = () => {
                 </button>
               </div>
 
-              {/* 3 Bài thơ mẫu */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              {/* 4 Bài đọc mẫu */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
                 {SAMPLE_POEMS.map((poem) => {
                   const isSelected = karaokeTitle === poem.title;
                   return (
