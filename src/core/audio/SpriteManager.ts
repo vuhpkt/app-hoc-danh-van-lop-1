@@ -13,6 +13,7 @@
 import { webAudioEngine } from './WebAudioEngine.ts';
 import { audioCacheService } from './AudioCacheService.ts';
 import { zaloTtsClient } from './ZaloTtsClient.ts';
+import { audioDspProcessor } from './AudioDspProcessor.ts';
 
 export interface SpriteSegmentInfo {
   start: number;
@@ -507,8 +508,9 @@ export class SpriteManager {
     if (cachedData) {
       const ctx = webAudioEngine.getAudioContext();
       try {
-        const clipBuffer = await ctx.decodeAudioData(cachedData.slice(0));
-        this.dynamicBuffers.set(clean, clipBuffer);
+        const rawClipBuffer = await ctx.decodeAudioData(cachedData.slice(0));
+        const enhancedBuffer = audioDspProcessor.trimAndEnhanceAudioBuffer(rawClipBuffer, ctx);
+        this.dynamicBuffers.set(clean, enhancedBuffer);
         return true;
       } catch (err) {
         console.warn(`Lỗi giải mã audio cho từ cache "${clean}":`, err);
@@ -523,13 +525,24 @@ export class SpriteManager {
 
     const fetchPromise = (async () => {
       try {
-        console.log(`🎙️ Đang lấy âm thanh Zalo AI cho từ mới: "${clean}"...`);
+        console.log(`🎙️ Đang lấy âm thanh Zalo AI cho từ mới: "${clean}" (tốc độ 0.8x)...`);
         const arrayBuffer = await zaloTtsClient.fetchAudioBuffer(clean);
-        await audioCacheService.saveClip(clean, arrayBuffer);
         const ctx = webAudioEngine.getAudioContext();
-        const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
-        this.dynamicBuffers.set(clean, decoded);
-        return decoded;
+        const rawDecoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
+
+        // Xử lý DSP: Cắt khoảng lặng trễ, 12ms Hann Windowing, Peak Normalization (-1dBFS)
+        const enhancedBuffer = audioDspProcessor.trimAndEnhanceAudioBuffer(rawDecoded, ctx);
+        this.dynamicBuffers.set(clean, enhancedBuffer);
+
+        // Lưu bản WAV 16-bit PCM đã xử lý hoàn chỉnh vào cache ngoại tuyến
+        try {
+          const wavData = audioDspProcessor.audioBufferToWavArrayBuffer(enhancedBuffer);
+          await audioCacheService.saveClip(clean, wavData, 'audio/wav');
+        } catch {
+          await audioCacheService.saveClip(clean, arrayBuffer, 'audio/mpeg');
+        }
+
+        return enhancedBuffer;
       } catch (err) {
         console.warn(`⚠️ Không thể lấy âm thanh Zalo AI cho từ "${clean}":`, err);
         return null;
