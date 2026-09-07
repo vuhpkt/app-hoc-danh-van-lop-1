@@ -490,57 +490,73 @@ export class SpriteManager {
   }
 
   /**
+   * Tải trước âm thanh của một từ vào RAM (từ Master Sprite, IndexedDB cache, hoặc Zalo AI TTS API)
+   * Đảm bảo file âm thanh sẵn sàng 100% trước khi phát
+   */
+  public async preloadAudio(spriteKeyOrToken: string): Promise<boolean> {
+    const clean = spriteKeyOrToken.toLowerCase().trim();
+    const spriteKey = this.resolveSpriteKey(clean) || clean;
+
+    // 1. Đã có trong RAM
+    if (this.clipBuffers.has(spriteKey) || this.dynamicBuffers.has(clean)) {
+      return true;
+    }
+
+    // 2. Có trong IndexedDB cache
+    const cachedData = await audioCacheService.getClip(clean);
+    if (cachedData) {
+      const ctx = webAudioEngine.getAudioContext();
+      try {
+        const clipBuffer = await ctx.decodeAudioData(cachedData.slice(0));
+        this.dynamicBuffers.set(clean, clipBuffer);
+        return true;
+      } catch (err) {
+        console.warn(`Lỗi giải mã audio cho từ cache "${clean}":`, err);
+      }
+    }
+
+    // 3. Gọi Zalo AI TTS API nếu chưa có
+    if (this.pendingFetches.has(clean)) {
+      const buffer = await this.pendingFetches.get(clean);
+      return !!buffer;
+    }
+
+    const fetchPromise = (async () => {
+      try {
+        console.log(`🎙️ Đang lấy âm thanh Zalo AI cho từ mới: "${clean}"...`);
+        const arrayBuffer = await zaloTtsClient.fetchAudioBuffer(clean);
+        await audioCacheService.saveClip(clean, arrayBuffer);
+        const ctx = webAudioEngine.getAudioContext();
+        const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
+        this.dynamicBuffers.set(clean, decoded);
+        return decoded;
+      } catch (err) {
+        console.warn(`⚠️ Không thể lấy âm thanh Zalo AI cho từ "${clean}":`, err);
+        return null;
+      } finally {
+        this.pendingFetches.delete(clean);
+      }
+    })();
+
+    this.pendingFetches.set(clean, fetchPromise);
+    const result = await fetchPromise;
+    return !!result;
+  }
+
+  /**
    * Phát một phân đoạn âm thanh với Lookahead Audio Scheduling (25ms buffer) & Smooth Gain Envelope
-   * Hỗ trợ đa tầng: (1) Master Sprite -> (2) IndexedDB Audio Cache -> (3) Web Speech API Fallback
+   * Tự động chờ nạp đủ âm thanh từ Zalo AI trước khi phát
    */
   public async playAudioSegment(spriteKeyOrToken: string): Promise<void> {
     const clean = spriteKeyOrToken.toLowerCase().trim();
     const spriteKey = this.resolveSpriteKey(clean) || clean;
-    let clipBuffer = this.clipBuffers.get(spriteKey) || this.dynamicBuffers.get(clean);
 
-    // 1. Nếu chưa có trong Master Sprite, kiểm tra trong IndexedDB Audio Cache
-    if (!clipBuffer) {
-      const cachedData = await audioCacheService.getClip(clean);
-      if (cachedData) {
-        const ctx = webAudioEngine.getAudioContext();
-        try {
-          clipBuffer = await ctx.decodeAudioData(cachedData.slice(0));
-          this.dynamicBuffers.set(clean, clipBuffer);
-        } catch (err) {
-          console.warn(`Lỗi giải mã audio cho từ cache "${clean}":`, err);
-        }
-      }
-    }
+    // Đảm bảo clip đã được nạp sẵn vào RAM trước khi phát
+    await this.preloadAudio(clean);
 
-    // 2. Nếu vẫn chưa có clip, gọi trực tiếp Zalo AI TTS API để lấy âm thanh chuẩn Ngọc Huyền và lưu vào IndexedDB
-    // TUYỆT ĐỐI KHÔNG DÙNG Web Speech API vì chất lượng phát âm tiếng Việt rất tệ.
-    if (!clipBuffer) {
-      if (this.pendingFetches.has(clean)) {
-        clipBuffer = (await this.pendingFetches.get(clean)) || undefined;
-      } else {
-        const fetchPromise = (async () => {
-          try {
-            console.log(`🎙️ Đang lấy âm thanh Zalo AI cho từ mới: "${clean}"...`);
-            const arrayBuffer = await zaloTtsClient.fetchAudioBuffer(clean);
-            await audioCacheService.saveClip(clean, arrayBuffer);
-            const ctx = webAudioEngine.getAudioContext();
-            const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
-            this.dynamicBuffers.set(clean, decoded);
-            return decoded;
-          } catch (err) {
-            console.warn(`⚠️ Không thể lấy âm thanh Zalo AI cho từ "${clean}":`, err);
-            return null;
-          } finally {
-            this.pendingFetches.delete(clean);
-          }
-        })();
+    const clipBuffer = this.clipBuffers.get(spriteKey) || this.dynamicBuffers.get(clean);
 
-        this.pendingFetches.set(clean, fetchPromise);
-        clipBuffer = (await fetchPromise) || undefined;
-      }
-    }
-
-    // 3. Nếu vẫn không có clip (do offline hoặc API lỗi), dừng lại (KHÔNG dùng robot Web Speech)
+    // Nếu vẫn không có clip (do offline hoặc API lỗi), dừng lại (KHÔNG dùng robot Web Speech)
     if (!clipBuffer) {
       console.warn(`⚠️ Không thể phát âm thanh cho: "${spriteKeyOrToken}" (key: ${spriteKey}) - Đã hủy bỏ fallback Web Speech robot`);
       return;

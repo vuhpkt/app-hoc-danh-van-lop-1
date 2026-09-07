@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Sparkles, PlusCircle } from 'lucide-react';
+import { Sparkles, PlusCircle, RefreshCw } from 'lucide-react';
 import { Token, ReadingMode } from '../types/index.ts';
 import { tokenizeVietnameseText } from '../core/parser/vietnamesePhonics.ts';
 import { AudioSpritePlayer } from '../core/audio/AudioSpritePlayer.ts';
@@ -46,6 +46,7 @@ export const KidLearningPage: React.FC = () => {
   const [speed, setSpeed] = useState<number>(0.85);
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [showOcrModal, setShowOcrModal] = useState<boolean>(false);
+  const [preparingInfo, setPreparingInfo] = useState<{ current: number; total: number; word: string } | null>(null);
 
   const playbackControllerRef = useRef<{ stop: () => void } | null>(null);
 
@@ -64,6 +65,7 @@ export const KidLearningPage: React.FC = () => {
     setIsPlaying(false);
     setActiveWordIdx(-1);
     setActiveSubStepLabel('');
+    setPreparingInfo(null);
   };
 
   const handleTogglePlay = () => {
@@ -73,7 +75,8 @@ export const KidLearningPage: React.FC = () => {
     }
 
     setIsPlaying(true);
-    setActiveWordIdx(0);
+    setActiveWordIdx(-1);
+    setPreparingInfo(null);
     setSelectedToken(null);
     audioManager.playClickSound();
 
@@ -88,12 +91,18 @@ export const KidLearningPage: React.FC = () => {
         wordsData,
         speed,
         (idx) => {
+          setPreparingInfo(null);
           setActiveWordIdx(idx);
         },
         () => {
           setIsPlaying(false);
           setActiveWordIdx(-1);
+          setPreparingInfo(null);
           audioManager.playSuccessChime();
+        },
+        true,
+        (info) => {
+          setPreparingInfo(info);
         }
       );
     } else {
@@ -102,6 +111,7 @@ export const KidLearningPage: React.FC = () => {
         wordsData,
         speed,
         (wIdx, _subIdx, subLabel) => {
+          setPreparingInfo(null);
           setActiveWordIdx(wIdx);
           setActiveSubStepLabel(subLabel);
         },
@@ -109,7 +119,12 @@ export const KidLearningPage: React.FC = () => {
           setIsPlaying(false);
           setActiveWordIdx(-1);
           setActiveSubStepLabel('');
+          setPreparingInfo(null);
           audioManager.playSuccessChime();
+        },
+        true,
+        (info) => {
+          setPreparingInfo(info);
         }
       );
     }
@@ -207,6 +222,26 @@ export const KidLearningPage: React.FC = () => {
         }}
         onSpeedChange={setSpeed}
       />
+
+      {/* BANNER CHUẨN BỊ ÂM THANH KHI CÓ TỪ MỚI CẦN TẢI TỪ ZALO AI */}
+      {preparingInfo && (
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 flex items-center justify-between gap-3 animate-fadeIn shadow-sm">
+          <div className="flex items-center gap-3">
+            <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+            <div>
+              <p className="text-xs sm:text-sm font-black text-blue-900">
+                Đang chuẩn bị âm thanh Zalo AI cho từ: <span className="underline decoration-blue-400">"{preparingInfo.word}"</span>
+              </p>
+              <p className="text-[11px] text-blue-600 font-medium">
+                Ứng dụng đang tải giọng Nữ Bắc Ngọc Huyền và lưu vào máy ({preparingInfo.current}/{preparingInfo.total})...
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-black text-blue-700 bg-blue-100 px-3 py-1 rounded-full">
+            {Math.round((preparingInfo.current / preparingInfo.total) * 100)}%
+          </span>
+        </div>
+      )}
 
       {/* BẢNG BÀI ĐỌC TYPOGRAPHY LỚN */}
       <KidReaderBoard

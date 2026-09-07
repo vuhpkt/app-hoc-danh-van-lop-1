@@ -118,7 +118,34 @@ export class AudioSpritePlayer {
   }
 
   /**
+   * Tải trước toàn bộ âm thanh của các từ trong câu trước khi bắt đầu phát
+   * Đảm bảo không nhảy vào đọc khi chưa có đủ file âm thanh
+   */
+  public static async prebufferSentence(
+    words: { text: string; breakdown?: PhonicsBreakdown }[],
+    onProgress?: (info: { current: number; total: number; word: string }) => void
+  ): Promise<void> {
+    if (!spriteManager.isSpriteReady()) {
+      await spriteManager.loadSprite();
+    }
+
+    const cleanWords = words
+      .map((w) => w.text.replace(/[,.!?:;]/g, '').trim().toLowerCase())
+      .filter((w) => w.length > 0);
+
+    const uniqueWords = Array.from(new Set(cleanWords));
+    const total = uniqueWords.length;
+
+    for (let i = 0; i < total; i++) {
+      const word = uniqueWords[i];
+      onProgress?.({ current: i + 1, total, word });
+      await spriteManager.preloadAudio(word);
+    }
+  }
+
+  /**
    * 3. PHÁT ĐỌC TRƠN CẢ CÂU (Fluent Sentence Reading - Karaoke Mode)
+   * - Tự động nạp trước 100% âm thanh trước khi phát
    * - Phát tuần tự từng từ trong câu
    * - Chèn khoảng nghỉ tự nhiên giữa các từ (~150ms ở tốc độ 1.0x)
    * - Kích hoạt callback onWordChange(index) theo thời gian thực để highlight chữ
@@ -128,7 +155,8 @@ export class AudioSpritePlayer {
     speed = 1.0,
     onWordChange?: (index: number) => void,
     onComplete?: () => void,
-    useRealAudio = true
+    useRealAudio = true,
+    onPreparing?: (info: { current: number; total: number; word: string }) => void
   ): { stop: () => void } {
     this.sentencePlaybackId++;
     const currentId = this.sentencePlaybackId;
@@ -137,9 +165,12 @@ export class AudioSpritePlayer {
     const interWordGapMs = Math.round(160 + Math.max(0, 1 - speed) * 750);
 
     const run = async () => {
-      if (useRealAudio && !spriteManager.isSpriteReady()) {
-        await spriteManager.loadSprite();
+      // 1. Tải trước toàn bộ âm thanh của câu trước khi nhảy vào đọc!
+      if (useRealAudio) {
+        await this.prebufferSentence(words, onPreparing);
       }
+
+      if (currentId !== this.sentencePlaybackId) return;
 
       for (let i = 0; i < words.length; i++) {
         if (currentId !== this.sentencePlaybackId) return;
@@ -194,7 +225,8 @@ export class AudioSpritePlayer {
     speed = 1.0,
     onStepChange?: (wordIdx: number, subStepIdx: number, subStepLabel: string) => void,
     onComplete?: () => void,
-    useRealAudio = true
+    useRealAudio = true,
+    onPreparing?: (info: { current: number; total: number; word: string }) => void
   ): { stop: () => void } {
     this.sentencePlaybackId++;
     const currentId = this.sentencePlaybackId;
@@ -203,9 +235,27 @@ export class AudioSpritePlayer {
     const intraPhonemeGapMs = SpriteManager.calculateSilencePadding(speed);
 
     const run = async () => {
-      if (useRealAudio && !spriteManager.isSpriteReady()) {
-        await spriteManager.loadSprite();
+      if (useRealAudio) {
+        if (!spriteManager.isSpriteReady()) {
+          await spriteManager.loadSprite();
+        }
+
+        // Tải trước toàn bộ các bước đánh vần của toàn bộ từ trong câu
+        const allSteps: string[] = [];
+        for (const w of words) {
+          if (w.breakdown?.spellingFormula) {
+            allSteps.push(...w.breakdown.spellingFormula);
+          }
+        }
+        const uniqueSteps = Array.from(new Set(allSteps));
+        for (let i = 0; i < uniqueSteps.length; i++) {
+          const step = uniqueSteps[i];
+          onPreparing?.({ current: i + 1, total: uniqueSteps.length, word: step });
+          await spriteManager.preloadAudio(step);
+        }
       }
+
+      if (currentId !== this.sentencePlaybackId) return;
 
       for (let i = 0; i < words.length; i++) {
         if (currentId !== this.sentencePlaybackId) return;

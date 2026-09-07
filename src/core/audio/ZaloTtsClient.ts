@@ -85,18 +85,37 @@ export class ZaloTtsClient {
   }
 
   /**
+   * Tải file từ Zalo CDN với cơ chế thăm dò (polling)
+   * Zalo CDN cần khoảng 500ms - 1500ms để bộ mã hóa âm thanh ghi xong file MP3.
+   */
+  public async downloadAudioWithPolling(url: string, maxAttempts = 6): Promise<ArrayBuffer> {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      // Chờ tăng dần: 500ms, 1000ms, 1500ms...
+      await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
+
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const buffer = await res.arrayBuffer();
+          if (buffer.byteLength > 1000) {
+            return buffer;
+          }
+        }
+      } catch {
+        // Tiếp tục thử lại vòng lặp tiếp theo
+      }
+    }
+
+    throw new Error(`Quá thời gian chờ file âm thanh sẵn sàng trên CDN Zalo: ${url}`);
+  }
+
+  /**
    * Tải dữ liệu nhị phân ArrayBuffer của âm thanh từ Zalo AI
    * @param text Từ cần tổng hợp
    */
   public async fetchAudioBuffer(text: string): Promise<ArrayBuffer> {
     const audioUrl = await this.synthesizeText(text);
-    const audioRes = await fetch(audioUrl);
-
-    if (!audioRes.ok) {
-      throw new Error(`Không thể tải file âm thanh từ URL: ${audioUrl}`);
-    }
-
-    return await audioRes.arrayBuffer();
+    return await this.downloadAudioWithPolling(audioUrl);
   }
 }
 

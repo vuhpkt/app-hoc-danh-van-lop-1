@@ -18,7 +18,8 @@ import {
   Headphones,
   Edit3,
   CloudDownload,
-  AlertCircle
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 import { PhonicsBreakdown, Token, ReadingMode } from '../types';
 import { parseVietnamesePhonics, tokenizeVietnameseText } from '../core/parser/vietnamesePhonics';
@@ -291,6 +292,7 @@ export const Playground: React.FC = () => {
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(0.8);
   const [selectedKaraokeToken, setSelectedKaraokeToken] = useState<Token | null>(null);
   const [showCustomTextInput, setShowCustomTextInput] = useState<boolean>(false);
+  const [karaokePreparingInfo, setKaraokePreparingInfo] = useState<{ current: number; total: number; word: string } | null>(null);
 
   const [syncStatus, setSyncStatus] = useState<{
     isChecking: boolean;
@@ -398,7 +400,8 @@ export const Playground: React.FC = () => {
     }
 
     setIsKaraokePlaying(true);
-    setActiveWordIdx(0);
+    setActiveWordIdx(-1);
+    setKaraokePreparingInfo(null);
     setSelectedKaraokeToken(null);
 
     const wordsData = karaokeTokens.map((t) => ({
@@ -412,14 +415,19 @@ export const Playground: React.FC = () => {
         wordsData,
         playbackSpeed,
         (idx) => {
+          setKaraokePreparingInfo(null);
           setActiveWordIdx(idx);
         },
         () => {
           setIsKaraokePlaying(false);
           setActiveWordIdx(-1);
+          setKaraokePreparingInfo(null);
           audioManager.playSuccessChime();
         },
-        useRealAudio
+        useRealAudio,
+        (info) => {
+          setKaraokePreparingInfo(info);
+        }
       );
     } else {
       // 2. Chế độ Đánh vần chi tiết từng từ trong câu
@@ -427,6 +435,7 @@ export const Playground: React.FC = () => {
         wordsData,
         playbackSpeed,
         (wordIdx, _subStepIdx, subStepLabel) => {
+          setKaraokePreparingInfo(null);
           setActiveWordIdx(wordIdx);
           setActiveSubStepLabel(subStepLabel);
         },
@@ -434,9 +443,13 @@ export const Playground: React.FC = () => {
           setIsKaraokePlaying(false);
           setActiveWordIdx(-1);
           setActiveSubStepLabel('');
+          setKaraokePreparingInfo(null);
           audioManager.playSuccessChime();
         },
-        useRealAudio
+        useRealAudio,
+        (info) => {
+          setKaraokePreparingInfo(info);
+        }
       );
     }
   };
@@ -451,6 +464,7 @@ export const Playground: React.FC = () => {
     setIsKaraokePlaying(false);
     setActiveWordIdx(-1);
     setActiveSubStepLabel('');
+    setKaraokePreparingInfo(null);
   };
 
   const handleResetKaraoke = () => {
@@ -1380,6 +1394,26 @@ export const Playground: React.FC = () => {
               currentWordIndex={activeWordIdx}
               totalWords={karaokeTokens.length}
             />
+
+            {/* BANNER CHUẨN BỊ ÂM THANH KHI CÓ TỪ MỚI CẦN TẢI TỪ ZALO AI */}
+            {karaokePreparingInfo && (
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 flex items-center justify-between gap-3 animate-fadeIn shadow-sm">
+                <div className="flex items-center gap-3">
+                  <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+                  <div>
+                    <p className="text-xs sm:text-sm font-black text-blue-900">
+                      Đang chuẩn bị âm thanh Zalo AI cho từ: <span className="underline decoration-blue-400">"{karaokePreparingInfo.word}"</span>
+                    </p>
+                    <p className="text-[11px] text-blue-600 font-medium">
+                      Ứng dụng đang tải giọng Nữ Bắc Ngọc Huyền và lưu vào máy ({karaokePreparingInfo.current}/{karaokePreparingInfo.total})...
+                    </p>
+                  </div>
+                </div>
+                <span className="text-xs font-black text-blue-700 bg-blue-100 px-3 py-1 rounded-full">
+                  {Math.round((karaokePreparingInfo.current / karaokePreparingInfo.total) * 100)}%
+                </span>
+              </div>
+            )}
 
             {/* TRÌNH HIỂN THỊ VĂN BẢN KARAOKE 60FPS (TextReader) */}
             <TextReader
