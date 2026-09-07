@@ -1490,7 +1490,7 @@ export const Playground: React.FC = () => {
           <div className="space-y-6 animate-fadeIn">
             <OCRUploader
               onScanComplete={(result) => {
-                setOcrTransferredText(result.rawText);
+                setOcrTransferredText(result.sanitizedText || result.rawText);
               }}
             />
 
