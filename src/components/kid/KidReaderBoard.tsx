@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, BookOpen } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { Token, ReadingMode } from '../../types/index.ts';
 import { WordBubble } from './WordBubble.tsx';
 
@@ -40,8 +40,7 @@ export const KidReaderBoard: React.FC<KidReaderBoardProps> = React.memo(({
           </div>
         </div>
 
-        <span className="inline-flex items-center gap-1.5 text-xs font-black text-stone-600 bg-stone-100/80 px-3.5 py-1.5 rounded-full self-start sm:self-center border border-stone-200/80">
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+        <span className="inline-flex items-center text-xs font-bold text-stone-500 bg-stone-100/90 px-3 py-1 rounded-full self-start sm:self-center border border-stone-200/80">
           <span>SGK Tiếng Việt 1</span>
         </span>
       </div>

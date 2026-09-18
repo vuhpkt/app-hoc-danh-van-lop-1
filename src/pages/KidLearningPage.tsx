@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { PlusCircle, RefreshCw, Trash2, CheckCircle2, AlertCircle, Zap, Settings, BookOpen } from 'lucide-react';
+import { PlusCircle, RefreshCw, Trash2, CheckCircle2, AlertCircle, Zap, Settings, BookOpen, PenLine } from 'lucide-react';
 import { Token, ReadingMode } from '../types/index.ts';
 import { tokenizeVietnameseText } from '../core/parser/vietnamesePhonics.ts';
 import { AudioSpritePlayer } from '../core/audio/AudioSpritePlayer.ts';
@@ -438,7 +438,8 @@ export const KidLearningPage: React.FC = () => {
             onClick={() => handleSelectLesson(currentLesson)}
             className="px-3.5 py-1.5 rounded-full text-xs font-black border-2 border-amber-500 bg-amber-500 text-white shadow-2xs whitespace-nowrap cursor-pointer flex items-center gap-1.5"
           >
-            <span>✏️ {currentLesson.title}</span>
+            <PenLine className="w-3.5 h-3.5" />
+            <span>{currentLesson.title}</span>
           </button>
         )}
 

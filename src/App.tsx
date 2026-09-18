@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BookOpen, Sparkles } from 'lucide-react';
+import { BookOpen, LayoutGrid } from 'lucide-react';
 import { KidLearningPage } from './pages/KidLearningPage';
 import { AlphabetLearningPage } from './pages/AlphabetLearningPage';
 
@@ -43,7 +43,7 @@ export function App() {
                 : 'text-stone-500 hover:text-stone-800'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+            <LayoutGrid className="w-3.5 h-3.5 text-emerald-600" />
             <span>Bảng Chữ Cái</span>
           </button>
         </div>

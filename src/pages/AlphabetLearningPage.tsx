@@ -65,21 +65,13 @@ export const AlphabetLearningPage: React.FC = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-4">
         {/* Banner Giới Thiệu & Điều Hướng Tab */}
         <div className="bg-white/80 backdrop-blur-md rounded-3xl p-4 sm:p-5 border-2 border-amber-200/80 shadow-[0_4px_0_#fde68a] mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-amber-100">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-amber-950 flex items-center gap-2">
-                <span>🔤</span> Bảng Chữ Cái & Âm Vần Tiếng Việt
-              </h1>
-              <p className="text-xs sm:text-sm text-stone-600 font-medium mt-0.5">
-                Chuẩn ngữ âm SGK Lớp 1 (Bộ GD&ĐT) • Phát âm chuẩn theo Âm ("bờ", "cờ", "dờ")
-              </p>
-            </div>
-
-            {/* Hint âm thanh 100% Offline */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold self-start sm:self-center">
-              <Volume2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Offline Master v4.4.0</span>
-            </div>
+          <div className="pb-3 border-b border-stone-100">
+            <h1 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+              Bảng Chữ Cái Tiếng Việt
+            </h1>
+            <p className="text-xs sm:text-sm text-stone-500 font-medium mt-0.5">
+              Chuẩn ngữ âm SGK Lớp 1 (Bộ GD&ĐT) • Phát âm chuẩn theo Âm ("bờ", "cờ", "ca", "dờ"...)
+            </p>
           </div>
 
           {/* 2 Tab Điều Hướng Chuẩn Montessori */}
@@ -121,12 +113,9 @@ export const AlphabetLearningPage: React.FC = () => {
         {/* TAB 1: 29 CHỮ CÁI (KHÔNG PHÂN CHIA NGUYÊN ÂM / PHỤ ÂM) */}
         {activeTab === 'letters' && (
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs sm:text-sm text-stone-600 font-medium">
-                Chạm vào chữ cái để nghe cô giáo phát âm chuẩn.
-              </span>
-              <span className="text-xs text-amber-800 font-bold bg-amber-100/70 px-2.5 py-1 rounded-full">
-                29 Chữ Cái
+            <div className="mb-4">
+              <span className="text-xs sm:text-sm text-stone-500 font-medium">
+                Chạm vào chữ cái để nghe phát âm chuẩn theo SGK Lớp 1.
               </span>
             </div>
 
@@ -147,13 +136,10 @@ export const AlphabetLearningPage: React.FC = () => {
         {/* TAB 2: 11 ÂM GHÉP (KHÔNG PHIÊN ÂM GẠCH CHÉO) */}
         {activeTab === 'compounds' && (
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs sm:text-sm text-stone-600 font-medium">
-                11 âm ghép cơ bản trong tiếng Việt. Chạm vào chữ để nghe cô giáo phát âm.
+            <div className="mb-4">
+              <p className="text-xs sm:text-sm text-stone-500 font-medium">
+                11 âm ghép cơ bản trong tiếng Việt. Chạm vào chữ để nghe phát âm.
               </p>
-              <span className="text-xs text-amber-800 font-bold bg-amber-100/70 px-2.5 py-1 rounded-full">
-                11 Âm Ghép
-              </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">

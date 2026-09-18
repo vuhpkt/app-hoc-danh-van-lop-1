@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Volume2, ArrowRight } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import { Token } from '../../types/index.ts';
 
 export interface PhonicsKaraokeStageProps {
@@ -50,58 +50,45 @@ export const PhonicsKaraokeStage: React.FC<PhonicsKaraokeStageProps> = ({
 
   if (!token || !phonics || formula.length === 0) {
     return (
-      <section
+      <div
         data-testid="phonics-karaoke-stage-empty"
-        className="bg-[#FFFDF9] rounded-3xl sm:rounded-[2rem] border-2 sm:border-3 border-[#EADFC7] p-4 sm:p-5 shadow-2xs text-center space-y-1.5 transition-all"
+        className="bg-white/80 rounded-2xl border border-stone-200/80 px-4 py-2.5 text-center shadow-2xs transition-all"
       >
-        <div className="flex items-center justify-center gap-2 text-stone-500 font-bold text-xs sm:text-sm">
-          <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-          <span>Sân Khấu Đánh Vần (Karaoke Phonics)</span>
-        </div>
-        <p className="text-xs text-stone-400 font-medium">
-          Bé chạm vào bất kỳ từ nào trong bài đọc để xem phân rã đánh vần từng bước nhé!
+        <p className="text-xs sm:text-sm text-stone-500 font-medium">
+          Chạm vào từ bất kỳ trong bài để xem và nghe đánh vần từng bước
         </p>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section
+    <div
       data-testid="phonics-karaoke-stage"
-      className="bg-[#FFFDF9] rounded-3xl sm:rounded-[2rem] border-2 sm:border-3 border-[#EADFC7] p-4 sm:p-5 shadow-sm space-y-3.5 transition-all relative overflow-hidden"
+      className="bg-[#FFFDF9] rounded-2xl border border-amber-200/80 p-3.5 sm:p-4 shadow-xs space-y-2.5 transition-all"
     >
-      {/* THANH TIÊU ĐỀ SÂN KHẤU */}
-      <div className="flex items-center justify-between gap-2 border-b border-amber-100 pb-2.5">
+      {/* THANH THÔNG TIN TỪ ĐANG ĐÁNH VẦN */}
+      <div className="flex items-center justify-between gap-2 border-b border-stone-100 pb-2">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-amber-400 text-stone-950 flex items-center justify-center font-black shadow-2xs shrink-0">
-            <Sparkles className="w-3.5 h-3.5" />
-          </div>
-          <div>
-            <span className="text-xs font-black text-stone-800 uppercase tracking-wider block">
-              Sân Khấu Đánh Vần
-            </span>
-            <span className="text-[10px] sm:text-[11px] text-stone-400 font-bold">
-              SGK Tiếng Việt 1 • Karaoke từng bước
-            </span>
-          </div>
-        </div>
-
-        {/* NÚT TỪ TRỌNG TÂM ĐANG HỌC */}
-        <button
-          type="button"
-          onClick={onReplayWord}
-          title={`Bấm để nghe lại từ "${token.phonics?.clean || token.text}"`}
-          className="inline-flex items-center gap-1.5 bg-amber-100/80 hover:bg-amber-200/90 text-amber-950 px-3 py-1 rounded-full text-xs font-black border border-amber-300 shadow-2xs cursor-pointer active:scale-95 transition-all"
-        >
-          <Volume2 className="w-3.5 h-3.5 text-amber-700" />
-          <span>Từ:</span>
-          <span className="text-sm font-black text-amber-900 underline decoration-amber-400 underline-offset-2">
+          <span className="text-xs text-stone-500 font-bold">Đánh vần:</span>
+          <span className="text-sm sm:text-base font-black text-stone-900 px-2.5 py-0.5 rounded-lg bg-amber-100 border border-amber-300/80">
             {token.phonics?.clean || token.text}
           </span>
-        </button>
+        </div>
+
+        {onReplayWord && (
+          <button
+            type="button"
+            onClick={onReplayWord}
+            title={`Nghe lại từ "${token.phonics?.clean || token.text}"`}
+            className="inline-flex items-center gap-1.5 text-stone-600 hover:text-stone-900 bg-white hover:bg-stone-50 px-2.5 py-1 rounded-xl text-xs font-bold border border-stone-200 shadow-2xs transition-all cursor-pointer active:scale-95"
+          >
+            <Volume2 className="w-3.5 h-3.5 text-stone-500" />
+            <span>Nghe cả từ</span>
+          </button>
+        )}
       </div>
 
-      {/* CHUỖI THẺ BÀI PHÂN RÃ NGỮ ÂM MONTESSORI & HIỆU ỨNG KARAOKE */}
+      {/* CHUỖI THẺ ÂM TIẾT */}
       <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 py-1">
         {formula.map((step, idx) => {
           const isActive = idx === activeStepIndex;
@@ -111,67 +98,46 @@ export const PhonicsKaraokeStage: React.FC<PhonicsKaraokeStageProps> = ({
 
           return (
             <React.Fragment key={`step-${idx}-${step}`}>
-              {/* NÚT / THẺ BÀI BÓC TÁCH NGỮ ÂM */}
               <button
                 type="button"
                 data-testid={`phonics-tile-${idx}`}
                 onClick={() => onStepClick?.(idx, step)}
-                title={`Chạm để nghe riêng âm "${step}"`}
-                className={`group relative min-w-[56px] sm:min-w-[68px] min-h-[62px] sm:min-h-[72px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 cursor-pointer select-none active:scale-95 ${
+                title={`Nghe âm "${step}"`}
+                className={`relative min-w-[56px] sm:min-w-[64px] min-h-[62px] sm:min-h-[68px] px-3 py-1.5 rounded-2xl flex flex-col items-center justify-center transition-all duration-150 cursor-pointer select-none active:scale-95 ${
                   isActive
-                    ? 'bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 text-stone-950 font-black shadow-md border-2 sm:border-3 border-amber-600 ring-4 ring-amber-300/80 scale-110 -translate-y-1 z-10'
+                    ? 'bg-amber-400 text-stone-950 font-black shadow-sm ring-4 ring-amber-300 scale-105 -translate-y-0.5 z-10'
                     : isPassed
-                    ? 'bg-amber-50/90 text-amber-950 border-2 border-amber-300/90 shadow-2xs hover:bg-amber-100/70'
+                    ? 'bg-amber-50 text-amber-950 border border-amber-200 font-bold'
                     : isFinal
-                    ? 'bg-amber-100/60 text-stone-900 border-2 border-amber-300/80 hover:bg-amber-200/50 shadow-2xs font-black'
-                    : 'bg-white text-stone-700 border-2 border-stone-200/90 hover:border-amber-300 hover:bg-amber-50/60 shadow-2xs font-extrabold'
+                    ? 'bg-stone-100 text-stone-900 border border-stone-200 font-black'
+                    : 'bg-white text-stone-800 border border-stone-200 hover:border-amber-300 hover:bg-amber-50/50 font-extrabold shadow-2xs'
                 }`}
               >
-                {/* CHỮ CHÍNH TRÊN THẺ */}
-                <span
-                  className={`text-xl sm:text-2xl leading-none transition-transform ${
-                    isActive ? 'font-black scale-105' : 'font-black'
-                  }`}
-                >
+                <span className="text-xl sm:text-2xl leading-none font-black">
                   {step}
                 </span>
 
-                {/* NHÃN PHỤ SƯ PHẠM TỐI GIẢN */}
                 {roleLabel && (
                   <span
-                    className={`text-[9px] sm:text-[10px] mt-1 font-bold leading-none tracking-tight whitespace-nowrap ${
-                      isActive ? 'text-stone-950 font-black' : 'text-stone-400 group-hover:text-stone-600'
+                    className={`text-[10px] mt-1 font-bold leading-none tracking-tight whitespace-nowrap ${
+                      isActive ? 'text-stone-950 font-black' : 'text-stone-400'
                     }`}
                   >
                     {roleLabel}
                   </span>
                 )}
-
-                {/* ICON LOA MINI KHI ĐANG PHÁT */}
-                {isActive && (
-                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber-600 text-white rounded-full flex items-center justify-center shadow-xs animate-bounce">
-                    <Volume2 className="w-2.5 h-2.5" />
-                  </span>
-                )}
               </button>
 
-              {/* DẤU MŨI TÊN KẾT NỐI GIỮA CÁC BƯỚC */}
+              {/* Dấu nối nhẹ nhàng giữa các bước */}
               {idx < formula.length - 1 && (
-                <div className="flex items-center justify-center text-stone-300 select-none px-0.5">
-                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
-                </div>
+                <span className="text-stone-300 font-bold select-none text-base sm:text-lg px-0.5">
+                  —
+                </span>
               )}
             </React.Fragment>
           );
         })}
       </div>
-
-      {/* DÒNG CHÚ THÍCH HƯỚNG DẪN 1-CHẠM DÀNH CHO BÉ */}
-      <div className="text-center pt-0.5">
-        <p className="text-[11px] text-stone-400 font-semibold">
-          💡 Bé có thể chạm vào từng thẻ bài trên sân khấu để nghe lại mẩu âm riêng nhé!
-        </p>
-      </div>
-    </section>
+    </div>
   );
 };

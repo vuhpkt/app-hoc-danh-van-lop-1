@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Square, RotateCcw, Volume2, Sparkles, Rabbit, Snail } from 'lucide-react';
+import { Play, Square, RotateCcw, Volume2, Type, Rabbit, Snail } from 'lucide-react';
 import { ReadingMode } from '../../types/index.ts';
 
 interface KidControlBarProps {
@@ -82,7 +82,7 @@ export const KidControlBar: React.FC<KidControlBarProps> = ({
               : 'text-stone-500 hover:text-stone-800'
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <Type className="w-3.5 h-3.5 text-amber-600" />
           <span>Đánh vần</span>
         </button>
       </div>

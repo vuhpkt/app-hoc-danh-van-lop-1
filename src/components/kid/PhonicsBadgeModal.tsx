@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Volume2, Sparkles, Play, Info } from 'lucide-react';
+import { X, Volume2, Play, Info } from 'lucide-react';
 import { Token } from '../../types/index.ts';
 import { spriteManager } from '../../core/audio/SpriteManager.ts';
 import { AudioSpritePlayer } from '../../core/audio/AudioSpritePlayer.ts';
@@ -67,9 +67,8 @@ export const PhonicsBadgeModal: React.FC<PhonicsBadgeModalProps> = ({ token, spe
 
         {/* Tiêu đề & Từ phóng to */}
         <div className="text-center space-y-1.5 pt-1">
-          <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 px-3 py-0.5 rounded-full border border-amber-200/80">
-            <Sparkles className="w-3 h-3 text-amber-500" />
-            <span>Bóc Tách Ngữ Âm</span>
+          <span className="inline-flex items-center text-[11px] font-black uppercase tracking-wider text-amber-800 bg-amber-50 px-3 py-0.5 rounded-full border border-amber-200/80">
+            <span>Cấu tạo tiếng</span>
           </span>
 
           <h2 className="text-5xl sm:text-6xl font-black text-stone-900 tracking-tight">
