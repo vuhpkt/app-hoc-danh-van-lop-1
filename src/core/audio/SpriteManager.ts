@@ -258,15 +258,15 @@ const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
   'chich': 'tu__chich',
   'quoc': 'tu__quoc',
   'quôc': 'tu__quoc',
-  'giăt': 'tu__giat',
-  'giat': 'tu__giat',
-  'hoc': 'tu__hoc',
-  'vit': 'tu__vit',
-  'măt': 'tu__mat',
-  'mat': 'tu__mat',
-  'quat': 'tu__quat',
-  'chuôt': 'tu__chuot',
-  'chuot': 'tu__chuot',
+  'giăt': 'tu__giat_sac',
+  'giat': 'tu__giat_sac',
+  'hoc': 'tu__hoc_sac',
+  'vit': 'tu__vit_sac',
+  'măt': 'tu__mat_sac',
+  'mat': 'tu__mat_sac',
+  'quat': 'tu__quat_sac',
+  'chuôt': 'tu__chuot_sac',
+  'chuot': 'tu__chuot_sac',
   'giắt': 'tu__giat_sac',
   'giặt': 'tu__giat',
   'hóc': 'tu__hoc_sac',
@@ -384,7 +384,7 @@ export class SpriteManager {
     return Math.round(80 + Math.max(0, 1 - clampedSpeed) * 850);
   }
 
-  public static readonly SPRITE_VERSION = 'v4.7.0';
+  public static readonly SPRITE_VERSION = 'v4.8.0';
 
   public async loadSprite(
     mapUrl?: string,

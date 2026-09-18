@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import { SlidersHorizontal, BookOpen, Sparkles } from 'lucide-react';
-import { Playground } from './pages/Playground';
+import { BookOpen, Sparkles } from 'lucide-react';
 import { KidLearningPage } from './pages/KidLearningPage';
 import { AlphabetLearningPage } from './pages/AlphabetLearningPage';
 
 export function App() {
-  const isDev = import.meta.env.DEV;
-  const [viewMode, setViewMode] = useState<'reader' | 'alphabet' | 'lab'>('reader');
-  const activeMode = !isDev && viewMode === 'lab' ? 'reader' : viewMode;
+  const [viewMode, setViewMode] = useState<'reader' | 'alphabet'>('reader');
 
   return (
     <div className="w-full min-h-screen bg-[#F8F6F1] flex flex-col font-sans text-stone-900">
@@ -22,13 +19,13 @@ export function App() {
           </span>
         </div>
 
-        {/* Nút chuyển đổi Chế Độ: Bé Đọc SGK | Bảng Chữ Cái & Âm | (Dev only: Thử Nghiệm) */}
+        {/* Nút chuyển đổi Chế Độ: Bé Đọc SGK | Bảng Chữ Cái & Âm */}
         <div className="flex items-center bg-stone-100/90 p-1 rounded-xl border border-stone-200/70 text-xs">
           <button
             type="button"
             onClick={() => setViewMode('reader')}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-              activeMode === 'reader'
+              viewMode === 'reader'
                 ? 'bg-white text-stone-900 font-black shadow-2xs'
                 : 'text-stone-500 hover:text-stone-800'
             }`}
@@ -41,7 +38,7 @@ export function App() {
             type="button"
             onClick={() => setViewMode('alphabet')}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-              activeMode === 'alphabet'
+              viewMode === 'alphabet'
                 ? 'bg-white text-emerald-800 font-black shadow-2xs'
                 : 'text-stone-500 hover:text-stone-800'
             }`}
@@ -49,30 +46,13 @@ export function App() {
             <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
             <span>Bảng Chữ Cái</span>
           </button>
-
-          {isDev && (
-            <button
-              type="button"
-              onClick={() => setViewMode('lab')}
-              className={`flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                activeMode === 'lab'
-                  ? 'bg-white text-blue-700 font-black shadow-2xs'
-                  : 'text-stone-500 hover:text-stone-800'
-              }`}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Thử Nghiệm</span>
-              <span className="sm:hidden">Lab</span>
-            </button>
-          )}
         </div>
       </nav>
 
       {/* Main View */}
       <main className="flex-1">
-        {activeMode === 'reader' && <KidLearningPage />}
-        {activeMode === 'alphabet' && <AlphabetLearningPage />}
-        {activeMode === 'lab' && <Playground />}
+        {viewMode === 'reader' && <KidLearningPage />}
+        {viewMode === 'alphabet' && <AlphabetLearningPage />}
       </main>
     </div>
   );

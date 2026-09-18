@@ -124,5 +124,12 @@ describe('Phonics 5-Step Formula Verification (SGK Kết Nối Tri Thức)', () 
     assert.equal(gieng.rime, 'iêng');
     assert.deepEqual(gieng.spellingFormula, ['gi', 'iêng', 'giêng', 'sắc', 'giếng']);
   });
+
+  it('9. Từ "học": bước đệm "hoc" phải giải mã ra "tu__hoc_sac" (phát âm là "hóc"), từ đọc "học" giải mã ra "tu__hoc"', async () => {
+    const { SpriteManager } = await import('../src/core/audio/SpriteManager.ts');
+    const sm = SpriteManager.getInstance();
+    assert.equal(sm.resolveSpriteKey('hoc'), 'tu__hoc_sac', 'Bước đệm "hoc" phải phát âm là "hóc" (tu__hoc_sac)');
+    assert.equal(sm.resolveSpriteKey('học'), 'tu__hoc', 'Từ hoàn chỉnh "học" phải phát âm là "học" (tu__hoc)');
+  });
 });
 
