@@ -90,13 +90,13 @@ export const PhonicsKaraokeStage: React.FC<PhonicsKaraokeStageProps> = ({
         <button
           type="button"
           onClick={onReplayWord}
-          title={`Bấm để nghe lại từ "${token.clean || token.raw}"`}
+          title={`Bấm để nghe lại từ "${token.phonics?.clean || token.text}"`}
           className="inline-flex items-center gap-1.5 bg-amber-100/80 hover:bg-amber-200/90 text-amber-950 px-3 py-1 rounded-full text-xs font-black border border-amber-300 shadow-2xs cursor-pointer active:scale-95 transition-all"
         >
           <Volume2 className="w-3.5 h-3.5 text-amber-700" />
           <span>Từ:</span>
           <span className="text-sm font-black text-amber-900 underline decoration-amber-400 underline-offset-2">
-            {token.clean || token.raw}
+            {token.phonics?.clean || token.text}
           </span>
         </button>
       </div>

@@ -43,4 +43,29 @@ describe('PhonicsKaraokeStage Component & Montessori UI Standards', () => {
     assert.ok(content.includes('tiếng'), 'Phải có nhãn tiếng');
     assert.ok(content.includes('từ đọc'), 'Phải có nhãn từ đọc');
   });
+
+  it('6. Option 1: Sân khấu PhonicsKaraokeStage được tích hợp phía TRÊN KidReaderBoard trong KidLearningPage', () => {
+    const pagePath = path.join(rootDir, 'src', 'pages', 'KidLearningPage.tsx');
+    assert.ok(fs.existsSync(pagePath), 'Phải tồn tại file KidLearningPage.tsx');
+    const pageContent = fs.readFileSync(pagePath, 'utf-8');
+
+    // Kiểm tra import
+    assert.ok(pageContent.includes("import { PhonicsKaraokeStage } from '../components/kid/PhonicsKaraokeStage.tsx'"), 'Phải import PhonicsKaraokeStage');
+
+    // Kiểm tra vị trí: Sân khấu nằm TRƯỚC KidReaderBoard trong JSX
+    const stageIndex = pageContent.indexOf('<PhonicsKaraokeStage');
+    const boardIndex = pageContent.indexOf('<KidReaderBoard');
+    assert.ok(stageIndex !== -1, 'Phải có <PhonicsKaraokeStage trong JSX');
+    assert.ok(boardIndex !== -1, 'Phải có <KidReaderBoard trong JSX');
+    assert.ok(stageIndex < boardIndex, 'Option 1: PhonicsKaraokeStage phải đặt TRƯỚC (phía trên) KidReaderBoard');
+
+    // Kiểm tra hiển thị khi readingMode === "spelling"
+    assert.ok(pageContent.includes("readingMode === 'spelling' && ("), 'Sân khấu phải hiển thị khi ở chế độ spelling');
+
+    // Kiểm tra state activeSubStepIndex và callbacks
+    assert.ok(pageContent.includes('activeSubStepIndex'), 'Phải quản lý state activeSubStepIndex');
+    assert.ok(pageContent.includes('handleStageStepClick'), 'Phải có hàm tương tác 1-chạm handleStageStepClick');
+    assert.ok(pageContent.includes('handleStageReplayWord'), 'Phải có hàm nghe lại từ handleStageReplayWord');
+  });
 });
+

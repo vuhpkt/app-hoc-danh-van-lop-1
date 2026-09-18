@@ -160,10 +160,45 @@ Dự án phát triển ứng dụng web/PWA học đánh vần chuẩn SGK Lớp
   - Kiểm tra độ phủ, thời lượng âm học `gh`, `ngh` và giao diện tối giản.
   - Chạy `npm test` và `npm run build` đạt 100% pass 0 lỗi.
 
-#### Checkpoint 13: Âm Học Chuẩn Xác & Giao Diện Tối Giản Hoàn Hảo
-- [ ] 28 phụ âm phát âm chuẩn xác không tạp âm ngoại lai.
-- [ ] Giao diện sạch sẽ, thân thiện với trẻ 5-6 tuổi.
-- [ ] 100% tests PASS, build sạch sẽ.
+#### Checkpoint 13: Âm Học Chuẩn Xác & Giao Diện Tối Giản Hoàn Hảo [ĐÃ ĐẠT]
+- [x] 28 phụ âm phát âm chuẩn xác không tạp âm ngoại lai.
+- [x] Giao diện sạch sẽ, thân thiện với trẻ 5-6 tuổi.
+- [x] 100% tests PASS (119/119), build sạch sẽ.
+
+---
+
+### Phase 14: Chuẩn Hóa Đánh Vần 5 Bước (l - ơp - lơp - sắc - lớp) & Sân Khấu Karaoke Ngữ Âm Giao Diện Bé Đọc
+
+#### Mục tiêu & Căn cứ:
+- Chuẩn hóa công thức đánh vần cho từ có thanh điệu thành chuỗi 5 bước: `[âm đầu] - [vần không dấu] - [tiếng thanh ngang] - [dấu thanh] - [tiếng hoàn chỉnh]`. Ví dụ từ "lớp" là `l - ơp - lơp - sắc - lớp`.
+- Xây dựng Sân khấu đánh vần phía TRÊN bảng bài đọc (`KidReaderBoard`) trong chế độ `spelling` (Phương án 1).
+- Hiển thị hiệu ứng Karaoke thời gian thực theo từng bước phát âm (`activeStepIndex`), bé chạm vào từng thẻ để nghe lại riêng từng mẩu âm.
+
+#### Danh sách công việc:
+- [x] **Task 14.1: Cập nhật Parser Ngữ Âm chuẩn hóa 5 bước cho mọi âm tiết có thanh**
+  - Cập nhật `generateSpellingFormula` trong `src/core/parser/vietnamesePhonics.ts`.
+  - Từ "lớp" trả về: `formula: ['l', 'ơp', 'lơp', 'sắc', 'lớp']`, `formulaText: 'l - ơp - lơp - sắc - lớp'`.
+  - Đồng bộ các từ khép tắc có thanh khác ("bắt", "học", "hát", "vịt", "sách") sang 5 bước.
+- [x] **Task 14.2: Tích hợp Audio Clips & Ánh xạ Sprite cho công thức 5 bước**
+  - Bổ sung `tu__lop.mp3` và `tu__lop_ngang.mp3` vào kho âm thanh.
+  - Cập nhật `TOKEN_TO_SPRITE_KEY_MAP` trong `SpriteManager.ts` cho các tiếng thanh ngang và từ mới.
+  - Nâng `SPRITE_VERSION = 'v4.6.0'` và đóng gói Master Audio Sprite.
+- [x] **Task 14.3: Xây dựng Component `PhonicsKaraokeStage.tsx`**
+  - Thẻ bài Montessori xúc giác lớn ($\ge 56\text{px}$), bố cục chuỗi phân rã ngữ âm.
+  - Karaoke Highlight: bừng sáng viền vàng hổ phách, scale-110, icon loa chuyển động nhịp nhàng theo `activeStepIndex`.
+  - Tương tác 1-chạm: Bé nhấn vào từng thẻ riêng biệt trên sân khấu để nghe lại âm thanh của riêng bước đó.
+- [x] **Task 14.4: Tích hợp Sân Khấu vào `KidLearningPage.tsx` Phía Trên Bảng Bài Đọc (Option 1)**
+  - Đặt Sân khấu phía trên `KidReaderBoard` trong chế độ `spelling`.
+  - Kết nối callbacks `onStepChange` từ `AudioSpritePlayer` với `activeSubStepIndex`.
+  - Tự động chuyển từ và đồng bộ nhịp điệu khi phát đọc toàn bài hoặc khi chạm vào từ.
+- [x] **Task 14.5: Kiểm thử Hồi quy Toàn diện & Đóng gói Production**
+  - Viết unit tests kiểm tra phân rã 5 bước và tương tác sân khấu Karaoke (`test/phonics_5step.test.js`, `test/phonics_karaoke_stage.test.js`).
+  - Chạy `npm test` (132/132 tests PASS 100%) và `npm run build` (0 lỗi TypeScript, 2.28s).
+
+#### Checkpoint 14: Đánh Vần 5 Bước Sư Phạm & Sân Khấu Karaoke Hoàn Hảo [ĐÃ HOÀN THÀNH XUẤT SẮC]
+- [x] Từ "lớp" và các từ có dấu thanh đánh vần chuẩn 5 bước `l - ơp - lơp - sắc - lớp`.
+- [x] Sân khấu hiển thị nổi bật phía trên bài đọc, Karaoke sáng từng bước đồng bộ giọng đọc.
+- [x] Toàn bộ test suite PASS (132/132 tests), build production sạch sẽ 0 lỗi.
 
 ---
 

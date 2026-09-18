@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { PlusCircle, RefreshCw, Trash2, CheckCircle2, AlertCircle, Zap, Settings, BookOpen } from 'lucide-react';
 import { Token, ReadingMode } from '../types/index.ts';
 import { tokenizeVietnameseText } from '../core/parser/vietnamesePhonics.ts';
@@ -11,6 +11,7 @@ import { GRADE1_LESSONS } from '../core/data/grade1Lessons.ts';
 import { KidReaderBoard } from '../components/kid/KidReaderBoard.tsx';
 import { KidControlBar } from '../components/shared/KidControlBar.tsx';
 import { PhonicsBadgeModal } from '../components/kid/PhonicsBadgeModal.tsx';
+import { PhonicsKaraokeStage } from '../components/kid/PhonicsKaraokeStage.tsx';
 import { ParentLessonModal, CustomLessonData } from '../components/parent/ParentLessonModal.tsx';
 
 export { GRADE1_LESSONS };
@@ -30,6 +31,7 @@ export const KidLearningPage: React.FC = () => {
 
   const [tokens, setTokens] = useState<Token[]>(() => tokenizeVietnameseText(currentLesson.text));
   const [activeWordIdx, setActiveWordIdx] = useState<number>(-1);
+  const [activeSubStepIndex, setActiveSubStepIndex] = useState<number>(-1);
   const [activeSubStepLabel, setActiveSubStepLabel] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [readingMode, setReadingMode] = useState<ReadingMode>('fluent');
@@ -155,8 +157,21 @@ export const KidLearningPage: React.FC = () => {
     }
   };
 
+  const syllablesOnly = useMemo(() => tokens.filter((t) => t.type === 'syllable'), [tokens]);
+
+  const currentStageToken = useMemo(() => {
+    if (activeWordIdx >= 0 && activeWordIdx < syllablesOnly.length) {
+      return syllablesOnly[activeWordIdx];
+    }
+    if (selectedToken) {
+      return selectedToken;
+    }
+    return syllablesOnly[0] || null;
+  }, [activeWordIdx, selectedToken, syllablesOnly]);
+
   const handleSelectLesson = (lesson: { id: string; title: string; text: string; note?: string }) => {
     handleStop();
+    setSelectedToken(null);
     setCurrentLesson(lesson);
     setTokens(tokenizeVietnameseText(lesson.text));
     if (typeof localStorage !== 'undefined') {
@@ -167,6 +182,7 @@ export const KidLearningPage: React.FC = () => {
 
   const handleSaveLesson = (lesson: CustomLessonData) => {
     handleStop();
+    setSelectedToken(null);
     setCurrentLesson(lesson);
     setTokens(tokenizeVietnameseText(lesson.text));
     if (typeof localStorage !== 'undefined') {
@@ -181,8 +197,10 @@ export const KidLearningPage: React.FC = () => {
       playbackControllerRef.current.stop();
       playbackControllerRef.current = null;
     }
+    spriteManager.stop();
     setIsPlaying(false);
     setActiveWordIdx(-1);
+    setActiveSubStepIndex(-1);
     setActiveSubStepLabel('');
     setPreparingInfo(null);
   };
@@ -195,6 +213,8 @@ export const KidLearningPage: React.FC = () => {
 
     setIsPlaying(true);
     setActiveWordIdx(-1);
+    setActiveSubStepIndex(-1);
+    setActiveSubStepLabel('');
     setPreparingInfo(null);
     setSelectedToken(null);
     audioManager.playClickSound();
@@ -213,6 +233,8 @@ export const KidLearningPage: React.FC = () => {
         () => {
           setIsPlaying(false);
           setActiveWordIdx(-1);
+          setActiveSubStepIndex(-1);
+          setActiveSubStepLabel('');
           setPreparingInfo(null);
           audioManager.playSuccessChime();
         },
@@ -226,14 +248,16 @@ export const KidLearningPage: React.FC = () => {
       playbackControllerRef.current = AudioSpritePlayer.playSentenceSpelling(
         wordsData,
         speed,
-        (wIdx, _subIdx, subLabel) => {
+        (wIdx, subIdx, subLabel) => {
           setPreparingInfo(null);
           setActiveWordIdx(wIdx);
+          setActiveSubStepIndex(subIdx);
           setActiveSubStepLabel(subLabel);
         },
         () => {
           setIsPlaying(false);
           setActiveWordIdx(-1);
+          setActiveSubStepIndex(-1);
           setActiveSubStepLabel('');
           setPreparingInfo(null);
           audioManager.playSuccessChime();
@@ -251,7 +275,6 @@ export const KidLearningPage: React.FC = () => {
     handleStop();
     setSelectedToken(token);
 
-    const syllablesOnly = tokens.filter((t) => t.type === 'syllable');
     const syllableIdx = syllablesOnly.findIndex((t) => t.id === token.id);
     if (syllableIdx !== -1) {
       setActiveWordIdx(syllableIdx);
@@ -261,14 +284,18 @@ export const KidLearningPage: React.FC = () => {
       if (readingMode === 'fluent') {
         AudioSpritePlayer.playFluentWord(token.phonics, speed);
       } else {
-        AudioSpritePlayer.playSpellingSequence(
+        setIsPlaying(true);
+        playbackControllerRef.current = AudioSpritePlayer.playSpellingSequence(
           token.phonics,
           speed,
-          (_subIdx) => {
-            const step = token.phonics?.spellingFormula[_subIdx] || '';
+          (subIdx) => {
+            setActiveSubStepIndex(subIdx);
+            const step = token.phonics?.spellingFormula[subIdx] || '';
             setActiveSubStepLabel(step);
           },
           () => {
+            setIsPlaying(false);
+            setActiveSubStepIndex(-1);
             setActiveSubStepLabel('');
           }
         );
@@ -276,6 +303,44 @@ export const KidLearningPage: React.FC = () => {
     } else {
       audioManager.playClickSound();
     }
+  };
+
+  // Tương tác 1-chạm trên sân khấu: Bé bấm vào từng mẩu âm để nghe lại mẩu âm riêng
+  const handleStageStepClick = (stepIndex: number, stepLabel: string) => {
+    handleStop();
+    setActiveSubStepIndex(stepIndex);
+    setActiveSubStepLabel(stepLabel);
+    spriteManager.playAudioSegment(stepLabel).then(() => {
+      setActiveSubStepIndex(-1);
+      setActiveSubStepLabel('');
+    });
+  };
+
+  // Bấm nút loa trên sân khấu để nghe lại toàn bộ công thức đánh vần của từ đang học
+  const handleStageReplayWord = () => {
+    if (!currentStageToken?.phonics) return;
+    handleStop();
+    setIsPlaying(true);
+
+    const syllableIdx = syllablesOnly.findIndex((t) => t.id === currentStageToken.id);
+    if (syllableIdx !== -1) {
+      setActiveWordIdx(syllableIdx);
+    }
+
+    playbackControllerRef.current = AudioSpritePlayer.playSpellingSequence(
+      currentStageToken.phonics,
+      speed,
+      (subIdx) => {
+        setActiveSubStepIndex(subIdx);
+        const step = currentStageToken.phonics?.spellingFormula[subIdx] || '';
+        setActiveSubStepLabel(step);
+      },
+      () => {
+        setIsPlaying(false);
+        setActiveSubStepIndex(-1);
+        setActiveSubStepLabel('');
+      }
+    );
   };
 
   return (
@@ -425,6 +490,18 @@ export const KidLearningPage: React.FC = () => {
         </div>
       )}
 
+      {/* SÂN KHẤU ĐÁNH VẦN KARAOKE (OPTION 1: PHÍA TRÊN BÀI ĐỌC) */}
+      {readingMode === 'spelling' && (
+        <PhonicsKaraokeStage
+          token={currentStageToken}
+          activeStepIndex={activeSubStepIndex}
+          activeStepLabel={activeSubStepLabel}
+          isPlaying={isPlaying}
+          onStepClick={handleStageStepClick}
+          onReplayWord={handleStageReplayWord}
+        />
+      )}
+
       {/* BẢNG BÀI ĐỌC (TRANG SÁCH GIẤY NGÀ ẤM ÁP) */}
       <KidReaderBoard
         tokens={tokens}
@@ -444,13 +521,14 @@ export const KidLearningPage: React.FC = () => {
         onReset={handleStop}
         onModeChange={(m) => {
           handleStop();
+          setSelectedToken(null);
           setReadingMode(m);
         }}
         onSpeedChange={setSpeed}
       />
 
-      {/* POPUP BÓC TÁCH NGỮ ÂM 3 MÀU KHI CHẠM VÀO TỪ */}
-      {selectedToken && (
+      {/* POPUP BÓC TÁCH NGỮ ÂM KHI CHẠM VÀO TỪ TRONG CHẾ ĐỘ ĐỌC TRƠN */}
+      {readingMode === 'fluent' && selectedToken && (
         <PhonicsBadgeModal
           token={selectedToken}
           speed={speed}
