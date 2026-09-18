@@ -34,3 +34,7 @@ scripts/test_*.js
 
 # Teamwork subagent artifacts
 .agents/
+
+# User raw audio uploads
+*.mp3_HTS.mp3
+
