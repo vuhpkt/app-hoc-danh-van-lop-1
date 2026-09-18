@@ -49,6 +49,10 @@ export class LessonAudioSyncer {
   public static async isWordAvailable(word: string): Promise<boolean> {
     const clean = word.toLowerCase().trim();
 
+    if (!spriteManager.isSpriteReady()) {
+      await spriteManager.loadSprite();
+    }
+
     // 1. Kiểm tra trong Audio Sprite Master
     if (spriteManager.resolveSpriteKey(clean)) {
       return true;

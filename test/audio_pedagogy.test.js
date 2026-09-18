@@ -189,6 +189,9 @@ test('Sprite Mapping & Audio Map Resolution - 100% Coverage for Grade 1 Core Wor
   });
 
   await t.test('2. 100% of words in all 4 Grade 1 sample poems resolve in audio-map for Fluent Karaoke', () => {
+    assert.equal(sm.resolveSpriteKey('em'), 'tu__em', "Từ 'em' trong bài đọc phải ánh xạ đến 'tu__em'");
+    assert.equal(sm.resolveSpriteKey('lo'), 'tu__lo', "Từ 'lo' trong bài đọc phải ánh xạ đến 'tu__lo'");
+
     const SAMPLE_POEMS_TEXTS = [
       'Trường học của em khang trang. Tiếng chim hót líu lo trên cành cây. Bé học bài vui vẻ.',
       'Ve vẻ vè ve. Cái vè chim chích. Bắt sâu đầu cành. Giúp ích cho cây.',
@@ -215,6 +218,8 @@ test('Acoustic Quality Verification for Master Audio Clips', async (t) => {
     { filename: 'van__a_breve_t.mp3', label: 'ắt' },
     { filename: 'tu__giat_sac.mp3', label: 'giắt' },
     { filename: 'tu__giat.mp3', label: 'giặt' },
+    { filename: 'tu__em.mp3', label: 'em' },
+    { filename: 'tu__lo.mp3', label: 'lo' },
   ];
 
   for (const { filename, label } of CLIPS_TO_VERIFY) {

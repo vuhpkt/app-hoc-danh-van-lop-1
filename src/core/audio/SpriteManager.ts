@@ -60,11 +60,11 @@ const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
   // 2. 6 DẤU THANH
   // ==========================================
   'ngang': 'thanh__ngang', 'không dấu': 'thanh__ngang', 'thanh ngang': 'thanh__ngang',
-  'huyền': 'thanh__huyen', 'huyen': 'thanh__huyen',
-  'sắc': 'thanh__sac', 'sac': 'thanh__sac',
-  'hỏi': 'thanh__hoi', 'hoi': 'thanh__hoi',
-  'ngã': 'thanh__nga', 'nga': 'thanh__nga',
-  'nặng': 'thanh__nang', 'nang': 'thanh__nang',
+  'huyền': 'thanh__huyen', 'huyen': 'thanh__huyen', 'thanh huyền': 'thanh__huyen',
+  'sắc': 'thanh__sac', 'sac': 'thanh__sac', 'thanh sắc': 'thanh__sac',
+  'thanh hỏi': 'thanh__hoi', 'dấu hỏi': 'thanh__hoi', 'thanh_hoi': 'thanh__hoi',
+  'ngã': 'thanh__nga', 'nga': 'thanh__nga', 'thanh ngã': 'thanh__nga',
+  'nặng': 'thanh__nang', 'nang': 'thanh__nang', 'thanh nặng': 'thanh__nang',
 
   // ==========================================
   // 3. TOÀN BỘ VẦN TIẾNG VIỆT LỚP 1
@@ -123,7 +123,7 @@ const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
   'am': 'van__am',
   'ăm': 'van__a_breve_m',
   'âm': 'van__a_hat_m',
-  'em': 'van__em',
+  'vần em': 'van__em', 'van__em': 'van__em',
   'êm': 'van__e_hat_m',
   'im': 'van__im',
   'om': 'van__om',
@@ -288,6 +288,7 @@ const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
   // 5. TOÀN BỘ TỪ VỰNG 4 BÀI ĐỌC MẪU SGK LỚP 1
   // ==========================================
   // Bài 1: Trường học của em
+  'em': 'tu__em',
   'của': 'tu__cua', 'cua': 'tu__cua_ngang',
   'khang': 'tu__khang',
   'trang': 'tu__trang',
@@ -331,6 +332,7 @@ const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
   'con': 'tu__con',
   'cá': 'tu__ca_sac', 'ca': 'tu__ca',
   'nhỏ': 'tu__nho_hoi', 'nho': 'tu__nho',
+  'hỏi': 'tu__hoi', 'hoi': 'tu__hoi',
 };
 
 
@@ -345,6 +347,7 @@ export class SpriteManager {
   private isLoading = false;
   private currentPlaybackId = 0;
   private activeGainNodes: GainNode[] = [];
+  private activeTimeouts: ReturnType<typeof setTimeout>[] = [];
 
   private constructor() {}
 
@@ -360,10 +363,13 @@ export class SpriteManager {
     return Math.round(80 + Math.max(0, 1 - clampedSpeed) * 850);
   }
 
+  public static readonly SPRITE_VERSION = 'v4.2.0';
+
   public async loadSprite(
-    mapUrl = '/audio/audio-map.json',
-    audioUrl = '/audio/sprite-main.mp3'
+    mapUrl = `/audio/audio-map.json?v=${SpriteManager.SPRITE_VERSION}`,
+    audioUrl = `/audio/sprite-main.mp3?v=${SpriteManager.SPRITE_VERSION}`
   ): Promise<boolean> {
+    if (typeof window === 'undefined') return false;
     if (this.isLoaded) return true;
     if (this.isLoading) {
       await new Promise((r) => setTimeout(r, 200));
@@ -462,12 +468,20 @@ export class SpriteManager {
     return this.clipBuffers.size;
   }
 
+  public getClipBuffer(tokenOrKey: string): AudioBuffer | undefined {
+    const clean = tokenOrKey.toLowerCase().trim();
+    const key = this.resolveSpriteKey(clean) || clean;
+    return this.clipBuffers.get(key) || this.dynamicBuffers.get(clean);
+  }
+
   public clearDynamicBuffers(): void {
     this.dynamicBuffers.clear();
   }
 
   public stop(): void {
     this.currentPlaybackId++;
+    this.activeTimeouts.forEach((t) => clearTimeout(t));
+    this.activeTimeouts = [];
     const ctx = webAudioEngine.getAudioContext();
     const now = ctx.currentTime;
 
@@ -499,10 +513,15 @@ export class SpriteManager {
    * Đảm bảo file âm thanh sẵn sàng 100% trước khi phát
    */
   public async preloadAudio(spriteKeyOrToken: string): Promise<boolean> {
+    // 0. Đảm bảo Master Sprite đã được nạp sẵn trong RAM
+    if (!this.isSpriteReady()) {
+      await this.loadSprite();
+    }
+
     const clean = spriteKeyOrToken.toLowerCase().trim();
     const spriteKey = this.resolveSpriteKey(clean) || clean;
 
-    // 1. Đã có trong RAM
+    // 1. Đã có trong RAM (Master Sprite hoặc Dynamic Buffer)
     if (this.clipBuffers.has(spriteKey) || this.dynamicBuffers.has(clean)) {
       return true;
     }
@@ -512,9 +531,9 @@ export class SpriteManager {
     if (cachedData) {
       const ctx = webAudioEngine.getAudioContext();
       try {
-        const rawClipBuffer = await ctx.decodeAudioData(cachedData.slice(0));
-        const enhancedBuffer = audioDspProcessor.trimAndEnhanceAudioBuffer(rawClipBuffer, ctx);
-        this.dynamicBuffers.set(clean, enhancedBuffer);
+        const cachedClipBuffer = await ctx.decodeAudioData(cachedData.slice(0));
+        // Dữ liệu trong cache đã được DSP tối ưu trước khi lưu, giữ nguyên để phát mượt mà
+        this.dynamicBuffers.set(clean, cachedClipBuffer);
         return true;
       } catch (err) {
         console.warn(`Lỗi giải mã audio cho từ cache "${clean}":`, err);
@@ -534,8 +553,11 @@ export class SpriteManager {
         const ctx = webAudioEngine.getAudioContext();
         const rawDecoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
 
-        // Xử lý DSP: Cắt khoảng lặng trễ, 12ms Hann Windowing, Peak Normalization (-1dBFS)
-        const enhancedBuffer = audioDspProcessor.trimAndEnhanceAudioBuffer(rawDecoded, ctx);
+        // Xử lý DSP Đồng bộ 100% với Kho gốc trên máy (scripts/build-audio-sprite.js):
+        // Giữ nguyên khoảng đệm lấy hơi tự nhiên đầu file (~160ms), tail 50ms, Hann windowing 12ms, 0dB gain boost
+        const enhancedBuffer = audioDspProcessor.trimAndEnhanceAudioBuffer(rawDecoded, ctx, {
+          profile: 'master_sprite_sync',
+        });
         this.dynamicBuffers.set(clean, enhancedBuffer);
 
         // Lưu bản WAV 16-bit PCM đã xử lý hoàn chỉnh vào cache ngoại tuyến
@@ -567,19 +589,29 @@ export class SpriteManager {
   public async playAudioSegment(spriteKeyOrToken: string): Promise<void> {
     const clean = spriteKeyOrToken.toLowerCase().trim();
     const spriteKey = this.resolveSpriteKey(clean) || clean;
+    const playbackId = this.currentPlaybackId;
 
     // Đảm bảo clip đã được nạp sẵn vào RAM trước khi phát
     await this.preloadAudio(clean);
+    if (playbackId !== this.currentPlaybackId) return;
 
     const clipBuffer = this.clipBuffers.get(spriteKey) || this.dynamicBuffers.get(clean);
 
-    // Nếu vẫn không có clip (do offline hoặc API lỗi), dừng lại (KHÔNG dùng robot Web Speech)
+    // Nếu vẫn không có clip (do offline hoặc API lỗi), fallback sang synthetic tone thay vì đứng im
     if (!clipBuffer) {
-      console.warn(`⚠️ Không thể phát âm thanh cho: "${spriteKeyOrToken}" (key: ${spriteKey}) - Đã hủy bỏ fallback Web Speech robot`);
+      console.warn(`⚠️ Không thể lấy clip thực cho: "${spriteKeyOrToken}" (key: ${spriteKey}) - Fallback âm thanh tổng hợp Web Audio`);
+      if (playbackId === this.currentPlaybackId) {
+        await webAudioEngine.playSyntheticTone(clean, 'ngang', 450, 1.0);
+      }
       return;
     }
 
     return new Promise((resolve) => {
+      if (playbackId !== this.currentPlaybackId) {
+        resolve();
+        return;
+      }
+
       const ctx = webAudioEngine.getAudioContext();
       const source = ctx.createBufferSource();
       const gainNode = ctx.createGain();
@@ -608,21 +640,28 @@ export class SpriteManager {
       source.start(startTime);
       source.stop(stopTime);
 
+      let timer: ReturnType<typeof setTimeout> | null = null;
+
       const cleanup = () => {
         try {
           source.disconnect();
           gainNode.disconnect();
         } catch {}
         this.activeGainNodes = this.activeGainNodes.filter((g) => g !== gainNode);
+        if (timer) {
+          this.activeTimeouts = this.activeTimeouts.filter((t) => t !== timer);
+        }
       };
 
       source.onended = cleanup;
 
       // Đồng bộ Promise chuẩn thời gian thực với setTimeout
       const totalDurationMs = Math.round((LOOKAHEAD_SEC + duration) * 1000);
-      setTimeout(() => {
+      timer = setTimeout(() => {
+        cleanup();
         resolve();
       }, totalDurationMs);
+      this.activeTimeouts.push(timer);
     });
   }
 
@@ -643,6 +682,13 @@ export class SpriteManager {
     const paddingMs = SpriteManager.calculateSilencePadding(speed);
 
     try {
+      // 1. Tải trước toàn bộ âm thanh của các bước vào RAM để phát liền mạch không giật lag
+      for (const token of tokensOrKeys) {
+        if (playbackId !== this.currentPlaybackId) return;
+        await this.preloadAudio(token);
+      }
+
+      // 2. Phát tuần tự từng bước nhịp nhàng
       for (let i = 0; i < tokensOrKeys.length; i++) {
         if (playbackId !== this.currentPlaybackId) return;
 
@@ -654,7 +700,13 @@ export class SpriteManager {
         if (playbackId !== this.currentPlaybackId) return;
 
         if (i < tokensOrKeys.length - 1 && paddingMs > 0) {
-          await new Promise((r) => setTimeout(r, paddingMs));
+          await new Promise<void>((resolve) => {
+            const timer = setTimeout(() => {
+              this.activeTimeouts = this.activeTimeouts.filter((t) => t !== timer);
+              resolve();
+            }, paddingMs);
+            this.activeTimeouts.push(timer);
+          });
         }
       }
 

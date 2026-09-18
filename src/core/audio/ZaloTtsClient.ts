@@ -5,6 +5,8 @@
  * Sử dụng giọng Nữ Bắc Ngọc Huyền (Speaker ID: 2), tốc độ 0.8x chuẩn ngữ điệu sư phạm Lớp 1
  */
 
+import type { ITtsService } from '../../types/index.ts';
+
 export interface ZaloTtsResponse {
   error_code: number;
   error_message: string;
@@ -13,12 +15,12 @@ export interface ZaloTtsResponse {
   };
 }
 
-export class ZaloTtsClient {
+export class ZaloTtsClient implements ITtsService {
   private static instance: ZaloTtsClient;
   private endpoint = 'https://api.zalo.ai/v1/tts/synthesize';
   private defaultApiKey = 'yVryikwVR8F9V5ei1C6b0yT5k17XE59P';
   private speakerId = '2'; // Nữ Bắc Ngọc Huyền
-  private speed = '0.8';
+  private speed = '0.8'; // Tốc độ chuẩn 0.8x đồng bộ 100% với 225 clips trong Master Sprite Lớp 1
 
   private constructor() {}
 
@@ -48,7 +50,14 @@ export class ZaloTtsClient {
   }
 
   public setSpeed(speed: string): void {
-    this.speed = speed;
+    const num = parseFloat(speed);
+    if (!isNaN(num)) {
+      // Zalo AI worker chỉ chấp nhận số thập phân 1 chữ số (vd: 0.8, 0.9, 1.0)
+      const clamped = Math.min(1.2, Math.max(0.7, num));
+      this.speed = (Math.round(clamped * 10) / 10).toFixed(1);
+    } else {
+      this.speed = '0.8';
+    }
   }
 
   /**
@@ -63,10 +72,11 @@ export class ZaloTtsClient {
     }
 
     const apiKey = this.getApiKey();
+    const formattedSpeed = (parseFloat(this.speed) || 0.8).toFixed(1);
     const params = new URLSearchParams({
       input: cleanText,
       speaker_id: this.speakerId,
-      speed: this.speed,
+      speed: formattedSpeed,
       encode_type: '1', // mp3
     });
 
@@ -96,10 +106,11 @@ export class ZaloTtsClient {
    * Tải file từ Zalo CDN với cơ chế thăm dò (polling)
    * Zalo CDN cần khoảng 500ms - 1500ms để bộ mã hóa âm thanh ghi xong file MP3.
    */
-  public async downloadAudioWithPolling(url: string, maxAttempts = 6): Promise<ArrayBuffer> {
+  public async downloadAudioWithPolling(url: string, maxAttempts = 8): Promise<ArrayBuffer> {
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      // Chờ tăng dần: 500ms, 1000ms, 1500ms...
-      await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
+      // Zalo CDN cần khoảng 600ms - 1500ms để ghi xong file MP3
+      const waitMs = attempt === 1 ? 600 : Math.min(1800, 450 * attempt);
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
 
       try {
         const res = await fetch(url);

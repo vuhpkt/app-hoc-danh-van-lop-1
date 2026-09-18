@@ -4,9 +4,10 @@
  * - Hỗ trợ phát cả câu (Đọc trơn Karaoke / Đánh vần từng từ tuần tự cả câu)
  * - Tương thích mượt mà giữa Real Audio Sprite và Synthetic Tone Generator
  */
-import { AudioSpriteMap, PhonicsBreakdown } from '../../types';
-import { webAudioEngine, AudioSequenceItem } from './WebAudioEngine';
-import { spriteManager, SpriteManager } from './SpriteManager';
+import type { AudioSpriteMap, PhonicsBreakdown, Token } from '../../types/index.ts';
+import { webAudioEngine } from './WebAudioEngine.ts';
+import type { AudioSequenceItem } from './WebAudioEngine.ts';
+import { spriteManager, SpriteManager } from './SpriteManager.ts';
 
 export const MOCK_AUDIO_SPRITE_MAP: AudioSpriteMap = {
   'b': { id: 'b', label: 'Âm b', start: 0.0, duration: 0.5, category: 'initial' },
@@ -29,6 +30,97 @@ export const MOCK_AUDIO_SPRITE_MAP: AudioSpriteMap = {
 
 export class AudioSpritePlayer {
   private static sentencePlaybackId = 0;
+  private static activeDelays: ReturnType<typeof setTimeout>[] = [];
+
+  /**
+   * Tính toán khoảng nghỉ tự nhiên giữa các từ:
+   * - Tốc độ 1.0x: ~160ms
+   * - Tốc độ 0.8x: ~310ms (chuẩn SGK Lớp 1)
+   * - Tốc độ 0.6x: ~460ms (chậm cho bé mới làm quen)
+   * - Dấu phẩy (,): +150ms
+   * - Dấu chấm (.), than (!), hỏi (?), xuống dòng thơ (\n): +320ms
+   */
+  public static calculateInterWordGap(speed = 0.8, punctuationAfter?: string): number {
+    const baseGap = Math.round(160 + Math.max(0, 1 - speed) * 750);
+    if (!punctuationAfter) return baseGap;
+
+    if (punctuationAfter === '\n' || /[.!?]/.test(punctuationAfter)) {
+      return baseGap + 320;
+    }
+    if (/[,;:]/.test(punctuationAfter)) {
+      return baseGap + 150;
+    }
+    return baseGap;
+  }
+
+  /**
+   * Đóng gói tokens thành danh sách từ phát âm kèm thông tin dấu câu/ngắt dòng kế tiếp
+   * Giữ nguyên vị trí index để highlight Karaoke chính xác 100%
+   */
+  public static packageTokensForPlayback(tokens: Token[]): Array<{
+    text: string;
+    breakdown?: PhonicsBreakdown;
+    punctuationAfter?: string;
+    originalIndex: number;
+  }> {
+    const words: Array<{
+      text: string;
+      breakdown?: PhonicsBreakdown;
+      punctuationAfter?: string;
+      originalIndex: number;
+    }> = [];
+
+    let currentSyllable: {
+      text: string;
+      breakdown?: PhonicsBreakdown;
+      punctuationAfter?: string;
+      originalIndex: number;
+    } | null = null;
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+
+      if (token.type === 'syllable') {
+        if (currentSyllable) {
+          words.push(currentSyllable);
+        }
+        currentSyllable = {
+          text: token.text,
+          breakdown: token.phonics,
+          punctuationAfter: undefined,
+          originalIndex: words.length,
+        };
+      } else if (currentSyllable) {
+        if (token.type === 'punctuation') {
+          currentSyllable.punctuationAfter = token.text;
+        } else if (token.type === 'newline') {
+          currentSyllable.punctuationAfter = '\n';
+        }
+      }
+    }
+
+    if (currentSyllable) {
+      words.push(currentSyllable);
+    }
+
+    return words;
+  }
+
+  private static cancellableSleep(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      let timer: ReturnType<typeof setTimeout>;
+      timer = setTimeout(() => {
+        this.activeDelays = this.activeDelays.filter((t) => t !== timer);
+        resolve();
+      }, ms);
+      this.activeDelays.push(timer);
+    });
+  }
+
+  private static clearDelays(): void {
+    this.activeDelays.forEach((t) => clearTimeout(t));
+    this.activeDelays = [];
+  }
 
   /**
    * Chuyển đổi một PhonicsBreakdown thành danh sách các AudioSequenceItem
@@ -151,8 +243,8 @@ export class AudioSpritePlayer {
    * - Kích hoạt callback onWordChange(index) theo thời gian thực để highlight chữ
    */
   public static playSentenceFluent(
-    words: { text: string; breakdown?: PhonicsBreakdown }[],
-    speed = 1.0,
+    words: { text: string; breakdown?: PhonicsBreakdown; punctuationAfter?: string }[],
+    speed = 0.8,
     onWordChange?: (index: number) => void,
     onComplete?: () => void,
     useRealAudio = true,
@@ -160,9 +252,6 @@ export class AudioSpritePlayer {
   ): { stop: () => void } {
     this.sentencePlaybackId++;
     const currentId = this.sentencePlaybackId;
-
-    // Khoảng nghỉ tự nhiên giữa các từ trong câu: ~160ms ở 1.0x, ~400ms ở 0.7x, ~600ms ở 0.5x
-    const interWordGapMs = Math.round(160 + Math.max(0, 1 - speed) * 750);
 
     const run = async () => {
       // 1. Tải trước toàn bộ âm thanh của câu trước khi nhảy vào đọc!
@@ -191,9 +280,10 @@ export class AudioSpritePlayer {
 
         if (currentId !== this.sentencePlaybackId) return;
 
-        // Chèn khoảng nghỉ giữa 2 từ
+        // Chèn khoảng nghỉ giữa 2 từ (có tính dấu câu hoặc ngắt dòng bài thơ)
         if (i < words.length - 1) {
-          await new Promise((r) => setTimeout(r, interWordGapMs));
+          const gapMs = AudioSpritePlayer.calculateInterWordGap(speed, item.punctuationAfter);
+          await this.cancellableSleep(gapMs);
         }
       }
 
@@ -208,6 +298,7 @@ export class AudioSpritePlayer {
     return {
       stop: () => {
         this.sentencePlaybackId++;
+        this.clearDelays();
         spriteManager.stop();
         webAudioEngine.stop();
         onWordChange?.(-1);
@@ -221,8 +312,8 @@ export class AudioSpritePlayer {
    * - Báo cả vị trí từ đang đánh vần và mẩu âm (sub-step) đang phát để hiển thị Tooltip/Badge
    */
   public static playSentenceSpelling(
-    words: { text: string; breakdown?: PhonicsBreakdown }[],
-    speed = 1.0,
+    words: { text: string; breakdown?: PhonicsBreakdown; punctuationAfter?: string }[],
+    speed = 0.8,
     onStepChange?: (wordIdx: number, subStepIdx: number, subStepLabel: string) => void,
     onComplete?: () => void,
     useRealAudio = true,
@@ -231,7 +322,6 @@ export class AudioSpritePlayer {
     this.sentencePlaybackId++;
     const currentId = this.sentencePlaybackId;
 
-    const interWordGapMs = Math.round(350 + Math.max(0, 1 - speed) * 800);
     const intraPhonemeGapMs = SpriteManager.calculateSilencePadding(speed);
 
     const run = async () => {
@@ -287,14 +377,15 @@ export class AudioSpritePlayer {
 
           // Khoảng nghỉ giữa các mẩu âm trong 1 từ
           if (s < breakdown.spellingFormula.length - 1) {
-            await new Promise((r) => setTimeout(r, intraPhonemeGapMs));
+            await this.cancellableSleep(intraPhonemeGapMs);
           }
         }
 
-        // Khoảng nghỉ dài hơn giữa 2 từ khác nhau
+        // Khoảng nghỉ dài hơn giữa 2 từ khác nhau (có tính dấu câu hoặc ngắt dòng bài thơ)
         if (i < words.length - 1) {
           onStepChange?.(i, -1, '');
-          await new Promise((r) => setTimeout(r, interWordGapMs));
+          const gapMs = AudioSpritePlayer.calculateInterWordGap(speed, item.punctuationAfter) + 120;
+          await this.cancellableSleep(gapMs);
         }
       }
 
@@ -309,6 +400,7 @@ export class AudioSpritePlayer {
     return {
       stop: () => {
         this.sentencePlaybackId++;
+        this.clearDelays();
         spriteManager.stop();
         webAudioEngine.stop();
         onStepChange?.(-1, -1, '');

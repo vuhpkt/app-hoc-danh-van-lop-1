@@ -10,6 +10,7 @@
     "test": "node --experimental-strip-types --test test/*.test.js",
     "generate:audio": "node scripts/generate-tts-audio.js",
     "generate:zalo": "node scripts/generate-zalo-tts.js",
+    "stretch:audio": "node scripts/stretch-raw-audio.js",
     "build:sprite": "node scripts/build-audio-sprite.js"
   },
   "dependencies": {

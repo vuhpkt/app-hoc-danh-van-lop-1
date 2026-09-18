@@ -36,6 +36,36 @@ test('ZaloTtsClient - Config and Dynamic Fallback Readiness', () => {
   assert.ok(zaloTtsClient, 'zaloTtsClient must be defined');
   const apiKey = zaloTtsClient.getApiKey();
   assert.ok(apiKey && apiKey.length > 10, 'Zalo AI API key must be configured and valid');
-  assert.equal(zaloTtsClient.getSpeed(), '0.8', 'Zalo AI TTS default speed must be set to 0.8 for Grade 1 kids');
+  assert.equal(zaloTtsClient.getSpeed(), '0.8', 'Zalo AI TTS default speed must be set to 0.8 (matching master sprite)');
   assert.equal(typeof zaloTtsClient.fetchAudioBuffer, 'function');
+
+  // Test chuẩn hóa tốc độ 1 chữ số thập phân
+  zaloTtsClient.setSpeed('0.75');
+  assert.equal(zaloTtsClient.getSpeed(), '0.8', 'setSpeed must normalize 0.75 to 0.8');
+  zaloTtsClient.setSpeed('0.8');
+});
+
+import { parseVietnamesePhonics } from '../src/core/parser/vietnamesePhonics.ts';
+
+test('Phonics & Dynamic Audio Pipeline for Grade 1 Word "mèo"', async () => {
+  const breakdown = parseVietnamesePhonics('mèo');
+  assert.equal(breakdown.raw, 'mèo');
+  assert.equal(breakdown.initialConsonant, 'm');
+  assert.equal(breakdown.rime, 'eo');
+  assert.equal(breakdown.tone, 'huyen');
+  assert.deepEqual(breakdown.spellingFormula, ['m', 'eo', 'meo', 'huyền', 'mèo']);
+
+  // Kiểm tra cả từ chính 'mèo' và tiếng đệm 'meo' đều tải thành công từ Zalo TTS
+  try {
+    const meoBuffer = await zaloTtsClient.fetchAudioBuffer('meo');
+    assert.ok(meoBuffer && meoBuffer.byteLength > 1000, 'Audio buffer for "meo" must be valid');
+    const meoWordBuffer = await zaloTtsClient.fetchAudioBuffer('mèo');
+    assert.ok(meoWordBuffer && meoWordBuffer.byteLength > 1000, 'Audio buffer for "mèo" must be valid');
+  } catch (err) {
+    if (err.message?.includes('fetch failed') || err.message?.includes('ENOTFOUND')) {
+      console.warn('Network offline during live Zalo TTS test, skipped live assertion');
+    } else {
+      throw err;
+    }
+  }
 });

@@ -5,7 +5,7 @@ import { audioDspProcessor } from '../src/core/audio/AudioDspProcessor.ts';
 test('AudioDspProcessor - Speech Boundaries and Silence Trimming', async (t) => {
   const SAMPLE_RATE = 24000;
 
-  await t.test('1. Trims leading silence (>200ms) with 10ms safe pre-roll', () => {
+  await t.test('1. Trims leading silence (>200ms) with 25ms safe pre-roll', () => {
     const totalSamples = SAMPLE_RATE * 1; // 1 second
     const samples = new Float32Array(totalSamples);
 
@@ -18,12 +18,12 @@ test('AudioDspProcessor - Speech Boundaries and Silence Trimming', async (t) => 
 
     const { startIdx, endIdx } = audioDspProcessor.detectSpeechBoundaries(samples, SAMPLE_RATE);
 
-    // Speech begins around 6000. With 10ms pre-roll (240 samples), startIdx should be ~5760
-    assert.ok(startIdx > 5000 && startIdx < 6050, `startIdx should be around 5760, got ${startIdx}`);
+    // Speech begins around 6000. With 25ms pre-roll (600 samples), startIdx should be ~5400
+    assert.ok(startIdx > 5200 && startIdx < 5600, `startIdx should be around 5400, got ${startIdx}`);
     assert.ok(endIdx > silenceLength + 2000, `endIdx should be after speech burst, got ${endIdx}`);
   });
 
-  await t.test('2. Trims trailing silence with 50ms natural decay tail', () => {
+  await t.test('2. Trims trailing silence with 80ms natural decay tail', () => {
     const totalSamples = SAMPLE_RATE * 1;
     const samples = new Float32Array(totalSamples);
 
@@ -36,11 +36,11 @@ test('AudioDspProcessor - Speech Boundaries and Silence Trimming', async (t) => 
 
     const { startIdx, endIdx } = audioDspProcessor.detectSpeechBoundaries(samples, SAMPLE_RATE);
 
-    // 50ms reverb tail is 1200 samples (dung sai trong phạm vi 1 cửa sổ 5ms ~ 120 samples)
-    const expectedTailEnd = speechEnd + Math.round(SAMPLE_RATE * 0.05);
+    // 80ms reverb tail is 1920 samples (dung sai trong phạm vi 1 cửa sổ 5ms ~ 120 samples)
+    const expectedTailEnd = speechEnd + Math.round(SAMPLE_RATE * 0.08);
     assert.ok(
       Math.abs(endIdx - expectedTailEnd) < 150,
-      `endIdx should include 50ms tail (~${expectedTailEnd}), got ${endIdx}`
+      `endIdx should include 80ms tail (~${expectedTailEnd}), got ${endIdx}`
     );
   });
 
@@ -153,3 +153,136 @@ test('AudioDspProcessor - WAV Header and Binary Serialization', async (t) => {
   assert.equal(dataTag, 'data');
   assert.equal(view.getUint32(40, true), 2000, 'Data size must be 2000 bytes');
 });
+
+test('AudioDspProcessor - Pedagogical Parametric EQ and Micro-Ambience', async (t) => {
+  const SAMPLE_RATE = 24000;
+
+  await t.test('1. Biquad Peaking EQ boosts 220Hz fundamental warmth (+2.2dB)', () => {
+    // Tạo sóng sin 220Hz biên độ 0.3
+    const len = SAMPLE_RATE * 0.2; // 200ms
+    const raw = new Float32Array(len);
+    for (let i = 0; i < len; i++) {
+      raw[i] = 0.3 * Math.sin((2 * Math.PI * 220 * i) / SAMPLE_RATE);
+    }
+
+    // EQ boost 220Hz (+2.2dB)
+    const boosted = audioDspProcessor.applyParametricEq(raw, SAMPLE_RATE, [
+      { type: 'peaking', frequency: 220, q: 1.1, gainDb: 2.2 },
+    ]);
+
+    // Đo biên độ ổn định (bỏ qua 50ms đầu lúc filter settle)
+    let maxRaw = 0;
+    let maxBoosted = 0;
+    const startCheck = Math.round(SAMPLE_RATE * 0.05);
+    for (let i = startCheck; i < len; i++) {
+      if (Math.abs(raw[i]) > maxRaw) maxRaw = Math.abs(raw[i]);
+      if (Math.abs(boosted[i]) > maxBoosted) maxBoosted = Math.abs(boosted[i]);
+    }
+
+    // +2.2dB tương đương tỷ lệ ~1.288x
+    const ratio = maxBoosted / maxRaw;
+    assert.ok(ratio > 1.20 && ratio < 1.35, `220Hz boost ratio should be ~1.288, got ${ratio.toFixed(3)}`);
+  });
+
+  await t.test('2. Biquad Peaking EQ cuts harshness at 3.6kHz (-2.2dB)', () => {
+    const len = SAMPLE_RATE * 0.2;
+    const raw = new Float32Array(len);
+    for (let i = 0; i < len; i++) {
+      raw[i] = 0.4 * Math.sin((2 * Math.PI * 3600 * i) / SAMPLE_RATE);
+    }
+
+    const cut = audioDspProcessor.applyParametricEq(raw, SAMPLE_RATE, [
+      { type: 'peaking', frequency: 3600, q: 1.4, gainDb: -2.2 },
+    ]);
+
+    let maxRaw = 0;
+    let maxCut = 0;
+    const startCheck = Math.round(SAMPLE_RATE * 0.05);
+    for (let i = startCheck; i < len; i++) {
+      if (Math.abs(raw[i]) > maxRaw) maxRaw = Math.abs(raw[i]);
+      if (Math.abs(cut[i]) > maxCut) maxCut = Math.abs(cut[i]);
+    }
+
+    // -2.2dB tương đương tỷ lệ ~0.776x
+    const ratio = maxCut / maxRaw;
+    assert.ok(ratio > 0.70 && ratio < 0.85, `3.6kHz cut ratio should be ~0.776, got ${ratio.toFixed(3)}`);
+  });
+
+  await t.test('3. Early Reflection Micro-Ambience adds warmth room presence without distortion', () => {
+    // Tín hiệu xung delta ở đầu (nhịp vỗ tay / impulse)
+    const len = 2000;
+    const impulse = new Float32Array(len);
+    impulse[10] = 0.8;
+
+    const ambient = audioDspProcessor.applyEarlyReflections(impulse, SAMPLE_RATE, 0.02, 0.25, 0.35, 0.06);
+
+    // Mẫu ban đầu vẫn còn biên độ chính (94% dry)
+    assert.ok(ambient[10] > 0.70, 'Direct sound must be preserved');
+
+    // Sau khoảng trễ 20ms (480 samples ở 24kHz), phải xuất hiện phản xạ buồng âm
+    const delaySample = 10 + Math.round(SAMPLE_RATE * 0.02);
+    assert.ok(Math.abs(ambient[delaySample]) > 0.01, 'Early reflection must appear after delay');
+  });
+
+  await t.test('4. Full DSP Pipeline executes correctly with presets', () => {
+    const len = SAMPLE_RATE * 0.4;
+    const samples = new Float32Array(len);
+    // Tiếng giả lập ở giữa
+    for (let i = 1000; i < len - 1000; i++) {
+      samples[i] = 0.5 * Math.sin((2 * Math.PI * 300 * i) / SAMPLE_RATE);
+    }
+
+    const warmResult = audioDspProcessor.processPcmSamples(samples, SAMPLE_RATE, {
+      profile: 'pedagogical_warm',
+    });
+    const dryResult = audioDspProcessor.processPcmSamples(samples, SAMPLE_RATE, {
+      profile: 'pure_dry',
+    });
+
+    assert.ok(warmResult.length > 0, 'Warm profile should return processed samples');
+    assert.ok(dryResult.length > 0, 'Dry profile should return processed samples');
+  });
+
+  await t.test('5. matchMasterSprite mode matches 100% of scripts/build-audio-sprite.js', () => {
+    const totalSamples = SAMPLE_RATE * 0.6;
+    const samples = new Float32Array(totalSamples);
+
+    // Initial click artifact at sample 0..5 (> 0.008)
+    samples[0] = 0.5;
+    samples[1] = 0.6;
+
+    // Speech ending at 400ms
+    const speechEnd = Math.round(SAMPLE_RATE * 0.40);
+    for (let i = 100; i < speechEnd; i++) {
+      samples[i] = 0.4 * Math.sin((2 * Math.PI * 300 * i) / SAMPLE_RATE);
+    }
+
+    // 1. Kho máy
+    let bStart = 0;
+    for (let s = 0; s < totalSamples; s++) {
+      if (Math.abs(samples[s]) > 0.008) {
+        bStart = Math.max(0, s - 240);
+        break;
+      }
+    }
+    let bEnd = totalSamples - 1;
+    for (let s = totalSamples - 1; s >= 0; s--) {
+      if (Math.abs(samples[s]) > 0.0025) {
+        bEnd = Math.min(totalSamples, s + 1200);
+        break;
+      }
+    }
+
+    // 2. AudioDspProcessor với matchMasterSprite: true
+    const clientBounds = audioDspProcessor.detectSpeechBoundaries(samples, SAMPLE_RATE, {
+      matchMasterSprite: true,
+      reverbTailSec: 0.050,
+      stopThreshold: 0.0025,
+      startThreshold: 0.008,
+    });
+
+    assert.equal(clientBounds.startIdx, bStart, 'Client startIdx must match master sprite build exactly');
+    assert.equal(clientBounds.endIdx, bEnd, 'Client endIdx must match master sprite build exactly');
+  });
+});
+

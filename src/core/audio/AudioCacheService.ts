@@ -6,6 +6,8 @@
  * Hỗ trợ tự động fallback in-memory Map trong môi trường test/Node.js.
  */
 
+import type { IAudioStorage } from '../../types/index.ts';
+
 const DB_NAME = 'VietnamesePhonicsAudioCache';
 const DB_VERSION = 1;
 const STORE_NAME = 'audio_clips';
@@ -17,7 +19,7 @@ export interface CachedAudioRecord {
   createdAt: number;
 }
 
-export class AudioCacheService {
+export class AudioCacheService implements IAudioStorage {
   private static instance: AudioCacheService;
   private db: IDBDatabase | null = null;
   private memoryFallback: Map<string, CachedAudioRecord> = new Map();
@@ -34,8 +36,11 @@ export class AudioCacheService {
     return AudioCacheService.instance;
   }
 
+  private static readonly CACHE_PREFIX = 'v_synced_v4_';
+
   private normalizeKey(word: string): string {
-    return word.toLowerCase().replace(/[,.!?:;]/g, '').trim();
+    const clean = word.toLowerCase().replace(/[,.!?:;]/g, '').trim();
+    return `${AudioCacheService.CACHE_PREFIX}${clean}`;
   }
 
   /**
@@ -171,12 +176,25 @@ export class AudioCacheService {
    * Lấy danh sách tất cả các từ đã được lưu trong cache ngoại tuyến
    */
   public async getAllCachedWords(): Promise<string[]> {
+    const stripPrefix = (k: string) => {
+      if (k.startsWith(AudioCacheService.CACHE_PREFIX)) {
+        return k.slice(AudioCacheService.CACHE_PREFIX.length);
+      }
+      if (k.startsWith('v_synced_')) {
+        return k.slice('v_synced_'.length);
+      }
+      if (k.startsWith('v08_')) {
+        return k.slice(4);
+      }
+      return k;
+    };
+
     if (!this.isIndexedDBAvailable) {
-      return Array.from(this.memoryFallback.keys());
+      return Array.from(this.memoryFallback.keys()).map(stripPrefix);
     }
 
     await this.init();
-    if (!this.db) return Array.from(this.memoryFallback.keys());
+    if (!this.db) return Array.from(this.memoryFallback.keys()).map(stripPrefix);
 
     return new Promise((resolve) => {
       try {
@@ -184,12 +202,43 @@ export class AudioCacheService {
         const store = tx.objectStore(STORE_NAME);
         const req = store.getAllKeys();
 
-        req.onsuccess = () => resolve((req.result as string[]) || []);
+        req.onsuccess = () => {
+          const keys = ((req.result as string[]) || []).map(stripPrefix);
+          resolve(keys);
+        };
         req.onerror = () => resolve([]);
       } catch {
-        resolve(Array.from(this.memoryFallback.keys()));
+        resolve(Array.from(this.memoryFallback.keys()).map(stripPrefix));
       }
     });
+  }
+
+  /**
+   * Xóa một clip khỏi cache
+   */
+  public async deleteClip(word: string): Promise<void> {
+    const key = this.normalizeKey(word);
+    this.memoryFallback.delete(key);
+    if (!this.isIndexedDBAvailable || !this.db) return;
+
+    return new Promise((resolve) => {
+      try {
+        const tx = this.db!.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.delete(key);
+        req.onsuccess = () => resolve();
+        req.onerror = () => resolve();
+      } catch {
+        resolve();
+      }
+    });
+  }
+
+  /**
+   * Lấy danh sách tất cả các key (IAudioStorage contract)
+   */
+  public async getAllKeys(): Promise<string[]> {
+    return this.getAllCachedWords();
   }
 
   /**
