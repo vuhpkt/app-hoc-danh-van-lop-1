@@ -11,6 +11,7 @@
     "generate:audio": "node scripts/generate-tts-audio.js",
     "generate:zalo": "node scripts/generate-zalo-tts.js",
     "stretch:audio": "node scripts/stretch-raw-audio.js",
+    "master:audio": "node scripts/master-audio-dataset.js",
     "build:sprite": "node scripts/build-audio-sprite.js"
   },
   "dependencies": {

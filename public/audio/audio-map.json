@@ -1,1402 +1,1402 @@
 {
   "am_dau__b": {
     "start": 0,
-    "end": 0.475,
-    "duration": 0.475
+    "end": 0.461,
+    "duration": 0.461
   },
   "am_dau__c": {
-    "start": 0.475,
-    "end": 0.895,
+    "start": 0.461,
+    "end": 0.881,
     "duration": 0.42
   },
   "am_dau__ch": {
-    "start": 0.895,
-    "end": 1.404,
-    "duration": 0.509
+    "start": 0.881,
+    "end": 1.391,
+    "duration": 0.51
   },
   "am_dau__d": {
-    "start": 1.404,
-    "end": 1.907,
-    "duration": 0.503
+    "start": 1.391,
+    "end": 1.868,
+    "duration": 0.477
   },
   "am_dau__g": {
-    "start": 1.907,
-    "end": 2.327,
-    "duration": 0.42
+    "start": 1.868,
+    "end": 2.29,
+    "duration": 0.422
   },
   "am_dau__dd": {
-    "start": 2.327,
-    "end": 2.805,
-    "duration": 0.478
+    "start": 2.29,
+    "end": 2.77,
+    "duration": 0.48
   },
   "am_dau__gh": {
-    "start": 2.805,
-    "end": 3.273,
+    "start": 2.77,
+    "end": 3.238,
     "duration": 0.468
   },
   "am_dau__gi": {
-    "start": 3.273,
-    "end": 3.766,
-    "duration": 0.493
-  },
-  "am_dau__h": {
-    "start": 3.766,
-    "end": 4.226,
-    "duration": 0.46
-  },
-  "am_dau__k": {
-    "start": 4.226,
-    "end": 4.695,
-    "duration": 0.469
-  },
-  "am_dau__kh": {
-    "start": 4.695,
-    "end": 5.189,
+    "start": 3.238,
+    "end": 3.732,
     "duration": 0.494
   },
+  "am_dau__h": {
+    "start": 3.732,
+    "end": 4.193,
+    "duration": 0.461
+  },
+  "am_dau__k": {
+    "start": 4.193,
+    "end": 4.667,
+    "duration": 0.474
+  },
+  "am_dau__kh": {
+    "start": 4.667,
+    "end": 5.145,
+    "duration": 0.478
+  },
   "am_dau__l": {
-    "start": 5.189,
-    "end": 5.677,
+    "start": 5.145,
+    "end": 5.633,
     "duration": 0.488
   },
   "am_dau__m": {
-    "start": 5.677,
-    "end": 6.114,
-    "duration": 0.437
+    "start": 5.633,
+    "end": 6.059,
+    "duration": 0.426
   },
   "am_dau__n": {
-    "start": 6.114,
-    "end": 6.58,
-    "duration": 0.466
+    "start": 6.059,
+    "end": 6.493,
+    "duration": 0.434
   },
   "am_dau__ng": {
-    "start": 6.58,
-    "end": 6.995,
-    "duration": 0.415
+    "start": 6.493,
+    "end": 6.909,
+    "duration": 0.416
   },
   "am_dau__ngh": {
-    "start": 6.995,
-    "end": 7.685,
+    "start": 6.909,
+    "end": 7.599,
     "duration": 0.69
   },
   "am_dau__nh": {
-    "start": 7.685,
-    "end": 8.191,
-    "duration": 0.506
+    "start": 7.599,
+    "end": 8.106,
+    "duration": 0.507
   },
   "am_dau__p": {
-    "start": 8.191,
-    "end": 8.688,
-    "duration": 0.497
+    "start": 8.106,
+    "end": 8.573,
+    "duration": 0.467
   },
   "am_dau__ph": {
-    "start": 8.688,
-    "end": 9.182,
-    "duration": 0.494
+    "start": 8.573,
+    "end": 9.035,
+    "duration": 0.462
   },
   "am_dau__qu": {
-    "start": 9.182,
-    "end": 9.652,
-    "duration": 0.47
+    "start": 9.035,
+    "end": 9.489,
+    "duration": 0.454
   },
   "am_dau__r": {
-    "start": 9.652,
-    "end": 10.137,
-    "duration": 0.485
-  },
-  "am_dau__s": {
-    "start": 10.137,
-    "end": 10.651,
-    "duration": 0.514
-  },
-  "am_dau__t": {
-    "start": 10.651,
-    "end": 11.119,
-    "duration": 0.468
-  },
-  "am_dau__th": {
-    "start": 11.119,
-    "end": 11.597,
-    "duration": 0.478
-  },
-  "am_dau__v": {
-    "start": 11.597,
-    "end": 12.05,
+    "start": 9.489,
+    "end": 9.942,
     "duration": 0.453
   },
+  "am_dau__s": {
+    "start": 9.942,
+    "end": 10.449,
+    "duration": 0.507
+  },
+  "am_dau__t": {
+    "start": 10.449,
+    "end": 10.898,
+    "duration": 0.449
+  },
+  "am_dau__th": {
+    "start": 10.898,
+    "end": 11.36,
+    "duration": 0.462
+  },
+  "am_dau__v": {
+    "start": 11.36,
+    "end": 11.806,
+    "duration": 0.446
+  },
   "am_dau__tr": {
-    "start": 12.05,
-    "end": 12.589,
+    "start": 11.806,
+    "end": 12.345,
     "duration": 0.539
   },
   "am_dau__x": {
-    "start": 12.589,
-    "end": 13.131,
+    "start": 12.345,
+    "end": 12.887,
     "duration": 0.542
   },
   "thanh__ngang": {
-    "start": 13.131,
-    "end": 13.961,
-    "duration": 0.83
+    "start": 12.887,
+    "end": 13.685,
+    "duration": 0.798
   },
   "thanh__sac": {
-    "start": 13.961,
-    "end": 14.406,
-    "duration": 0.445
+    "start": 13.685,
+    "end": 14.129,
+    "duration": 0.444
   },
   "thanh__huyen": {
-    "start": 14.406,
-    "end": 14.957,
-    "duration": 0.551
+    "start": 14.129,
+    "end": 14.662,
+    "duration": 0.533
   },
   "thanh__hoi": {
-    "start": 14.957,
-    "end": 15.449,
+    "start": 14.662,
+    "end": 15.154,
     "duration": 0.492
   },
   "thanh__nga": {
-    "start": 15.449,
-    "end": 15.932,
+    "start": 15.154,
+    "end": 15.637,
     "duration": 0.483
   },
   "van__a": {
-    "start": 15.932,
-    "end": 16.357,
-    "duration": 0.425
+    "start": 15.637,
+    "end": 16.15,
+    "duration": 0.513
   },
   "thanh__nang": {
-    "start": 16.357,
-    "end": 16.82,
-    "duration": 0.463
+    "start": 16.15,
+    "end": 16.598,
+    "duration": 0.448
   },
   "van__a_breve": {
-    "start": 16.82,
-    "end": 17.322,
-    "duration": 0.502
+    "start": 16.598,
+    "end": 17.125,
+    "duration": 0.527
   },
   "van__a_hat": {
-    "start": 17.322,
-    "end": 17.783,
-    "duration": 0.461
+    "start": 17.125,
+    "end": 17.625,
+    "duration": 0.5
   },
   "van__e": {
-    "start": 17.783,
-    "end": 18.185,
-    "duration": 0.402
+    "start": 17.625,
+    "end": 18.164,
+    "duration": 0.539
   },
   "van__e_hat": {
-    "start": 18.185,
-    "end": 18.59,
-    "duration": 0.405
+    "start": 18.164,
+    "end": 18.683,
+    "duration": 0.519
   },
   "van__i": {
-    "start": 18.59,
-    "end": 19.049,
-    "duration": 0.459
+    "start": 18.683,
+    "end": 19.208,
+    "duration": 0.525
   },
   "van__y": {
-    "start": 19.049,
-    "end": 19.477,
-    "duration": 0.428
+    "start": 19.208,
+    "end": 19.73,
+    "duration": 0.522
   },
   "van__o": {
-    "start": 19.477,
-    "end": 19.914,
-    "duration": 0.437
+    "start": 19.73,
+    "end": 20.24,
+    "duration": 0.51
   },
   "van__o_hat": {
-    "start": 19.914,
-    "end": 20.351,
-    "duration": 0.437
+    "start": 20.24,
+    "end": 20.759,
+    "duration": 0.519
   },
   "van__o_horn": {
-    "start": 20.351,
-    "end": 20.795,
-    "duration": 0.444
+    "start": 20.759,
+    "end": 21.287,
+    "duration": 0.528
   },
   "van__u": {
-    "start": 20.795,
-    "end": 21.261,
-    "duration": 0.466
+    "start": 21.287,
+    "end": 21.81,
+    "duration": 0.523
   },
   "van__u_horn": {
-    "start": 21.261,
-    "end": 21.735,
-    "duration": 0.474
+    "start": 21.81,
+    "end": 22.331,
+    "duration": 0.521
   },
   "van__ia": {
-    "start": 21.735,
-    "end": 22.299,
+    "start": 22.331,
+    "end": 22.895,
     "duration": 0.564
   },
   "van__ya": {
-    "start": 22.299,
-    "end": 22.686,
-    "duration": 0.387
+    "start": 22.895,
+    "end": 23.388,
+    "duration": 0.493
   },
   "van__ie": {
-    "start": 22.686,
-    "end": 23.241,
+    "start": 23.388,
+    "end": 23.943,
     "duration": 0.555
   },
   "van__ye": {
-    "start": 23.241,
-    "end": 23.738,
+    "start": 23.943,
+    "end": 24.44,
     "duration": 0.497
   },
   "van__ua": {
-    "start": 23.738,
-    "end": 24.149,
-    "duration": 0.411
+    "start": 24.44,
+    "end": 24.955,
+    "duration": 0.515
   },
   "van__ua_horn": {
-    "start": 24.149,
-    "end": 24.579,
-    "duration": 0.43
-  },
-  "van__uo_hat": {
-    "start": 24.579,
-    "end": 25.211,
-    "duration": 0.632
-  },
-  "van__uo_horn": {
-    "start": 25.211,
-    "end": 25.843,
-    "duration": 0.632
-  },
-  "van__ai": {
-    "start": 25.843,
-    "end": 26.283,
-    "duration": 0.44
-  },
-  "van__ay": {
-    "start": 26.283,
-    "end": 26.71,
-    "duration": 0.427
-  },
-  "van__a_hat_y": {
-    "start": 26.71,
-    "end": 27.108,
-    "duration": 0.398
-  },
-  "van__ao": {
-    "start": 27.108,
-    "end": 27.544,
-    "duration": 0.436
-  },
-  "van__au": {
-    "start": 27.544,
-    "end": 27.981,
-    "duration": 0.437
-  },
-  "van__a_hat_u": {
-    "start": 27.981,
-    "end": 28.38,
-    "duration": 0.399
-  },
-  "van__eo": {
-    "start": 28.38,
-    "end": 28.829,
-    "duration": 0.449
-  },
-  "van__e_hat_u": {
-    "start": 28.829,
-    "end": 29.236,
-    "duration": 0.407
-  },
-  "van__iu": {
-    "start": 29.236,
-    "end": 29.73,
-    "duration": 0.494
-  },
-  "van__yeu": {
-    "start": 29.73,
-    "end": 30.223,
-    "duration": 0.493
-  },
-  "van__ieu": {
-    "start": 30.223,
-    "end": 30.77,
-    "duration": 0.547
-  },
-  "van__oi": {
-    "start": 30.77,
-    "end": 31.209,
-    "duration": 0.439
-  },
-  "van__o_hat_i": {
-    "start": 31.209,
-    "end": 31.668,
-    "duration": 0.459
-  },
-  "van__o_horn_i": {
-    "start": 31.668,
-    "end": 32.064,
-    "duration": 0.396
-  },
-  "van__ui": {
-    "start": 32.064,
-    "end": 32.539,
-    "duration": 0.475
-  },
-  "van__u_horn_i": {
-    "start": 32.539,
-    "end": 32.97,
-    "duration": 0.431
-  },
-  "van__uoi": {
-    "start": 32.97,
-    "end": 33.438,
-    "duration": 0.468
-  },
-  "van__oa": {
-    "start": 33.438,
-    "end": 33.888,
-    "duration": 0.45
-  },
-  "van__u_horn_o_horn_i": {
-    "start": 33.888,
-    "end": 34.383,
-    "duration": 0.495
-  },
-  "van__oai": {
-    "start": 34.383,
-    "end": 34.871,
-    "duration": 0.488
-  },
-  "van__oe": {
-    "start": 34.871,
-    "end": 35.31,
-    "duration": 0.439
-  },
-  "van__uay": {
-    "start": 35.31,
-    "end": 35.782,
-    "duration": 0.472
-  },
-  "van__oay": {
-    "start": 35.782,
-    "end": 36.32,
-    "duration": 0.538
-  },
-  "van__ue": {
-    "start": 36.32,
-    "end": 36.789,
-    "duration": 0.469
-  },
-  "van__oeo": {
-    "start": 36.789,
-    "end": 37.309,
+    "start": 24.955,
+    "end": 25.475,
     "duration": 0.52
   },
+  "van__uo_hat": {
+    "start": 25.475,
+    "end": 26.111,
+    "duration": 0.636
+  },
+  "van__uo_horn": {
+    "start": 26.111,
+    "end": 26.747,
+    "duration": 0.636
+  },
+  "van__ai": {
+    "start": 26.747,
+    "end": 27.253,
+    "duration": 0.506
+  },
+  "van__ay": {
+    "start": 27.253,
+    "end": 27.784,
+    "duration": 0.531
+  },
+  "van__a_hat_y": {
+    "start": 27.784,
+    "end": 28.317,
+    "duration": 0.533
+  },
+  "van__ao": {
+    "start": 28.317,
+    "end": 28.867,
+    "duration": 0.55
+  },
+  "van__au": {
+    "start": 28.867,
+    "end": 29.417,
+    "duration": 0.55
+  },
+  "van__a_hat_u": {
+    "start": 29.417,
+    "end": 29.953,
+    "duration": 0.536
+  },
+  "van__eo": {
+    "start": 29.953,
+    "end": 30.458,
+    "duration": 0.505
+  },
+  "van__e_hat_u": {
+    "start": 30.458,
+    "end": 31.002,
+    "duration": 0.544
+  },
+  "van__iu": {
+    "start": 31.002,
+    "end": 31.527,
+    "duration": 0.525
+  },
+  "van__yeu": {
+    "start": 31.527,
+    "end": 32.039,
+    "duration": 0.512
+  },
+  "van__ieu": {
+    "start": 32.039,
+    "end": 32.587,
+    "duration": 0.548
+  },
+  "van__oi": {
+    "start": 32.587,
+    "end": 33.123,
+    "duration": 0.536
+  },
+  "van__o_hat_i": {
+    "start": 33.123,
+    "end": 33.631,
+    "duration": 0.508
+  },
+  "van__o_horn_i": {
+    "start": 33.631,
+    "end": 34.149,
+    "duration": 0.518
+  },
+  "van__ui": {
+    "start": 34.149,
+    "end": 34.661,
+    "duration": 0.512
+  },
+  "van__u_horn_i": {
+    "start": 34.661,
+    "end": 35.174,
+    "duration": 0.513
+  },
+  "van__uoi": {
+    "start": 35.174,
+    "end": 35.688,
+    "duration": 0.514
+  },
+  "van__oa": {
+    "start": 35.688,
+    "end": 36.223,
+    "duration": 0.535
+  },
+  "van__u_horn_o_horn_i": {
+    "start": 36.223,
+    "end": 36.746,
+    "duration": 0.523
+  },
+  "van__oai": {
+    "start": 36.746,
+    "end": 37.281,
+    "duration": 0.535
+  },
+  "van__oe": {
+    "start": 37.281,
+    "end": 37.827,
+    "duration": 0.546
+  },
+  "van__uay": {
+    "start": 37.827,
+    "end": 38.347,
+    "duration": 0.52
+  },
+  "van__oay": {
+    "start": 38.347,
+    "end": 38.869,
+    "duration": 0.522
+  },
+  "van__ue": {
+    "start": 38.869,
+    "end": 39.411,
+    "duration": 0.542
+  },
+  "van__oeo": {
+    "start": 39.411,
+    "end": 39.94,
+    "duration": 0.529
+  },
   "van__uya": {
-    "start": 37.309,
-    "end": 37.852,
-    "duration": 0.543
+    "start": 39.94,
+    "end": 40.487,
+    "duration": 0.547
   },
   "van__uyu": {
-    "start": 37.852,
-    "end": 38.473,
+    "start": 40.487,
+    "end": 41.108,
     "duration": 0.621
   },
   "van__am": {
-    "start": 38.473,
-    "end": 38.911,
-    "duration": 0.438
+    "start": 41.108,
+    "end": 41.661,
+    "duration": 0.553
   },
   "van__ui_horn_i": {
-    "start": 38.911,
-    "end": 39.379,
-    "duration": 0.468
+    "start": 41.661,
+    "end": 42.175,
+    "duration": 0.514
   },
   "van__a_breve_m": {
-    "start": 39.379,
-    "end": 39.803,
-    "duration": 0.424
+    "start": 42.175,
+    "end": 42.699,
+    "duration": 0.524
   },
   "van__a_hat_m": {
-    "start": 39.803,
-    "end": 40.229,
-    "duration": 0.426
+    "start": 42.699,
+    "end": 43.256,
+    "duration": 0.557
   },
   "van__e_hat_m": {
-    "start": 40.229,
-    "end": 40.632,
-    "duration": 0.403
+    "start": 43.256,
+    "end": 43.783,
+    "duration": 0.527
   },
   "van__em": {
-    "start": 40.632,
-    "end": 41.161,
-    "duration": 0.529
+    "start": 43.783,
+    "end": 44.318,
+    "duration": 0.535
   },
   "van__om": {
-    "start": 41.161,
-    "end": 41.582,
-    "duration": 0.421
+    "start": 44.318,
+    "end": 44.837,
+    "duration": 0.519
   },
   "van__im": {
-    "start": 41.582,
-    "end": 42.039,
-    "duration": 0.457
+    "start": 44.837,
+    "end": 45.354,
+    "duration": 0.517
   },
   "van__o_hat_m": {
-    "start": 42.039,
-    "end": 42.478,
-    "duration": 0.439
+    "start": 45.354,
+    "end": 45.869,
+    "duration": 0.515
   },
   "van__o_horn_m": {
-    "start": 42.478,
-    "end": 42.952,
-    "duration": 0.474
+    "start": 45.869,
+    "end": 46.405,
+    "duration": 0.536
   },
   "van__um": {
-    "start": 42.952,
-    "end": 43.391,
-    "duration": 0.439
+    "start": 46.405,
+    "end": 46.909,
+    "duration": 0.504
   },
   "van__u_horn_m": {
-    "start": 43.391,
-    "end": 43.833,
-    "duration": 0.442
+    "start": 46.909,
+    "end": 47.41,
+    "duration": 0.501
   },
   "van__iem": {
-    "start": 43.833,
-    "end": 44.357,
+    "start": 47.41,
+    "end": 47.934,
     "duration": 0.524
   },
   "van__yem": {
-    "start": 44.357,
-    "end": 44.893,
+    "start": 47.934,
+    "end": 48.47,
     "duration": 0.536
   },
   "van__uom_hat": {
-    "start": 44.893,
-    "end": 45.334,
-    "duration": 0.441
+    "start": 48.47,
+    "end": 49.019,
+    "duration": 0.549
   },
   "van__uom_horn": {
-    "start": 45.334,
-    "end": 45.822,
-    "duration": 0.488
+    "start": 49.019,
+    "end": 49.538,
+    "duration": 0.519
   },
   "van__oam": {
-    "start": 45.822,
-    "end": 46.3,
-    "duration": 0.478
+    "start": 49.538,
+    "end": 50.071,
+    "duration": 0.533
   },
   "van__an": {
-    "start": 46.3,
-    "end": 46.74,
-    "duration": 0.44
+    "start": 50.071,
+    "end": 50.614,
+    "duration": 0.543
   },
   "van__a_breve_n": {
-    "start": 46.74,
-    "end": 47.178,
-    "duration": 0.438
+    "start": 50.614,
+    "end": 51.122,
+    "duration": 0.508
   },
   "van__a_hat_n": {
-    "start": 47.178,
-    "end": 47.572,
-    "duration": 0.394
+    "start": 51.122,
+    "end": 51.645,
+    "duration": 0.523
   },
   "van__en": {
-    "start": 47.572,
-    "end": 48.001,
-    "duration": 0.429
+    "start": 51.645,
+    "end": 52.159,
+    "duration": 0.514
   },
   "van__e_hat_n": {
-    "start": 48.001,
-    "end": 48.398,
-    "duration": 0.397
+    "start": 52.159,
+    "end": 52.703,
+    "duration": 0.544
   },
   "van__in": {
-    "start": 48.398,
-    "end": 48.871,
-    "duration": 0.473
+    "start": 52.703,
+    "end": 53.234,
+    "duration": 0.531
   },
   "van__on": {
-    "start": 48.871,
-    "end": 49.298,
-    "duration": 0.427
+    "start": 53.234,
+    "end": 53.771,
+    "duration": 0.537
   },
   "van__o_hat_n": {
-    "start": 49.298,
-    "end": 49.741,
-    "duration": 0.443
+    "start": 53.771,
+    "end": 54.287,
+    "duration": 0.516
   },
   "van__o_horn_n": {
-    "start": 49.741,
-    "end": 50.183,
-    "duration": 0.442
+    "start": 54.287,
+    "end": 54.81,
+    "duration": 0.523
   },
   "van__un": {
-    "start": 50.183,
-    "end": 50.623,
-    "duration": 0.44
+    "start": 54.81,
+    "end": 55.328,
+    "duration": 0.518
   },
   "van__u_horn_n": {
-    "start": 50.623,
-    "end": 51.099,
-    "duration": 0.476
+    "start": 55.328,
+    "end": 55.845,
+    "duration": 0.517
   },
   "van__ien": {
-    "start": 51.099,
-    "end": 51.557,
-    "duration": 0.458
+    "start": 55.845,
+    "end": 56.359,
+    "duration": 0.514
   },
   "van__yen": {
-    "start": 51.557,
-    "end": 52.03,
-    "duration": 0.473
+    "start": 56.359,
+    "end": 56.876,
+    "duration": 0.517
   },
   "van__uan_hat": {
-    "start": 52.03,
-    "end": 52.461,
-    "duration": 0.431
+    "start": 56.876,
+    "end": 57.407,
+    "duration": 0.531
   },
   "van__uan_horn": {
-    "start": 52.461,
-    "end": 52.949,
-    "duration": 0.488
+    "start": 57.407,
+    "end": 57.914,
+    "duration": 0.507
   },
   "van__oan": {
-    "start": 52.949,
-    "end": 53.447,
-    "duration": 0.498
+    "start": 57.914,
+    "end": 58.413,
+    "duration": 0.499
   },
   "van__oan_breve": {
-    "start": 53.447,
-    "end": 53.942,
+    "start": 58.413,
+    "end": 58.908,
     "duration": 0.495
   },
   "van__uen": {
-    "start": 53.942,
-    "end": 54.601,
+    "start": 58.908,
+    "end": 59.567,
     "duration": 0.659
   },
   "van__uan_hat_a": {
-    "start": 54.601,
-    "end": 55.072,
-    "duration": 0.471
+    "start": 59.567,
+    "end": 60.082,
+    "duration": 0.515
   },
   "van__ang": {
-    "start": 55.072,
-    "end": 55.504,
-    "duration": 0.432
+    "start": 60.082,
+    "end": 60.62,
+    "duration": 0.538
   },
   "van__uyen": {
-    "start": 55.504,
-    "end": 56,
-    "duration": 0.496
+    "start": 60.62,
+    "end": 61.137,
+    "duration": 0.517
   },
   "van__a_breve_ng": {
-    "start": 56,
-    "end": 56.435,
-    "duration": 0.435
+    "start": 61.137,
+    "end": 61.647,
+    "duration": 0.51
   },
   "van__a_hat_ng": {
-    "start": 56.435,
-    "end": 56.93,
-    "duration": 0.495
+    "start": 61.647,
+    "end": 62.169,
+    "duration": 0.522
   },
   "van__eng": {
-    "start": 56.93,
-    "end": 57.358,
-    "duration": 0.428
+    "start": 62.169,
+    "end": 62.712,
+    "duration": 0.543
   },
   "van__e_hat_ng": {
-    "start": 57.358,
-    "end": 57.83,
-    "duration": 0.472
+    "start": 62.712,
+    "end": 63.242,
+    "duration": 0.53
   },
   "van__ong": {
-    "start": 57.83,
-    "end": 58.262,
-    "duration": 0.432
+    "start": 63.242,
+    "end": 63.78,
+    "duration": 0.538
   },
   "van__o_hat_ng": {
-    "start": 58.262,
-    "end": 58.7,
-    "duration": 0.438
+    "start": 63.78,
+    "end": 64.301,
+    "duration": 0.521
   },
   "van__u_horn_ng": {
-    "start": 58.7,
-    "end": 59.145,
-    "duration": 0.445
+    "start": 64.301,
+    "end": 64.842,
+    "duration": 0.541
   },
   "van__ung": {
-    "start": 59.145,
-    "end": 59.61,
-    "duration": 0.465
+    "start": 64.842,
+    "end": 65.361,
+    "duration": 0.519
   },
   "van__ieng": {
-    "start": 59.61,
-    "end": 60.123,
-    "duration": 0.513
+    "start": 65.361,
+    "end": 65.875,
+    "duration": 0.514
   },
   "van__yeng": {
-    "start": 60.123,
-    "end": 60.64,
+    "start": 65.875,
+    "end": 66.392,
     "duration": 0.517
   },
   "van__uong_hat": {
-    "start": 60.64,
-    "end": 61.11,
-    "duration": 0.47
+    "start": 66.392,
+    "end": 66.915,
+    "duration": 0.523
   },
   "van__uong_horn": {
-    "start": 61.11,
-    "end": 61.593,
-    "duration": 0.483
+    "start": 66.915,
+    "end": 67.456,
+    "duration": 0.541
   },
   "van__oang_breve": {
-    "start": 61.593,
-    "end": 62.106,
+    "start": 67.456,
+    "end": 67.969,
     "duration": 0.513
   },
   "van__oang": {
-    "start": 62.106,
-    "end": 62.62,
+    "start": 67.969,
+    "end": 68.483,
     "duration": 0.514
   },
   "van__anh": {
-    "start": 62.62,
-    "end": 63.087,
-    "duration": 0.467
+    "start": 68.483,
+    "end": 69.015,
+    "duration": 0.532
   },
   "van__uang_hat": {
-    "start": 63.087,
-    "end": 63.666,
+    "start": 69.015,
+    "end": 69.594,
     "duration": 0.579
   },
   "van__inh": {
-    "start": 63.666,
-    "end": 64.134,
-    "duration": 0.468
+    "start": 69.594,
+    "end": 70.109,
+    "duration": 0.515
   },
   "van__e_hat_nh": {
-    "start": 64.134,
-    "end": 64.581,
-    "duration": 0.447
+    "start": 70.109,
+    "end": 70.643,
+    "duration": 0.534
   },
   "van__oanh": {
-    "start": 64.581,
-    "end": 65.108,
+    "start": 70.643,
+    "end": 71.17,
     "duration": 0.527
   },
   "van__uynh": {
-    "start": 65.108,
-    "end": 65.606,
-    "duration": 0.498
+    "start": 71.17,
+    "end": 71.67,
+    "duration": 0.5
   },
   "van__ap": {
-    "start": 65.606,
-    "end": 65.99,
-    "duration": 0.384
+    "start": 71.67,
+    "end": 72.116,
+    "duration": 0.446
   },
   "van__a_breve_p": {
-    "start": 65.99,
-    "end": 66.332,
-    "duration": 0.342
+    "start": 72.116,
+    "end": 72.533,
+    "duration": 0.417
   },
   "van__a_hat_p": {
-    "start": 66.332,
-    "end": 66.681,
-    "duration": 0.349
+    "start": 72.533,
+    "end": 72.962,
+    "duration": 0.429
   },
   "van__ep": {
-    "start": 66.681,
-    "end": 67.058,
-    "duration": 0.377
+    "start": 72.962,
+    "end": 73.411,
+    "duration": 0.449
   },
   "van__e_hat_p": {
-    "start": 67.058,
-    "end": 67.44,
-    "duration": 0.382
+    "start": 73.411,
+    "end": 73.846,
+    "duration": 0.435
   },
   "van__ip": {
-    "start": 67.44,
-    "end": 67.836,
-    "duration": 0.396
+    "start": 73.846,
+    "end": 74.284,
+    "duration": 0.438
   },
   "van__op": {
-    "start": 67.836,
-    "end": 68.187,
-    "duration": 0.351
+    "start": 74.284,
+    "end": 74.713,
+    "duration": 0.429
   },
   "van__o_hat_p": {
-    "start": 68.187,
-    "end": 68.55,
-    "duration": 0.363
+    "start": 74.713,
+    "end": 75.15,
+    "duration": 0.437
   },
   "van__o_horn_p": {
-    "start": 68.55,
-    "end": 68.914,
-    "duration": 0.364
+    "start": 75.15,
+    "end": 75.579,
+    "duration": 0.429
   },
   "van__up": {
-    "start": 68.914,
-    "end": 69.313,
-    "duration": 0.399
+    "start": 75.579,
+    "end": 76.015,
+    "duration": 0.436
   },
   "van__u_horn_p": {
-    "start": 69.313,
-    "end": 69.712,
-    "duration": 0.399
+    "start": 76.015,
+    "end": 76.451,
+    "duration": 0.436
   },
   "van__iep": {
-    "start": 69.712,
-    "end": 70.176,
-    "duration": 0.464
+    "start": 76.451,
+    "end": 76.9,
+    "duration": 0.449
   },
   "van__uop_hat": {
-    "start": 70.176,
-    "end": 70.734,
-    "duration": 0.558
+    "start": 76.9,
+    "end": 77.441,
+    "duration": 0.541
   },
   "van__uop_horn": {
-    "start": 70.734,
-    "end": 71.157,
+    "start": 77.441,
+    "end": 77.864,
     "duration": 0.423
   },
   "van__a_breve_t": {
-    "start": 71.157,
-    "end": 71.519,
-    "duration": 0.362
+    "start": 77.864,
+    "end": 78.306,
+    "duration": 0.442
   },
   "van__at": {
-    "start": 71.519,
-    "end": 71.901,
-    "duration": 0.382
+    "start": 78.306,
+    "end": 78.742,
+    "duration": 0.436
   },
   "van__a_hat_t": {
-    "start": 71.901,
-    "end": 72.261,
-    "duration": 0.36
+    "start": 78.742,
+    "end": 79.174,
+    "duration": 0.432
   },
   "van__et": {
-    "start": 72.261,
-    "end": 72.626,
-    "duration": 0.365
+    "start": 79.174,
+    "end": 79.61,
+    "duration": 0.436
   },
   "van__e_hat_t": {
-    "start": 72.626,
-    "end": 73.009,
-    "duration": 0.383
+    "start": 79.61,
+    "end": 80.058,
+    "duration": 0.448
   },
   "van__it": {
-    "start": 73.009,
-    "end": 73.403,
-    "duration": 0.394
+    "start": 80.058,
+    "end": 80.505,
+    "duration": 0.447
   },
   "van__ot": {
-    "start": 73.403,
-    "end": 73.786,
-    "duration": 0.383
+    "start": 80.505,
+    "end": 80.934,
+    "duration": 0.429
   },
   "van__o_hat_t": {
-    "start": 73.786,
-    "end": 74.181,
-    "duration": 0.395
+    "start": 80.934,
+    "end": 81.388,
+    "duration": 0.454
   },
   "van__o_horn_t": {
-    "start": 74.181,
-    "end": 74.58,
-    "duration": 0.399
+    "start": 81.388,
+    "end": 81.82,
+    "duration": 0.432
   },
   "van__ut": {
-    "start": 74.58,
-    "end": 74.996,
-    "duration": 0.416
+    "start": 81.82,
+    "end": 82.237,
+    "duration": 0.417
   },
   "van__iet": {
-    "start": 74.996,
-    "end": 75.541,
-    "duration": 0.545
+    "start": 82.237,
+    "end": 82.783,
+    "duration": 0.546
   },
   "van__u_horn_t": {
-    "start": 75.541,
-    "end": 75.945,
-    "duration": 0.404
+    "start": 82.783,
+    "end": 83.214,
+    "duration": 0.431
   },
   "van__uot_horn": {
-    "start": 75.945,
-    "end": 76.379,
-    "duration": 0.434
+    "start": 83.214,
+    "end": 83.632,
+    "duration": 0.418
   },
   "van__uot_hat": {
-    "start": 76.379,
-    "end": 76.98,
+    "start": 83.632,
+    "end": 84.233,
     "duration": 0.601
   },
   "van__oat": {
-    "start": 76.98,
-    "end": 77.405,
-    "duration": 0.425
+    "start": 84.233,
+    "end": 84.66,
+    "duration": 0.427
   },
   "van__oat_breve": {
-    "start": 77.405,
-    "end": 77.797,
-    "duration": 0.392
+    "start": 84.66,
+    "end": 85.086,
+    "duration": 0.426
   },
   "van__uat_hat": {
-    "start": 77.797,
-    "end": 78.205,
-    "duration": 0.408
+    "start": 85.086,
+    "end": 85.515,
+    "duration": 0.429
   },
   "van__uyet": {
-    "start": 78.205,
-    "end": 78.666,
+    "start": 85.515,
+    "end": 85.976,
     "duration": 0.461
   },
   "van__ac": {
-    "start": 78.666,
-    "end": 79.016,
-    "duration": 0.35
+    "start": 85.976,
+    "end": 86.403,
+    "duration": 0.427
   },
   "van__uyt": {
-    "start": 79.016,
-    "end": 79.45,
+    "start": 86.403,
+    "end": 86.837,
     "duration": 0.434
   },
   "van__a_breve_c": {
-    "start": 79.45,
-    "end": 79.794,
-    "duration": 0.344
+    "start": 86.837,
+    "end": 87.254,
+    "duration": 0.417
   },
   "van__a_hat_c": {
-    "start": 79.794,
-    "end": 80.464,
-    "duration": 0.67
+    "start": 87.254,
+    "end": 87.928,
+    "duration": 0.674
   },
   "van__ec": {
-    "start": 80.464,
-    "end": 80.824,
-    "duration": 0.36
+    "start": 87.928,
+    "end": 88.36,
+    "duration": 0.432
   },
   "van__e_hat_c": {
-    "start": 80.824,
-    "end": 81.196,
-    "duration": 0.372
+    "start": 88.36,
+    "end": 88.816,
+    "duration": 0.456
   },
   "van__oc": {
-    "start": 81.196,
-    "end": 81.546,
-    "duration": 0.35
+    "start": 88.816,
+    "end": 89.247,
+    "duration": 0.431
   },
   "van__o_hat_c": {
-    "start": 81.546,
-    "end": 81.893,
-    "duration": 0.347
+    "start": 89.247,
+    "end": 89.657,
+    "duration": 0.41
   },
   "van__u_horn_c": {
-    "start": 81.893,
-    "end": 82.238,
-    "duration": 0.345
+    "start": 89.657,
+    "end": 90.073,
+    "duration": 0.416
   },
   "van__uc": {
-    "start": 82.238,
-    "end": 82.605,
-    "duration": 0.367
+    "start": 90.073,
+    "end": 90.517,
+    "duration": 0.444
   },
   "van__uoc_hat": {
-    "start": 82.605,
-    "end": 82.984,
-    "duration": 0.379
+    "start": 90.517,
+    "end": 90.96,
+    "duration": 0.443
   },
   "van__iec": {
-    "start": 82.984,
-    "end": 83.433,
+    "start": 90.96,
+    "end": 91.409,
     "duration": 0.449
   },
   "van__uoc_horn": {
-    "start": 83.433,
-    "end": 83.851,
+    "start": 91.409,
+    "end": 91.827,
     "duration": 0.418
   },
   "van__oac": {
-    "start": 83.851,
-    "end": 84.247,
-    "duration": 0.396
+    "start": 91.827,
+    "end": 92.257,
+    "duration": 0.43
   },
   "van__ach": {
-    "start": 84.247,
-    "end": 84.625,
-    "duration": 0.378
+    "start": 92.257,
+    "end": 92.69,
+    "duration": 0.433
   },
   "van__oac_breve": {
-    "start": 84.625,
-    "end": 85.019,
-    "duration": 0.394
+    "start": 92.69,
+    "end": 93.141,
+    "duration": 0.451
   },
   "van__e_hat_ch": {
-    "start": 85.019,
-    "end": 85.414,
-    "duration": 0.395
+    "start": 93.141,
+    "end": 93.593,
+    "duration": 0.452
   },
   "van__ich": {
-    "start": 85.414,
-    "end": 85.808,
-    "duration": 0.394
+    "start": 93.593,
+    "end": 94.058,
+    "duration": 0.465
   },
   "van__oach": {
-    "start": 85.808,
-    "end": 86.229,
-    "duration": 0.421
+    "start": 94.058,
+    "end": 94.489,
+    "duration": 0.431
   },
   "van__uych": {
-    "start": 86.229,
-    "end": 86.771,
-    "duration": 0.542
+    "start": 94.489,
+    "end": 95.033,
+    "duration": 0.544
   },
   "tu__giat_sac": {
-    "start": 86.771,
-    "end": 87.216,
-    "duration": 0.445
+    "start": 95.033,
+    "end": 95.479,
+    "duration": 0.446
   },
   "tu__giat": {
-    "start": 87.216,
-    "end": 87.678,
+    "start": 95.479,
+    "end": 95.941,
     "duration": 0.462
   },
   "tu__hoc": {
-    "start": 87.678,
-    "end": 88.059,
-    "duration": 0.381
+    "start": 95.941,
+    "end": 96.375,
+    "duration": 0.434
   },
   "tu__hoc_sac": {
-    "start": 88.059,
-    "end": 88.441,
-    "duration": 0.382
+    "start": 96.375,
+    "end": 96.831,
+    "duration": 0.456
   },
   "tu__vit": {
-    "start": 88.441,
-    "end": 88.889,
-    "duration": 0.448
+    "start": 96.831,
+    "end": 97.273,
+    "duration": 0.442
   },
   "tu__vit_sac": {
-    "start": 88.889,
-    "end": 89.303,
-    "duration": 0.414
+    "start": 97.273,
+    "end": 97.726,
+    "duration": 0.453
   },
   "tu__mat": {
-    "start": 89.303,
-    "end": 89.725,
-    "duration": 0.422
+    "start": 97.726,
+    "end": 98.17,
+    "duration": 0.444
   },
   "tu__mat_sac": {
-    "start": 89.725,
-    "end": 90.131,
-    "duration": 0.406
+    "start": 98.17,
+    "end": 98.594,
+    "duration": 0.424
   },
   "tu__quat_sac": {
-    "start": 90.131,
-    "end": 90.573,
+    "start": 98.594,
+    "end": 99.036,
     "duration": 0.442
   },
   "tu__quat": {
-    "start": 90.573,
-    "end": 91.043,
+    "start": 99.036,
+    "end": 99.506,
     "duration": 0.47
   },
   "tu__chuot_sac": {
-    "start": 91.043,
-    "end": 91.58,
-    "duration": 0.537
+    "start": 99.506,
+    "end": 100.022,
+    "duration": 0.516
   },
   "tu__chuot": {
-    "start": 91.58,
-    "end": 92.127,
-    "duration": 0.547
+    "start": 100.022,
+    "end": 100.512,
+    "duration": 0.49
   },
   "tu__hat": {
-    "start": 92.127,
-    "end": 92.541,
+    "start": 100.512,
+    "end": 100.926,
     "duration": 0.414
   },
   "tu__bat": {
-    "start": 92.541,
-    "end": 92.933,
-    "duration": 0.392
+    "start": 100.926,
+    "end": 101.36,
+    "duration": 0.434
   },
   "tu__quoc": {
-    "start": 92.933,
-    "end": 93.347,
-    "duration": 0.414
+    "start": 101.36,
+    "end": 101.802,
+    "duration": 0.442
   },
   "tu__sach": {
-    "start": 93.347,
-    "end": 93.808,
-    "duration": 0.461
+    "start": 101.802,
+    "end": 102.247,
+    "duration": 0.445
   },
   "tu__truong_ngang": {
-    "start": 93.808,
-    "end": 94.411,
-    "duration": 0.603
+    "start": 102.247,
+    "end": 102.84,
+    "duration": 0.593
   },
   "tu__truong": {
-    "start": 94.411,
-    "end": 95.058,
+    "start": 102.84,
+    "end": 103.487,
     "duration": 0.647
   },
   "tu__khuyu_ngang": {
-    "start": 95.058,
-    "end": 95.612,
-    "duration": 0.554
+    "start": 103.487,
+    "end": 104.042,
+    "duration": 0.555
   },
   "tu__quang": {
-    "start": 95.612,
-    "end": 96.114,
-    "duration": 0.502
+    "start": 104.042,
+    "end": 104.579,
+    "duration": 0.537
   },
   "tu__khuyu": {
-    "start": 96.114,
-    "end": 96.653,
-    "duration": 0.539
+    "start": 104.579,
+    "end": 105.105,
+    "duration": 0.526
   },
   "tu__nguyen": {
-    "start": 96.653,
-    "end": 97.203,
-    "duration": 0.55
+    "start": 105.105,
+    "end": 105.639,
+    "duration": 0.534
   },
   "tu__chich": {
-    "start": 97.203,
-    "end": 97.667,
-    "duration": 0.464
+    "start": 105.639,
+    "end": 106.073,
+    "duration": 0.434
   },
   "tu__choe": {
-    "start": 97.667,
-    "end": 98.215,
+    "start": 106.073,
+    "end": 106.621,
     "duration": 0.548
   },
   "tu__huych": {
-    "start": 98.215,
-    "end": 98.643,
-    "duration": 0.428
+    "start": 106.621,
+    "end": 107.086,
+    "duration": 0.465
   },
   "tu__chim": {
-    "start": 98.643,
-    "end": 99.189,
-    "duration": 0.546
+    "start": 107.086,
+    "end": 107.633,
+    "duration": 0.547
   },
   "tu__hoa": {
-    "start": 99.189,
-    "end": 99.625,
-    "duration": 0.436
+    "start": 107.633,
+    "end": 108.155,
+    "duration": 0.522
   },
   "tu__me_ngang": {
-    "start": 99.625,
-    "end": 100.055,
-    "duration": 0.43
+    "start": 108.155,
+    "end": 108.699,
+    "duration": 0.544
   },
   "tu__me": {
-    "start": 100.055,
-    "end": 100.441,
-    "duration": 0.386
+    "start": 108.699,
+    "end": 109.202,
+    "duration": 0.503
   },
   "tu__be_ngang": {
-    "start": 100.441,
-    "end": 100.86,
-    "duration": 0.419
+    "start": 109.202,
+    "end": 109.736,
+    "duration": 0.534
   },
   "tu__be": {
-    "start": 100.86,
-    "end": 101.347,
-    "duration": 0.487
+    "start": 109.736,
+    "end": 110.247,
+    "duration": 0.511
   },
   "tu__ban_ngang": {
-    "start": 101.347,
-    "end": 101.833,
-    "duration": 0.486
+    "start": 110.247,
+    "end": 110.765,
+    "duration": 0.518
   },
   "tu__ban": {
-    "start": 101.833,
-    "end": 102.256,
-    "duration": 0.423
-  },
-  "tu__it_nang": {
-    "start": 102.256,
-    "end": 102.687,
-    "duration": 0.431
-  },
-  "tu__ac_nang": {
-    "start": 102.687,
-    "end": 103.069,
-    "duration": 0.382
-  },
-  "tu__cua": {
-    "start": 103.069,
-    "end": 103.49,
-    "duration": 0.421
-  },
-  "tu__cua_ngang": {
-    "start": 103.49,
-    "end": 103.911,
-    "duration": 0.421
-  },
-  "tu__em": {
-    "start": 103.911,
-    "end": 104.44,
+    "start": 110.765,
+    "end": 111.294,
     "duration": 0.529
   },
+  "tu__it_nang": {
+    "start": 111.294,
+    "end": 111.747,
+    "duration": 0.453
+  },
+  "tu__ac_nang": {
+    "start": 111.747,
+    "end": 112.184,
+    "duration": 0.437
+  },
+  "tu__cua": {
+    "start": 112.184,
+    "end": 112.708,
+    "duration": 0.524
+  },
+  "tu__cua_ngang": {
+    "start": 112.708,
+    "end": 113.252,
+    "duration": 0.544
+  },
+  "tu__em": {
+    "start": 113.252,
+    "end": 113.787,
+    "duration": 0.535
+  },
   "tu__khang": {
-    "start": 104.44,
-    "end": 104.966,
+    "start": 113.787,
+    "end": 114.313,
     "duration": 0.526
   },
   "tu__trang": {
-    "start": 104.966,
-    "end": 105.536,
+    "start": 114.313,
+    "end": 114.883,
     "duration": 0.57
   },
   "tu__tieng": {
-    "start": 105.536,
-    "end": 106.078,
+    "start": 114.883,
+    "end": 115.425,
     "duration": 0.542
   },
   "tu__tieng_ngang": {
-    "start": 106.078,
-    "end": 106.623,
-    "duration": 0.545
+    "start": 115.425,
+    "end": 115.954,
+    "duration": 0.529
   },
   "tu__hot": {
-    "start": 106.623,
-    "end": 107.02,
-    "duration": 0.397
+    "start": 115.954,
+    "end": 116.384,
+    "duration": 0.43
   },
   "tu__liu_sac": {
-    "start": 107.02,
-    "end": 107.536,
+    "start": 116.384,
+    "end": 116.9,
     "duration": 0.516
   },
   "tu__liu": {
-    "start": 107.536,
-    "end": 108.066,
-    "duration": 0.53
+    "start": 116.9,
+    "end": 117.431,
+    "duration": 0.531
   },
   "tu__lo": {
-    "start": 108.066,
-    "end": 108.603,
-    "duration": 0.537
+    "start": 117.431,
+    "end": 117.948,
+    "duration": 0.517
   },
   "tu__tren": {
-    "start": 108.603,
-    "end": 109.151,
+    "start": 117.948,
+    "end": 118.496,
     "duration": 0.548
   },
   "tu__canh_huyen": {
-    "start": 109.151,
-    "end": 109.655,
-    "duration": 0.504
+    "start": 118.496,
+    "end": 119.022,
+    "duration": 0.526
   },
   "tu__canh": {
-    "start": 109.655,
-    "end": 110.128,
-    "duration": 0.473
+    "start": 119.022,
+    "end": 119.554,
+    "duration": 0.532
   },
   "tu__cay": {
-    "start": 110.128,
-    "end": 110.544,
-    "duration": 0.416
+    "start": 119.554,
+    "end": 120.085,
+    "duration": 0.531
   },
   "tu__bai_huyen": {
-    "start": 110.544,
-    "end": 111.036,
-    "duration": 0.492
+    "start": 120.085,
+    "end": 120.601,
+    "duration": 0.516
   },
   "tu__bai": {
-    "start": 111.036,
-    "end": 111.528,
-    "duration": 0.492
+    "start": 120.601,
+    "end": 121.127,
+    "duration": 0.526
   },
   "tu__vui": {
-    "start": 111.528,
-    "end": 111.999,
-    "duration": 0.471
+    "start": 121.127,
+    "end": 121.642,
+    "duration": 0.515
   },
   "tu__ve_hoi": {
-    "start": 111.999,
-    "end": 112.539,
-    "duration": 0.54
+    "start": 121.642,
+    "end": 122.156,
+    "duration": 0.514
   },
   "tu__ve": {
-    "start": 112.539,
-    "end": 113.027,
-    "duration": 0.488
+    "start": 122.156,
+    "end": 122.688,
+    "duration": 0.532
   },
   "tu__ve_huyen": {
-    "start": 113.027,
-    "end": 113.527,
-    "duration": 0.5
+    "start": 122.688,
+    "end": 123.207,
+    "duration": 0.519
   },
   "tu__cai": {
-    "start": 113.527,
-    "end": 114.018,
-    "duration": 0.491
+    "start": 123.207,
+    "end": 123.731,
+    "duration": 0.524
   },
   "tu__cai_ngang": {
-    "start": 114.018,
-    "end": 114.471,
-    "duration": 0.453
+    "start": 123.731,
+    "end": 124.25,
+    "duration": 0.519
   },
   "tu__sau": {
-    "start": 114.471,
-    "end": 114.98,
+    "start": 124.25,
+    "end": 124.759,
     "duration": 0.509
   },
   "tu__dau_huyen": {
-    "start": 114.98,
-    "end": 115.492,
+    "start": 124.759,
+    "end": 125.271,
     "duration": 0.512
   },
   "tu__dau": {
-    "start": 115.492,
-    "end": 115.984,
-    "duration": 0.492
+    "start": 125.271,
+    "end": 125.787,
+    "duration": 0.516
   },
   "tu__giup": {
-    "start": 115.984,
-    "end": 116.461,
-    "duration": 0.477
+    "start": 125.787,
+    "end": 126.265,
+    "duration": 0.478
   },
   "tu__cho": {
-    "start": 116.461,
-    "end": 116.936,
-    "duration": 0.475
+    "start": 126.265,
+    "end": 126.792,
+    "duration": 0.527
   },
   "tu__ngoan": {
-    "start": 116.936,
-    "end": 117.435,
-    "duration": 0.499
+    "start": 126.792,
+    "end": 127.311,
+    "duration": 0.519
   },
   "tu__cham": {
-    "start": 117.435,
-    "end": 117.956,
+    "start": 127.311,
+    "end": 127.832,
     "duration": 0.521
   },
   "tu__chi_hoi": {
-    "start": 117.956,
-    "end": 118.507,
-    "duration": 0.551
+    "start": 127.832,
+    "end": 128.368,
+    "duration": 0.536
   },
   "tu__chi": {
-    "start": 118.507,
-    "end": 119.057,
-    "duration": 0.55
+    "start": 128.368,
+    "end": 128.902,
+    "duration": 0.534
   },
   "tu__co": {
-    "start": 119.057,
-    "end": 119.535,
-    "duration": 0.478
+    "start": 128.902,
+    "end": 129.428,
+    "duration": 0.526
   },
   "tu__giao": {
-    "start": 119.535,
-    "end": 120.061,
+    "start": 129.428,
+    "end": 129.954,
     "duration": 0.526
   },
   "tu__giao_sac": {
-    "start": 120.061,
-    "end": 120.619,
+    "start": 129.954,
+    "end": 130.512,
     "duration": 0.558
   },
   "tu__khen": {
-    "start": 120.619,
-    "end": 121.144,
+    "start": 130.512,
+    "end": 131.037,
     "duration": 0.525
   },
   "tu__diem_hoi": {
-    "start": 121.144,
-    "end": 121.686,
-    "duration": 0.542
+    "start": 131.037,
+    "end": 131.563,
+    "duration": 0.526
   },
   "tu__diem": {
-    "start": 121.686,
-    "end": 122.225,
+    "start": 131.563,
+    "end": 132.102,
     "duration": 0.539
   },
   "tu__muoi_huyen": {
-    "start": 122.225,
-    "end": 122.812,
-    "duration": 0.587
+    "start": 132.102,
+    "end": 132.675,
+    "duration": 0.573
   },
   "tu__muoi": {
-    "start": 122.812,
-    "end": 123.364,
-    "duration": 0.552
+    "start": 132.675,
+    "end": 133.214,
+    "duration": 0.539
   },
   "tu__khan": {
-    "start": 123.364,
-    "end": 123.874,
+    "start": 133.214,
+    "end": 133.724,
     "duration": 0.51
   },
   "tu__sach_nang": {
-    "start": 123.874,
-    "end": 124.352,
-    "duration": 0.478
+    "start": 133.724,
+    "end": 134.185,
+    "duration": 0.461
   },
   "tu__chu_sac": {
-    "start": 124.352,
-    "end": 124.863,
+    "start": 134.185,
+    "end": 134.696,
     "duration": 0.511
   },
   "tu__chu": {
-    "start": 124.863,
-    "end": 125.38,
-    "duration": 0.517
+    "start": 134.696,
+    "end": 135.214,
+    "duration": 0.518
   },
   "tu__boi": {
-    "start": 125.38,
-    "end": 125.869,
-    "duration": 0.489
+    "start": 135.214,
+    "end": 135.705,
+    "duration": 0.491
   },
   "tu__nhanh": {
-    "start": 125.869,
-    "end": 126.434,
+    "start": 135.705,
+    "end": 136.27,
     "duration": 0.565
   },
   "tu__gap_sac": {
-    "start": 126.434,
-    "end": 126.808,
-    "duration": 0.374
+    "start": 136.27,
+    "end": 136.715,
+    "duration": 0.445
   },
   "tu__gap_nang": {
-    "start": 126.808,
-    "end": 127.22,
-    "duration": 0.412
+    "start": 136.715,
+    "end": 137.147,
+    "duration": 0.432
   },
   "tu__tay": {
-    "start": 127.22,
-    "end": 127.694,
-    "duration": 0.474
+    "start": 137.147,
+    "end": 137.661,
+    "duration": 0.514
   },
   "tu__con": {
-    "start": 127.694,
-    "end": 128.111,
-    "duration": 0.417
+    "start": 137.661,
+    "end": 138.204,
+    "duration": 0.543
   },
   "tu__ca_sac": {
-    "start": 128.111,
-    "end": 128.581,
-    "duration": 0.47
+    "start": 138.204,
+    "end": 138.755,
+    "duration": 0.551
   },
   "tu__ca": {
-    "start": 128.581,
-    "end": 129.012,
-    "duration": 0.431
+    "start": 138.755,
+    "end": 139.282,
+    "duration": 0.527
   },
   "tu__nho_hoi": {
-    "start": 129.012,
-    "end": 129.51,
+    "start": 139.282,
+    "end": 139.78,
     "duration": 0.498
   },
   "tu__hoi": {
-    "start": 129.51,
-    "end": 130.002,
-    "duration": 0.492
+    "start": 139.78,
+    "end": 140.301,
+    "duration": 0.521
   },
   "tu__nho": {
-    "start": 130.002,
-    "end": 130.494,
-    "duration": 0.492
+    "start": 140.301,
+    "end": 140.82,
+    "duration": 0.519
   }
 }

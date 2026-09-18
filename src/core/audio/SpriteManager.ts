@@ -363,7 +363,7 @@ export class SpriteManager {
     return Math.round(80 + Math.max(0, 1 - clampedSpeed) * 850);
   }
 
-  public static readonly SPRITE_VERSION = 'v4.2.0';
+  public static readonly SPRITE_VERSION = 'v4.3.0';
 
   public async loadSprite(
     mapUrl = `/audio/audio-map.json?v=${SpriteManager.SPRITE_VERSION}`,
@@ -532,8 +532,27 @@ export class SpriteManager {
       const ctx = webAudioEngine.getAudioContext();
       try {
         const cachedClipBuffer = await ctx.decodeAudioData(cachedData.slice(0));
-        // Dữ liệu trong cache đã được DSP tối ưu trước khi lưu, giữ nguyên để phát mượt mà
-        this.dynamicBuffers.set(clean, cachedClipBuffer);
+        let bufferToStore = cachedClipBuffer;
+        const chData = cachedClipBuffer.numberOfChannels > 0 ? cachedClipBuffer.getChannelData(0) : null;
+        const activeSpeechDur = chData ? audioDspProcessor.detectActiveSpeechDuration(chData, cachedClipBuffer.sampleRate) : 0;
+        // Nếu bản ghi cũ trong cache bị ngắn (active speech < 260ms hoặc total duration < 260ms), tự động nâng cấp bằng WSOLA
+        if (activeSpeechDur > 0 ? activeSpeechDur < 0.260 : cachedClipBuffer.duration < 0.260) {
+          bufferToStore = audioDspProcessor.trimAndEnhanceAudioBuffer(cachedClipBuffer, ctx, {
+            profile: 'master_sprite_sync',
+            enableAutoStretch: true,
+            matchMasterSprite: false,
+            maxGainBoost: 4.5,
+            preRollSec: 0.050,
+            reverbTailSec: 0.140,
+            targetPeak: 0.89,
+          });
+          // Nâng cấp bản ghi trong IndexedDB cache ngoại tuyến lên bản WAV 16-bit PCM đã WSOLA
+          try {
+            const wavData = audioDspProcessor.audioBufferToWavArrayBuffer(bufferToStore);
+            audioCacheService.saveClip(clean, wavData, 'audio/wav').catch(() => {});
+          } catch {}
+        }
+        this.dynamicBuffers.set(clean, bufferToStore);
         return true;
       } catch (err) {
         console.warn(`Lỗi giải mã audio cho từ cache "${clean}":`, err);
@@ -553,10 +572,15 @@ export class SpriteManager {
         const ctx = webAudioEngine.getAudioContext();
         const rawDecoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
 
-        // Xử lý DSP Đồng bộ 100% với Kho gốc trên máy (scripts/build-audio-sprite.js):
-        // Giữ nguyên khoảng đệm lấy hơi tự nhiên đầu file (~160ms), tail 50ms, Hann windowing 12ms, 0dB gain boost
+        // Xử lý In-Browser WSOLA DSP: kéo giãn tự động nếu < 260ms, pre-roll 50ms, decay tail 140ms, chuẩn hóa đỉnh 0.89
         const enhancedBuffer = audioDspProcessor.trimAndEnhanceAudioBuffer(rawDecoded, ctx, {
           profile: 'master_sprite_sync',
+          enableAutoStretch: true,
+          matchMasterSprite: false,
+          maxGainBoost: 4.5,
+          preRollSec: 0.050,
+          reverbTailSec: 0.140,
+          targetPeak: 0.89,
         });
         this.dynamicBuffers.set(clean, enhancedBuffer);
 

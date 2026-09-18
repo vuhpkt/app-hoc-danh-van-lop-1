@@ -30,3 +30,6 @@ scripts/*.wav
 scripts/temp_*.wav
 scripts/raw_*.wav
 scripts/test_*.js
+
+# Teamwork subagent artifacts
+.agents/

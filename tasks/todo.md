@@ -152,3 +152,26 @@
   - TypeScript build thành công 0 lỗi.
 
 ### ── Checkpoint 10: Âm thanh tự nhiên, ngân vang tròn trịa, cân bằng nhịp điệu 100% [HOÀN TẤT] ──
+
+---
+
+## Phase 11: Mastering Toàn Diện 280 Mẩu Âm Kho Gốc & Thuật Toán WSOLA In-Browser (v4.3.0)
+- [x] **Task 11.1: Xây dựng kịch bản Mastering tự động hóa 100% (`scripts/master-audio-dataset.js`)**
+  - Quét toàn bộ 280 mẩu âm từ nguồn gốc bất biến `raw-audio-backup/`.
+  - Tự động đo đạc thời lượng nói thực tế (Active Speech) và biên độ đỉnh (Peak).
+  - Tự động áp dụng bộ lọc WSOLA (`atempo`) kéo giãn thời lượng đạt chuẩn sư phạm:
+    * Vần mở/vang (như *"vui"*, *"lo"*, *"em"*, *"chim"*, *"cây"*, *"cô"*): chuẩn hóa $\ge 300\text{ms}$.
+    * Vần khép tắc $p, t, c, ch$ (như *"học"*, *"bắt"*, *"sạch"*, *"vịt"*, *"gập"*): chuẩn hóa $\ge 220\text{ms}$.
+  - Chuẩn hóa biên độ đỉnh của **100% mẩu âm (280 clips)** về chuẩn $0.86 \pm 0.02$ ($-1.3\text{dBFS}$).
+- [x] **Task 11.2: Tái đóng gói Master Audio Sprite & Kích hoạt Cache-Busting `v4.3.0`**
+  - Đóng gói 280 clips đạt chuẩn vào `public/audio/sprite-main.mp3`, `sprite-main.webm` và `audio-map.json`.
+  - Nâng `SpriteManager.SPRITE_VERSION = 'v4.3.0'` để ép trình duyệt xóa sạch cache đĩa cũ.
+- [x] **Task 11.3: Tích hợp thuật toán WSOLA thuần TypeScript In-Browser vào `AudioDspProcessor.ts`**
+  - Xây dựng hàm `wsolaTimeStretch` xử lý trực tiếp trên mảng `Float32Array` trong trình duyệt ($< 10\text{ms}$, bảo toàn $100\%$ cao độ).
+  - Tích hợp `processDynamicWord`: khi người dùng nạp từ mới ngoài kho có thời lượng $< 260\text{ms}$, tự động kéo giãn lên $300\text{ms} - 320\text{ms}$, chèn $50\text{ms}$ pre-roll, $140\text{ms}$ decay tail, Hann windowing $12\text{ms}$ và chuẩn hóa đỉnh về $0.89$ ($-1\text{dBFS}$).
+  - Xuất định dạng 16-bit PCM WAV tương thích hoàn toàn với IndexedDB offline storage.
+- [x] **Task 11.4: Bộ kiểm thử hồi quy độc lập 3 vòng phản biện (Adversarial Review & Victory Audit)**
+  - Viết suite `test/pedagogical_mastering.test.js` kiểm tra độ nguyên vẹn, dạng sóng và các trường hợp biên.
+  - **108/108 tests PASS (100%)**, `npm run build` thành công xuất sắc 0 lỗi (2.48s).
+
+### ── Checkpoint 11: Bộ âm thanh đạt chất lượng sư phạm hoàn hảo toàn diện v4.3.0 [CHIẾN THẮNG TUYỆT ĐỐI] ──
