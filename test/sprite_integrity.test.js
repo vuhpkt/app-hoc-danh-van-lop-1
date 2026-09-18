@@ -120,7 +120,7 @@ test('Master Audio Sprite Integrity & Acoustic Quality', async (t) => {
 
   await t.test('SPRITE_VERSION và ánh xạ từ vựng "em", "lo" chuẩn Lesson 1', () => {
     const spriteFile = fs.readFileSync(path.join(rootDir, 'src', 'core', 'audio', 'SpriteManager.ts'), 'utf-8');
-    assert.ok(spriteFile.includes("SPRITE_VERSION = 'v4.6.0'"), "SPRITE_VERSION phải được cập nhật lên 'v4.6.0'");
+    assert.ok(spriteFile.includes("SPRITE_VERSION = 'v4.7.0'"), "SPRITE_VERSION phải được cập nhật lên 'v4.7.0'");
 
     const emMatch = spriteFile.match(/'em'\s*:\s*'([^']+)'/);
     assert.ok(emMatch, "Phải có mapping cho 'em'");

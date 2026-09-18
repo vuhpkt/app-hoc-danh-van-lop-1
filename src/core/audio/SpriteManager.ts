@@ -384,7 +384,7 @@ export class SpriteManager {
     return Math.round(80 + Math.max(0, 1 - clampedSpeed) * 850);
   }
 
-  public static readonly SPRITE_VERSION = 'v4.6.0';
+  public static readonly SPRITE_VERSION = 'v4.7.0';
 
   public async loadSprite(
     mapUrl = `/audio/audio-map.json?v=${SpriteManager.SPRITE_VERSION}`,

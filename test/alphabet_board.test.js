@@ -51,7 +51,7 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
       // Quy chuẩn phát âm theo Âm:
       if (letter.type === 'consonant') {
         assert.ok(letter.spriteKey.startsWith('am_dau__'), `Phụ âm ${letter.uppercase} phải trỏ vào am_dau__* để phát âm bờ, cờ, dờ... (thực tế: ${letter.spriteKey})`);
-        assert.ok(letter.soundLabel.endsWith('ờ') || letter.soundLabel === 'quờ', `Nhãn âm của phụ âm ${letter.uppercase} phải là âm ("bờ", "cờ"...), thực tế: ${letter.soundLabel}`);
+        assert.ok(letter.soundLabel.endsWith('ờ') || letter.soundLabel === 'quờ' || letter.soundLabel === 'ca', `Nhãn âm của phụ âm ${letter.uppercase} phải là âm ("bờ", "cờ"...) hoặc tên chữ "ca", thực tế: ${letter.soundLabel}`);
       } else {
         assert.ok(letter.spriteKey.startsWith('van__'), `Nguyên âm ${letter.uppercase} phải trỏ vào van__* (thực tế: ${letter.spriteKey})`);
       }
@@ -173,10 +173,10 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
     assert.ok(!pageCode.includes('/{comp.soundLabel}/'), 'AlphabetLearningPage không được chứa phiên âm /{comp.soundLabel}/');
   });
 
-  await t.test('9. Chữ "k" phát âm chuẩn "cờ" (đồng âm với "c"), không bị đọc thành "câu"', () => {
+  await t.test('9. Chữ "k" phát âm chuẩn "ca" (tên chữ cái ca), không đọc là "câu" hay "cờ"', () => {
     const kLetter = ALPHABET_LETTERS.find(l => l.letter === 'k');
     assert.ok(kLetter, 'Phải có chữ "k" trong ALPHABET_LETTERS');
-    assert.equal(kLetter.soundLabel, 'cờ', 'Chữ "k" phải có soundLabel là "cờ"');
+    assert.equal(kLetter.soundLabel, 'ca', 'Chữ "k" phải có soundLabel là "ca"');
     
     const kSeg = audioMap[kLetter.spriteKey];
     assert.ok(kSeg, 'Sprite key của "k" phải tồn tại trong audio-map');
@@ -185,7 +185,7 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
     const manifest = JSON.parse(fs.readFileSync(path.join(rootDir, 'raw-audio', 'manifest.json'), 'utf-8'));
     const kManifest = manifest.find(m => m.key === 'am_dau__k');
     assert.ok(kManifest, 'am_dau__k phải có trong manifest.json');
-    assert.equal(kManifest.text, 'cờ', 'am_dau__k text trong manifest phải là "cờ"');
+    assert.equal(kManifest.text, 'ca', 'am_dau__k text trong manifest phải là "ca"');
   });
 
   await t.test('10. Nguyên âm "o" và "ô" phải hoàn toàn phân biệt, không bị trùng lặp âm thanh', () => {

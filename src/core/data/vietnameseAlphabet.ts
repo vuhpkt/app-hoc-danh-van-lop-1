@@ -63,7 +63,7 @@ export const ALPHABET_LETTERS: LetterItem[] = [
   { letter: 'g', uppercase: 'G', lowercase: 'g', type: 'consonant', soundLabel: 'gờ', spriteKey: 'am_dau__g', exampleWord: 'gà' },
   { letter: 'h', uppercase: 'H', lowercase: 'h', type: 'consonant', soundLabel: 'hờ', spriteKey: 'am_dau__h', exampleWord: 'hát' },
   { letter: 'i', uppercase: 'I', lowercase: 'i', type: 'vowel', soundLabel: 'i', spriteKey: 'van__i', exampleWord: 'chim' },
-  { letter: 'k', uppercase: 'K', lowercase: 'k', type: 'consonant', soundLabel: 'cờ', spriteKey: 'am_dau__k', exampleWord: 'khen' },
+  { letter: 'k', uppercase: 'K', lowercase: 'k', type: 'consonant', soundLabel: 'ca', spriteKey: 'am_dau__k', exampleWord: 'khen' },
   { letter: 'l', uppercase: 'L', lowercase: 'l', type: 'consonant', soundLabel: 'lờ', spriteKey: 'am_dau__l', exampleWord: 'lo' },
   { letter: 'm', uppercase: 'M', lowercase: 'm', type: 'consonant', soundLabel: 'mờ', spriteKey: 'am_dau__m', exampleWord: 'mẹ' },
   { letter: 'n', uppercase: 'N', lowercase: 'n', type: 'consonant', soundLabel: 'nờ', spriteKey: 'am_dau__n', exampleWord: 'nho' },
