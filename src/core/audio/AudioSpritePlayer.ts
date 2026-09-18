@@ -31,6 +31,7 @@ export const MOCK_AUDIO_SPRITE_MAP: AudioSpriteMap = {
 export class AudioSpritePlayer {
   private static sentencePlaybackId = 0;
   private static activeDelays: ReturnType<typeof setTimeout>[] = [];
+  private static activeDelayResolvers: Array<() => void> = [];
 
   /**
    * Tính toán khoảng nghỉ tự nhiên giữa các từ:
@@ -109,10 +110,13 @@ export class AudioSpritePlayer {
   private static cancellableSleep(ms: number): Promise<void> {
     return new Promise((resolve) => {
       let timer: ReturnType<typeof setTimeout>;
-      timer = setTimeout(() => {
+      const done = () => {
         this.activeDelays = this.activeDelays.filter((t) => t !== timer);
+        this.activeDelayResolvers = this.activeDelayResolvers.filter((r) => r !== done);
         resolve();
-      }, ms);
+      };
+      this.activeDelayResolvers.push(done);
+      timer = setTimeout(done, ms);
       this.activeDelays.push(timer);
     });
   }
@@ -120,6 +124,13 @@ export class AudioSpritePlayer {
   private static clearDelays(): void {
     this.activeDelays.forEach((t) => clearTimeout(t));
     this.activeDelays = [];
+    const resolvers = [...this.activeDelayResolvers];
+    this.activeDelayResolvers = [];
+    resolvers.forEach((r) => {
+      try {
+        r();
+      } catch {}
+    });
   }
 
   /**

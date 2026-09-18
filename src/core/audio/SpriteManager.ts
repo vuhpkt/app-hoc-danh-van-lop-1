@@ -366,6 +366,8 @@ export class SpriteManager {
   private isLoading = false;
   private currentPlaybackId = 0;
   private activeGainNodes: GainNode[] = [];
+  private activeSources: AudioBufferSourceNode[] = [];
+  private activeResolvers: Array<() => void> = [];
   private activeTimeouts: ReturnType<typeof setTimeout>[] = [];
 
   private constructor() {}
@@ -473,6 +475,9 @@ export class SpriteManager {
 
       this.clipBuffers.set(key, clipBuffer);
     }
+
+    // Giải phóng AudioBuffer tổng khỏi RAM sau khi đã bóc tách 282 clip con
+    this.masterBuffer = null;
   }
 
   public isSpriteReady(): boolean {
@@ -501,6 +506,16 @@ export class SpriteManager {
     this.currentPlaybackId++;
     this.activeTimeouts.forEach((t) => clearTimeout(t));
     this.activeTimeouts = [];
+
+    // Dừng và ngắt toàn bộ AudioBufferSourceNode đang phát dở
+    this.activeSources.forEach((source) => {
+      try {
+        source.stop();
+        source.disconnect();
+      } catch {}
+    });
+    this.activeSources = [];
+
     const ctx = webAudioEngine.getAudioContext();
     const now = ctx.currentTime;
 
@@ -513,6 +528,16 @@ export class SpriteManager {
       } catch {}
     });
     this.activeGainNodes = [];
+
+    // Giải phóng tất cả các Promise đang chờ để không bị treo hàm async
+    const resolvers = [...this.activeResolvers];
+    this.activeResolvers = [];
+    resolvers.forEach((r) => {
+      try {
+        r();
+      } catch {}
+    });
+
     webAudioEngine.stop();
   }
 
@@ -679,31 +704,37 @@ export class SpriteManager {
       source.connect(gainNode);
       gainNode.connect(ctx.destination);
       this.activeGainNodes.push(gainNode);
+      this.activeSources.push(source);
 
-      source.start(startTime);
-      source.stop(stopTime);
-
+      let isFinished = false;
       let timer: ReturnType<typeof setTimeout> | null = null;
 
-      const cleanup = () => {
+      const finish = () => {
+        if (isFinished) return;
+        isFinished = true;
         try {
           source.disconnect();
           gainNode.disconnect();
         } catch {}
         this.activeGainNodes = this.activeGainNodes.filter((g) => g !== gainNode);
+        this.activeSources = this.activeSources.filter((s) => s !== source);
+        this.activeResolvers = this.activeResolvers.filter((r) => r !== finish);
         if (timer) {
+          clearTimeout(timer);
           this.activeTimeouts = this.activeTimeouts.filter((t) => t !== timer);
         }
+        resolve();
       };
 
-      source.onended = cleanup;
+      this.activeResolvers.push(finish);
+      source.onended = finish;
+
+      source.start(startTime);
+      source.stop(stopTime);
 
       // Đồng bộ Promise chuẩn thời gian thực với setTimeout
       const totalDurationMs = Math.round((LOOKAHEAD_SEC + duration) * 1000);
-      timer = setTimeout(() => {
-        cleanup();
-        resolve();
-      }, totalDurationMs);
+      timer = setTimeout(finish, totalDurationMs);
       this.activeTimeouts.push(timer);
     });
   }
@@ -744,10 +775,17 @@ export class SpriteManager {
 
         if (i < tokensOrKeys.length - 1 && paddingMs > 0) {
           await new Promise<void>((resolve) => {
-            const timer = setTimeout(() => {
-              this.activeTimeouts = this.activeTimeouts.filter((t) => t !== timer);
+            let timer: ReturnType<typeof setTimeout> | null = null;
+            const finishPause = () => {
+              this.activeResolvers = this.activeResolvers.filter((r) => r !== finishPause);
+              if (timer) {
+                clearTimeout(timer);
+                this.activeTimeouts = this.activeTimeouts.filter((t) => t !== timer);
+              }
               resolve();
-            }, paddingMs);
+            };
+            this.activeResolvers.push(finishPause);
+            timer = setTimeout(finishPause, paddingMs);
             this.activeTimeouts.push(timer);
           });
         }
