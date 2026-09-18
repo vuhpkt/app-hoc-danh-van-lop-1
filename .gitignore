@@ -25,6 +25,7 @@ dist-ssr
 
 # Temporary audio test files
 temp_trimmed_audio/
+raw-audio-backup/
 scripts/*.wav
 scripts/temp_*.wav
 scripts/raw_*.wav
