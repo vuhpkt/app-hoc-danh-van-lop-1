@@ -124,10 +124,10 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
     assert.equal(blend2.blendedWord, 'ca');
     assert.deepEqual(blend2.audioSteps, ['am_dau__c', 'van__a', 'tu__ca']);
 
-    // Thử ghép trường hợp từ chưa có sẵn trong master sprite (chỉ phát cờ + ang)
+    // Thử ghép trường hợp từ chưa có sẵn trong master sprite (vẫn có đủ 3 bước để phát âm tiếng ghép)
     const blendUnknown = blendSoundWithPhonics('c', 'ang');
     assert.equal(blendUnknown.blendedWord, 'cang');
-    assert.deepEqual(blendUnknown.audioSteps, ['am_dau__c', 'van__ang']);
+    assert.deepEqual(blendUnknown.audioSteps, ['am_dau__c', 'van__ang', 'cang']);
   });
 
   await t.test('6. Kiểm tra các bộ ghép âm mẫu (Presets) giải quyết 100% audio hợp lệ', () => {
@@ -207,5 +207,18 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
     const oHatBuf = fs.readFileSync(oHatFile);
     assert.notEqual(oBuf.length, oHatBuf.length, 'Kích thước tệp âm thanh "o" và "ô" phải khác biệt');
   });
+
+  await t.test('11. blendSoundWithPhonics phải luôn có đủ 3 bước âm thanh [âm đầu, vần, tiếng ghép]', () => {
+    const blendBa = blendSoundWithPhonics('b', 'a');
+    assert.equal(blendBa.blendedWord, 'ba');
+    assert.equal(blendBa.audioSteps.length, 3, 'Phải có đủ 3 bước: âm đầu, vần, và tiếng ghép');
+    assert.deepEqual(blendBa.audioSteps, ['am_dau__b', 'van__a', 'ba']);
+
+    const blendCa = blendSoundWithPhonics('c', 'a');
+    assert.equal(blendCa.blendedWord, 'ca');
+    assert.equal(blendCa.audioSteps.length, 3);
+    assert.deepEqual(blendCa.audioSteps, ['am_dau__c', 'van__a', 'tu__ca']);
+  });
 });
+
 

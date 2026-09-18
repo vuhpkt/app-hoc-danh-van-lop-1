@@ -335,6 +335,7 @@ const CORE_WORD_SPRITE_KEYS: Record<string, string> = {
   'khuỷu': 'tu__khuyu',
   'líu': 'tu__liu',
   'lo': 'tu__lo',
+  'me': 'tu__me_ngang',
   'mẹ': 'tu__me',
   'mắt': 'tu__mat',
   'mười': 'tu__muoi',
@@ -389,11 +390,9 @@ export function blendSoundWithPhonics(consonant: string, rime: string): BlendRes
   // 3. Tìm spriteKey cho từ ghép kết quả (nếu có sẵn trong Master Sprite)
   const blendedWordKey = CORE_WORD_SPRITE_KEYS[blendedWord];
 
-  // 4. Chuỗi âm thanh sư phạm: [âm đầu] -> [vần] -> [từ ghép nếu có]
-  const audioSteps: string[] = [consonantKey, rimeKey];
-  if (blendedWordKey) {
-    audioSteps.push(blendedWordKey);
-  }
+  // 4. Chuỗi âm thanh sư phạm: [âm đầu] -> [vần] -> [tiếng ghép hoàn chỉnh]
+  // Luôn đảm bảo đủ 3 bước phát âm sư phạm: âm đầu -> vần -> tiếng ghép
+  const audioSteps: string[] = [consonantKey, rimeKey, blendedWordKey || blendedWord];
 
   return {
     consonant: normalizedConsonant,
