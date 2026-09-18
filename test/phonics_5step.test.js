@@ -102,4 +102,27 @@ describe('Phonics 5-Step Formula Verification (SGK Kết Nối Tri Thức)', () 
       assert.ok(audioMap[key], `Sprite key "${key}" cho step "${step}" phải có toạ độ trong audio-map.json`);
     }
   });
+
+  it('8. Âm tiết bắt đầu bằng "gi" đi với nguyên âm đôi "iê" phân rã đúng vần "iê..." (giết, giếc, giền, giếng)', () => {
+    const giet = parseVietnamesePhonics('giết');
+    assert.equal(giet.initialConsonant, 'gi');
+    assert.equal(giet.rime, 'iêt');
+    assert.deepEqual(giet.spellingFormula, ['gi', 'iêt', 'giêt', 'sắc', 'giết']);
+
+    const giec = parseVietnamesePhonics('giếc');
+    assert.equal(giec.initialConsonant, 'gi');
+    assert.equal(giec.rime, 'iêc');
+    assert.deepEqual(giec.spellingFormula, ['gi', 'iêc', 'giêc', 'sắc', 'giếc']);
+
+    const gien = parseVietnamesePhonics('giền');
+    assert.equal(gien.initialConsonant, 'gi');
+    assert.equal(gien.rime, 'iên');
+    assert.deepEqual(gien.spellingFormula, ['gi', 'iên', 'giên', 'huyền', 'giền']);
+
+    const gieng = parseVietnamesePhonics('giếng');
+    assert.equal(gieng.initialConsonant, 'gi');
+    assert.equal(gieng.rime, 'iêng');
+    assert.deepEqual(gieng.spellingFormula, ['gi', 'iêng', 'giêng', 'sắc', 'giếng']);
+  });
 });
+

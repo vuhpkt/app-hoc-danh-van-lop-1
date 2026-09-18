@@ -218,6 +218,17 @@ export function extractInitialAndRime(unaccentedWord: string): { initialConsonan
       return { initialConsonant: 'gi', rime: 'i', baseWord: 'gi' };
     }
 
+    // Nếu sau 'gi' là nguyên âm đôi 'e' hoặc 'ê' (ví dụ: giết -> giêt, giếc -> giêc, giền -> giên, giếng -> giêng)
+    // Theo ngữ âm Lớp 1, chữ 'i' được chia sẻ giữa âm đầu 'gi' và vần 'iê...'
+    if (word.startsWith('gie') || word.startsWith('giê')) {
+      const rimePartWithI = word.slice(1); // 'iêt', 'iêc', 'iêng', 'iên'...
+      return {
+        initialConsonant: 'gi',
+        rime: rimePartWithI,
+        baseWord: word,
+      };
+    }
+
     const char3 = word.charAt(2);
     // Nếu ký tự thứ 3 là nguyên âm (ví dụ: gió -> char3 = 'o'; giặt/giăt -> char3 = 'ă'; giày/giay -> char3 = 'a'; giữa/giưa -> char3 = 'ư')
     if (BASE_VOWELS.has(char3)) {
@@ -229,7 +240,7 @@ export function extractInitialAndRime(unaccentedWord: string): { initialConsonan
       };
     }
 
-    // Nếu ký tự thứ 3 là phụ âm (ví dụ: gìn/gin -> char3 = 'n'; giết/giet -> char3 = 'e' nhưng 'iê' là nguyên âm đôi)
+    // Nếu ký tự thứ 3 là phụ âm (ví dụ: gìn/gin -> char3 = 'n'; git -> char3 = 't')
     // Trong trường hợp này 'i' vừa là âm của 'gi' vừa đóng vai trò nguyên âm của vần ('in', 'it'...)
     const rimePartWithI = word.slice(1); // 'in', 'it'...
     return {
@@ -278,62 +289,6 @@ export function isCheckedRime(rime: string): boolean {
   if (clean.endsWith('ch')) return true;
   const lastChar = clean.slice(-1);
   return lastChar === 'p' || lastChar === 't' || lastChar === 'c';
-}
-
-/**
- * Bảng chuyển đổi vần khép tắc không dấu sang dạng có thanh SẮC chuẩn
- */
-export const CHECKED_RIME_TO_SAC_MAP: Record<string, string> = {
-  // -p
-  'ap': 'áp', 'ăp': 'ắp', 'âp': 'ấp', 'ep': 'ép', 'êp': 'ếp',
-  'ip': 'íp', 'op': 'óp', 'ôp': 'ốp', 'ơp': 'ớp', 'up': 'úp',
-  'ưp': 'úp', 'iep': 'iếp', 'iêp': 'iếp', 'uop': 'uốp', 'uôp': 'uốp',
-  'ươp': 'ướp', 'uop_horn': 'ướp',
-  // -t
-  'at': 'át', 'ăt': 'ắt', 'ât': 'ất', 'et': 'ét', 'êt': 'ết',
-  'it': 'ít', 'ot': 'ót', 'ôt': 'ốt', 'ơt': 'ớt', 'ut': 'út',
-  'ưt': 'ứt', 'iet': 'iết', 'iêt': 'iết', 'yet': 'yết', 'yêt': 'yết',
-  'uot': 'uốt', 'uôt': 'uốt', 'ươt': 'ướt',
-  'oat': 'oát', 'oăt': 'oắt', 'uat': 'uất', 'uât': 'uất',
-  'uyet': 'uyết', 'uyêt': 'uyết', 'uyt': 'uýt',
-  // -c
-  'ac': 'ác', 'ăc': 'ắc', 'âc': 'ấc', 'ec': 'éc', 'êc': 'ếc',
-  'oc': 'óc', 'ôc': 'ốc', 'uc': 'úc', 'ưc': 'ức',
-  'iec': 'iếc', 'iêc': 'iếc', 'uoc': 'uốc', 'uôc': 'uốc', 'ươc': 'ước',
-  'oac': 'oác', 'oăc': 'oắc',
-  // -ch
-  'ach': 'ách', 'êch': 'ếch', 'ich': 'ích', 'oach': 'oách', 'uych': 'uých',
-};
-
-/**
- * Lấy dạng thanh sắc của vần khép tắc
- */
-export function getCheckedRimeSac(rime: string): string {
-  const clean = rime.toLowerCase().trim();
-  return CHECKED_RIME_TO_SAC_MAP[clean] || clean;
-}
-
-/**
- * Bảng ánh xạ chuyển nguyên âm mang thanh NẶNG sang thanh SẮC
- */
-const NANG_TO_SAC_VOWEL_MAP: Record<string, string> = {
-  'ạ': 'á', 'ặ': 'ắ', 'ậ': 'ấ',
-  'ẹ': 'é', 'ệ': 'ế',
-  'ị': 'í',
-  'ọ': 'ó', 'ộ': 'ố', 'ợ': 'ớ',
-  'ụ': 'ú', 'ự': 'ứ',
-};
-
-/**
- * Chuyển một từ/tiếng mang thanh NẶNG sang tiếng đệm mang thanh SẮC tương ứng
- * Ví dụ: giặt -> giắt, học -> hóc, vịt -> vít, mặt -> mắt, quạt -> quát, chuột -> chuốt
- */
-export function convertNangToSac(word: string): string {
-  let res = '';
-  for (const char of word.normalize('NFC')) {
-    res += NANG_TO_SAC_VOWEL_MAP[char] || char;
-  }
-  return res;
 }
 
 /**
