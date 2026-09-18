@@ -10,10 +10,12 @@ export function App() {
     <div className="w-full min-h-screen bg-[#F8F6F1] flex flex-col font-sans text-stone-900">
       {/* Top Bar Switcher: Thanh lịch, dịu nhẹ */}
       <nav className="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-stone-200/70 px-3 sm:px-4 py-2 flex items-center justify-between shadow-2xs">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-amber-400 text-stone-950 flex items-center justify-center font-black text-xs shadow-2xs">
-            TV1
-          </div>
+        <div className="flex items-center gap-2.5">
+          <img
+            src={`${import.meta.env.BASE_URL}app-icon.jpg`}
+            alt="Logo Đánh Vần Tiếng Việt 1"
+            className="w-8 h-8 rounded-xl object-cover shadow-2xs border border-amber-200"
+          />
           <span className="font-extrabold text-stone-800 text-xs sm:text-sm tracking-tight hidden md:inline">
             Đánh Vần Tiếng Việt 1
           </span>
