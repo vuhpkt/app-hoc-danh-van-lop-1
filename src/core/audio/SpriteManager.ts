@@ -387,8 +387,8 @@ export class SpriteManager {
   public static readonly SPRITE_VERSION = 'v4.7.0';
 
   public async loadSprite(
-    mapUrl = `/audio/audio-map.json?v=${SpriteManager.SPRITE_VERSION}`,
-    audioUrl = `/audio/sprite-main.mp3?v=${SpriteManager.SPRITE_VERSION}`
+    mapUrl?: string,
+    audioUrl?: string
   ): Promise<boolean> {
     if (typeof window === 'undefined') return false;
     if (this.isLoaded) return true;
@@ -397,17 +397,22 @@ export class SpriteManager {
       return this.isLoaded;
     }
 
+    const base = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || '/';
+    const cleanBase = base.endsWith('/') ? base : `${base}/`;
+    const resolvedMapUrl = mapUrl || `${cleanBase}audio/audio-map.json?v=${SpriteManager.SPRITE_VERSION}`;
+    const resolvedAudioUrl = audioUrl || `${cleanBase}audio/sprite-main.mp3?v=${SpriteManager.SPRITE_VERSION}`;
+
     this.isLoading = true;
 
     try {
       const ctx = webAudioEngine.getAudioContext();
 
-      const mapRes = await fetch(mapUrl);
-      if (!mapRes.ok) throw new Error(`Không tải được map từ ${mapUrl}`);
+      const mapRes = await fetch(resolvedMapUrl);
+      if (!mapRes.ok) throw new Error(`Không tải được map từ ${resolvedMapUrl}`);
       this.audioMap = (await mapRes.json()) as AudioSpriteMap;
 
-      const audioRes = await fetch(audioUrl);
-      if (!audioRes.ok) throw new Error(`Không tải được sprite từ ${audioUrl}`);
+      const audioRes = await fetch(resolvedAudioUrl);
+      if (!audioRes.ok) throw new Error(`Không tải được sprite từ ${resolvedAudioUrl}`);
       const arrayBuffer = await audioRes.arrayBuffer();
 
       this.masterBuffer = await ctx.decodeAudioData(arrayBuffer);
