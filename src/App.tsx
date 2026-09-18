@@ -5,7 +5,9 @@ import { KidLearningPage } from './pages/KidLearningPage';
 import { AlphabetLearningPage } from './pages/AlphabetLearningPage';
 
 export function App() {
+  const isDev = import.meta.env.DEV;
   const [viewMode, setViewMode] = useState<'reader' | 'alphabet' | 'lab'>('reader');
+  const activeMode = !isDev && viewMode === 'lab' ? 'reader' : viewMode;
 
   return (
     <div className="w-full min-h-screen bg-[#F8F6F1] flex flex-col font-sans text-stone-900">
@@ -20,13 +22,13 @@ export function App() {
           </span>
         </div>
 
-        {/* Nút chuyển đổi 3 Chế Độ: Bé Đọc SGK | Bảng Chữ Cái & Âm | Phòng Thử Nghiệm */}
+        {/* Nút chuyển đổi Chế Độ: Bé Đọc SGK | Bảng Chữ Cái & Âm | (Dev only: Thử Nghiệm) */}
         <div className="flex items-center bg-stone-100/90 p-1 rounded-xl border border-stone-200/70 text-xs">
           <button
             type="button"
             onClick={() => setViewMode('reader')}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-              viewMode === 'reader'
+              activeMode === 'reader'
                 ? 'bg-white text-stone-900 font-black shadow-2xs'
                 : 'text-stone-500 hover:text-stone-800'
             }`}
@@ -39,7 +41,7 @@ export function App() {
             type="button"
             onClick={() => setViewMode('alphabet')}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-              viewMode === 'alphabet'
+              activeMode === 'alphabet'
                 ? 'bg-white text-emerald-800 font-black shadow-2xs'
                 : 'text-stone-500 hover:text-stone-800'
             }`}
@@ -48,27 +50,29 @@ export function App() {
             <span>Bảng Chữ Cái</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setViewMode('lab')}
-            className={`flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-              viewMode === 'lab'
-                ? 'bg-white text-blue-700 font-black shadow-2xs'
-                : 'text-stone-500 hover:text-stone-800'
-            }`}
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Thử Nghiệm</span>
-            <span className="sm:hidden">Lab</span>
-          </button>
+          {isDev && (
+            <button
+              type="button"
+              onClick={() => setViewMode('lab')}
+              className={`flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                activeMode === 'lab'
+                  ? 'bg-white text-blue-700 font-black shadow-2xs'
+                  : 'text-stone-500 hover:text-stone-800'
+              }`}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Thử Nghiệm</span>
+              <span className="sm:hidden">Lab</span>
+            </button>
+          )}
         </div>
       </nav>
 
       {/* Main View */}
       <main className="flex-1">
-        {viewMode === 'reader' && <KidLearningPage />}
-        {viewMode === 'alphabet' && <AlphabetLearningPage />}
-        {viewMode === 'lab' && <Playground />}
+        {activeMode === 'reader' && <KidLearningPage />}
+        {activeMode === 'alphabet' && <AlphabetLearningPage />}
+        {activeMode === 'lab' && <Playground />}
       </main>
     </div>
   );

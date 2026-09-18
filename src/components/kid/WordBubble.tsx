@@ -9,7 +9,7 @@ interface WordBubbleProps {
   onClick: (token: Token) => void;
 }
 
-export const WordBubble: React.FC<WordBubbleProps> = ({
+const WordBubbleComponent: React.FC<WordBubbleProps> = ({
   token,
   isActive,
   readingMode,
@@ -61,3 +61,15 @@ export const WordBubble: React.FC<WordBubbleProps> = ({
     </div>
   );
 };
+
+export const WordBubble = React.memo(WordBubbleComponent, (prev, next) => {
+  return (
+    prev.isActive === next.isActive &&
+    prev.subStepLabel === next.subStepLabel &&
+    prev.readingMode === next.readingMode &&
+    prev.token.text === next.token.text &&
+    prev.token.type === next.token.type &&
+    prev.onClick === next.onClick
+  );
+});
+

@@ -30,6 +30,7 @@ export class LessonAudioSyncer {
    * Tách bài đọc thành danh sách các từ vựng độc nhất (không trùng lặp, không dấu câu)
    */
   public static extractUniqueWords(text: string): string[] {
+    if (!text || typeof text !== 'string') return [];
     const rawTokens = text.split(/[\s,.;:!?"'()\-—\n\r]+/);
     const set = new Set<string>();
 

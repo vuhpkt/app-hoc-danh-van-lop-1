@@ -89,6 +89,15 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
     );
   };
 
+  // Thu hồi Object URL khi unmount component để tránh rò rỉ bộ nhớ
+  useEffect(() => {
+    return () => {
+      if (capturedPreview?.url) {
+        URL.revokeObjectURL(capturedPreview.url);
+      }
+    };
+  }, [capturedPreview]);
+
   const handleConfirm = () => {
     if (capturedPreview) {
       onCapture(capturedPreview.blob, capturedPreview.url);
@@ -96,6 +105,9 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   };
 
   const handleRetake = () => {
+    if (capturedPreview?.url) {
+      URL.revokeObjectURL(capturedPreview.url);
+    }
     setCapturedPreview(null);
   };
 

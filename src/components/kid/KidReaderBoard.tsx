@@ -12,7 +12,7 @@ interface KidReaderBoardProps {
   onTokenClick: (token: Token) => void;
 }
 
-export const KidReaderBoard: React.FC<KidReaderBoardProps> = ({
+export const KidReaderBoard: React.FC<KidReaderBoardProps> = React.memo(({
   tokens,
   title,
   activeWordIndex,
@@ -70,4 +70,4 @@ export const KidReaderBoard: React.FC<KidReaderBoardProps> = ({
       </div>
     </div>
   );
-};
+});

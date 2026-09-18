@@ -67,8 +67,12 @@ export const ParentLessonModal: React.FC<ParentLessonModalProps> = ({
       alert('Vui lòng nhập hoặc dán nội dung bài đọc cho bé.');
       return;
     }
+    if (cleanText.length > 1500) {
+      alert('Nội dung bài đọc không được vượt quá 1500 ký tự (chuẩn 1 trang sách SGK Lớp 1).');
+      return;
+    }
 
-    const title = lessonTitle.trim() || 'Bài Tập Đọc Hôm Nay';
+    const title = lessonTitle.trim().slice(0, 80) || 'Bài Tập Đọc Hôm Nay';
     const newLesson: CustomLessonData = {
       id: `lesson-custom-${Date.now()}`,
       title,
@@ -170,6 +174,7 @@ export const ParentLessonModal: React.FC<ParentLessonModalProps> = ({
                 </label>
                 <input
                   type="text"
+                  maxLength={80}
                   value={lessonTitle}
                   onChange={(e) => setLessonTitle(e.target.value)}
                   placeholder="Ví dụ: Bài 5: Chú mèo mướp..."
@@ -185,13 +190,14 @@ export const ParentLessonModal: React.FC<ParentLessonModalProps> = ({
                   </label>
                   {pasteContent && (
                     <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                      {lineCount} dòng • {wordCount} từ vựng
+                      {lineCount} dòng • {wordCount} từ • {pasteContent.length}/1500 ký tự
                     </span>
                   )}
                 </div>
 
                 <textarea
                   rows={7}
+                  maxLength={1500}
                   value={pasteContent}
                   onChange={(e) => setPasteContent(e.target.value)}
                   placeholder={`Dán đoạn văn hoặc bài thơ vào đây...\n\nVí dụ:\nVe vẻ vè ve\nCái vè chim chích\nBắt sâu đầu cành\nGiúp ích cho cây.`}

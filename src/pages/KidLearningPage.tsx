@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { PlusCircle, RefreshCw, Trash2, CheckCircle2, AlertCircle, Zap, Settings, BookOpen } from 'lucide-react';
 import { Token, ReadingMode } from '../types/index.ts';
 import { tokenizeVietnameseText } from '../core/parser/vietnamesePhonics.ts';
@@ -22,7 +22,16 @@ export const KidLearningPage: React.FC = () => {
       const saved = localStorage.getItem('tv1_active_lesson');
       if (saved) {
         try {
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          if (
+            parsed &&
+            typeof parsed.id === 'string' &&
+            typeof parsed.title === 'string' &&
+            typeof parsed.text === 'string' &&
+            parsed.text.trim().length > 0
+          ) {
+            return parsed;
+          }
         } catch {}
       }
     }
@@ -59,12 +68,28 @@ export const KidLearningPage: React.FC = () => {
 
   const playbackControllerRef = useRef<{ stop: () => void } | null>(null);
 
-  // Nạp trước Audio Sprite Master vào RAM ngay khi vào màn hình bé học
+  const handleStop = useCallback(() => {
+    if (playbackControllerRef.current) {
+      playbackControllerRef.current.stop();
+      playbackControllerRef.current = null;
+    }
+    spriteManager.stop();
+    setIsPlaying(false);
+    setActiveWordIdx(-1);
+    setActiveSubStepIndex(-1);
+    setActiveSubStepLabel('');
+    setPreparingInfo(null);
+  }, []);
+
+  // Nạp trước Audio Sprite Master vào RAM và dọn dẹp âm thanh khi rời màn hình
   useEffect(() => {
     spriteManager.loadSprite().catch((err) => {
       console.warn('Lỗi khi nạp Master Sprite:', err);
     });
-  }, []);
+    return () => {
+      handleStop();
+    };
+  }, [handleStop]);
 
   // Tự động kiểm tra độ sẵn sàng âm thanh mỗi khi bài học thay đổi
   useEffect(() => {
@@ -123,7 +148,7 @@ export const KidLearningPage: React.FC = () => {
         totalUnique: words.length,
         progress: null,
       });
-      setCacheMessage('Đã đồng bộ 100% âm thanh chuẩn DSP kho gốc cho bài đọc!');
+      setCacheMessage('Đã tải và sẵn sàng 100% âm thanh chất lượng cao cho bài đọc!');
       setTimeout(() => setCacheMessage(null), 4000);
     } catch (err) {
       console.error('Lỗi khi đồng bộ âm thanh bài học:', err);
@@ -132,7 +157,7 @@ export const KidLearningPage: React.FC = () => {
   };
 
   const handleClearAudioCache = async () => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ âm thanh tải về trước đây để làm mới kho âm thanh theo chuẩn DSP mới nhất không?')) {
+    if (window.confirm('Bạn có muốn xóa dữ liệu âm thanh đã lưu để làm mới toàn bộ bài học không?')) {
       handleStop();
       await audioCacheService.clear();
       spriteManager.clearDynamicBuffers();
@@ -152,7 +177,7 @@ export const KidLearningPage: React.FC = () => {
         totalUnique: words.length,
         progress: null,
       });
-      setCacheMessage('Đã làm mới sạch kho âm! Bạn có thể nhấn "Đồng Bộ Ngay" để nạp âm thanh chuẩn DSP mới nhất.');
+      setCacheMessage('Đã làm mới bộ nhớ âm thanh! Bạn có thể nhấn "Đồng Bộ Ngay" để nạp âm thanh mới.');
       setTimeout(() => setCacheMessage(null), 4500);
     }
   };
@@ -190,19 +215,6 @@ export const KidLearningPage: React.FC = () => {
     }
     setCacheMessage(`Đã nạp bài học mới: "${lesson.title}". Sẵn sàng phát đọc và đánh vần!`);
     setTimeout(() => setCacheMessage(null), 4000);
-  };
-
-  const handleStop = () => {
-    if (playbackControllerRef.current) {
-      playbackControllerRef.current.stop();
-      playbackControllerRef.current = null;
-    }
-    spriteManager.stop();
-    setIsPlaying(false);
-    setActiveWordIdx(-1);
-    setActiveSubStepIndex(-1);
-    setActiveSubStepLabel('');
-    setPreparingInfo(null);
   };
 
   const handleTogglePlay = () => {
@@ -271,7 +283,7 @@ export const KidLearningPage: React.FC = () => {
   };
 
   // Tương tác 1-chạm: Click vào từ lập tức dừng câu, highlight từ đó và phát ngay âm thanh
-  const handleTokenClick = (token: Token) => {
+  const handleTokenClick = useCallback((token: Token) => {
     handleStop();
     setSelectedToken(token);
 
@@ -303,7 +315,7 @@ export const KidLearningPage: React.FC = () => {
     } else {
       audioManager.playClickSound();
     }
-  };
+  }, [handleStop, syllablesOnly, readingMode, speed]);
 
   // Tương tác 1-chạm trên sân khấu: Bé bấm vào từng mẩu âm để nghe lại mẩu âm riêng
   const handleStageStepClick = (stepIndex: number, stepLabel: string) => {

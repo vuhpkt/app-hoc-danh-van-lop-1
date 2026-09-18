@@ -56,7 +56,7 @@ export const RimeCard: React.FC<RimeCardProps> = React.memo(({
           title={`Đánh vần mẩu: ${rime.spellingFormula}`}
           aria-label={`Đánh vần mẩu vần ${rime.rime}`}
           className={`
-            flex items-center gap-1 px-2.5 py-1.5 min-h-[36px] rounded-xl text-xs font-bold
+            flex items-center justify-center gap-1 px-3 py-2 min-h-[44px] min-w-[44px] rounded-xl text-xs font-bold
             transition-all duration-150 cursor-pointer shadow-sm active:scale-95 outline-none
             focus-visible:ring-2 focus-visible:ring-emerald-500
             ${
