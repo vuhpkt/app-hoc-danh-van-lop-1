@@ -248,6 +248,25 @@ const TOKEN_TO_SPRITE_KEY_MAP: Record<string, string> = {
   // ==========================================
   // 4. TIẾNG TRUNG GIAN & TỪ ĐẶC BIỆT SGK LỚP 1
   // ==========================================
+  'lớp': 'tu__lop',
+  'lơp': 'tu__lop_ngang',
+  'lop': 'tu__lop_ngang',
+  'băt': 'tu__bat',
+  'bat': 'tu__bat',
+  'hat': 'tu__hat',
+  'sach': 'tu__sach',
+  'chich': 'tu__chich',
+  'quoc': 'tu__quoc',
+  'quôc': 'tu__quoc',
+  'giăt': 'tu__giat',
+  'giat': 'tu__giat',
+  'hoc': 'tu__hoc',
+  'vit': 'tu__vit',
+  'măt': 'tu__mat',
+  'mat': 'tu__mat',
+  'quat': 'tu__quat',
+  'chuôt': 'tu__chuot',
+  'chuot': 'tu__chuot',
   'giắt': 'tu__giat_sac',
   'giặt': 'tu__giat',
   'hóc': 'tu__hoc_sac',
@@ -363,7 +382,7 @@ export class SpriteManager {
     return Math.round(80 + Math.max(0, 1 - clampedSpeed) * 850);
   }
 
-  public static readonly SPRITE_VERSION = 'v4.5.0';
+  public static readonly SPRITE_VERSION = 'v4.6.0';
 
   public async loadSprite(
     mapUrl = `/audio/audio-map.json?v=${SpriteManager.SPRITE_VERSION}`,

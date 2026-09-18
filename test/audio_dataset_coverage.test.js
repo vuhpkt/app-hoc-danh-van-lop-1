@@ -26,11 +26,11 @@ test('Audio Dataset Coverage & Integrity', async (t) => {
   // Lấy danh sách các keys được định nghĩa trong generate-zalo-tts.js
   const zaloKeyMatches = [...zaloContent.matchAll(/key:\s*'([a-z0-9_]+)'/g)].map(m => m[1]);
 
-  await t.test('generate-zalo-tts.js phải chứa đủ 280 mục âm thanh chuẩn', () => {
+  await t.test('generate-zalo-tts.js phải chứa đủ 282 mục âm thanh chuẩn', () => {
     assert.equal(
       zaloKeyMatches.length,
-      280,
-      `Kỳ vọng có đúng 280 keys trong generate-zalo-tts.js, nhưng hiện tại có ${zaloKeyMatches.length}`
+      282,
+      `Kỳ vọng có đúng 282 keys trong generate-zalo-tts.js, nhưng hiện tại có ${zaloKeyMatches.length}`
     );
   });
 

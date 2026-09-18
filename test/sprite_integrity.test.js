@@ -29,8 +29,8 @@ test('Master Audio Sprite Integrity & Acoustic Quality', async (t) => {
   const audioMap = JSON.parse(fs.readFileSync(mapPath, 'utf-8'));
   const entries = Object.entries(audioMap);
 
-  await t.test('audio-map.json phải có đúng 280 mục âm thanh chuẩn', () => {
-    assert.equal(entries.length, 280, `Kỳ vọng 280 mục, thực tế có ${entries.length}`);
+  await t.test('audio-map.json phải có đúng 282 mục âm thanh chuẩn', () => {
+    assert.equal(entries.length, 282, `Kỳ vọng 282 mục, thực tế có ${entries.length}`);
   });
 
   await t.test('Mọi mục trong audio-map.json phải có toạ độ thời gian chuẩn xác, start < end', () => {
@@ -120,7 +120,7 @@ test('Master Audio Sprite Integrity & Acoustic Quality', async (t) => {
 
   await t.test('SPRITE_VERSION và ánh xạ từ vựng "em", "lo" chuẩn Lesson 1', () => {
     const spriteFile = fs.readFileSync(path.join(rootDir, 'src', 'core', 'audio', 'SpriteManager.ts'), 'utf-8');
-    assert.ok(spriteFile.includes("SPRITE_VERSION = 'v4.5.0'"), "SPRITE_VERSION phải được cập nhật lên 'v4.3.0'");
+    assert.ok(spriteFile.includes("SPRITE_VERSION = 'v4.6.0'"), "SPRITE_VERSION phải được cập nhật lên 'v4.6.0'");
 
     const emMatch = spriteFile.match(/'em'\s*:\s*'([^']+)'/);
     assert.ok(emMatch, "Phải có mapping cho 'em'");

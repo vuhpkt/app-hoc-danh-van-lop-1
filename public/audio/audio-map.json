@@ -1398,5 +1398,15 @@
     "start": 141.522,
     "end": 142.041,
     "duration": 0.519
+  },
+  "tu__lop": {
+    "start": 142.041,
+    "end": 142.454,
+    "duration": 0.413
+  },
+  "tu__lop_ngang": {
+    "start": 142.454,
+    "end": 142.95,
+    "duration": 0.496
   }
 }

@@ -175,11 +175,11 @@ test('Master Audio Sprite - Integrity & v4.3.0 Upgrade', async (t) => {
     assert.ok(mapStat.size > 10000, `Kích thước map (${mapStat.size} bytes) phải hợp lệ (> 10KB)`);
 
     const audioMap = JSON.parse(fs.readFileSync(mapPath, 'utf-8'));
-    assert.equal(Object.keys(audioMap).length, 280, 'audio-map.json phải chứa đúng 280 mục chuẩn');
+    assert.equal(Object.keys(audioMap).length, 282, 'audio-map.json phải chứa đúng 282 mục chuẩn');
   });
 
-  await t.test('SPRITE_VERSION được nâng cấp lên v4.5.0 trong SpriteManager.ts', () => {
-    assert.equal(SpriteManager.SPRITE_VERSION, 'v4.5.0', 'SpriteManager.SPRITE_VERSION phải là v4.5.0');
+  await t.test('SPRITE_VERSION được nâng cấp lên v4.6.0 trong SpriteManager.ts', () => {
+    assert.equal(SpriteManager.SPRITE_VERSION, 'v4.6.0', 'SpriteManager.SPRITE_VERSION phải là v4.6.0');
   });
 });
 

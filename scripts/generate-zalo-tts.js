@@ -366,6 +366,8 @@ const AUDIO_DATASET = [
   { key: 'tu__nho_hoi', text: 'nhỏ' },
   { key: 'tu__nho', text: 'nho' },
   { key: 'tu__hoi', text: 'hỏi' },
+  { key: 'tu__lop', text: 'lớp' },
+  { key: 'tu__lop_ngang', text: 'lơp' },
 ];
 
 

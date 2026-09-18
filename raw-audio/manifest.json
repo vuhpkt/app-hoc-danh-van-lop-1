@@ -1398,5 +1398,15 @@
     "key": "tu__nho",
     "filename": "tu__nho.mp3",
     "text": "nho"
+  },
+  {
+    "key": "tu__lop",
+    "filename": "tu__lop.mp3",
+    "text": "lớp"
+  },
+  {
+    "key": "tu__lop_ngang",
+    "filename": "tu__lop_ngang.mp3",
+    "text": "lơp"
   }
 ]
