@@ -172,4 +172,40 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
     assert.ok(!pageCode.includes("'consonant'"), 'AlphabetLearningPage không được chứa filter consonant');
     assert.ok(!pageCode.includes('/{comp.soundLabel}/'), 'AlphabetLearningPage không được chứa phiên âm /{comp.soundLabel}/');
   });
+
+  await t.test('9. Chữ "k" phát âm chuẩn "cờ" (đồng âm với "c"), không bị đọc thành "câu"', () => {
+    const kLetter = ALPHABET_LETTERS.find(l => l.letter === 'k');
+    assert.ok(kLetter, 'Phải có chữ "k" trong ALPHABET_LETTERS');
+    assert.equal(kLetter.soundLabel, 'cờ', 'Chữ "k" phải có soundLabel là "cờ"');
+    
+    const kSeg = audioMap[kLetter.spriteKey];
+    assert.ok(kSeg, 'Sprite key của "k" phải tồn tại trong audio-map');
+    assert.ok(kSeg.duration >= 0.25, `Thời lượng của âm "k" (${kSeg.duration}s) phải >= 0.25s`);
+
+    const manifest = JSON.parse(fs.readFileSync(path.join(rootDir, 'raw-audio', 'manifest.json'), 'utf-8'));
+    const kManifest = manifest.find(m => m.key === 'am_dau__k');
+    assert.ok(kManifest, 'am_dau__k phải có trong manifest.json');
+    assert.equal(kManifest.text, 'cờ', 'am_dau__k text trong manifest phải là "cờ"');
+  });
+
+  await t.test('10. Nguyên âm "o" và "ô" phải hoàn toàn phân biệt, không bị trùng lặp âm thanh', () => {
+    const oLetter = ALPHABET_LETTERS.find(l => l.letter === 'o');
+    const oHatLetter = ALPHABET_LETTERS.find(l => l.letter === 'ô');
+    assert.ok(oLetter && oHatLetter, 'Phải có cả chữ "o" và "ô"');
+
+    const oSeg = audioMap[oLetter.spriteKey];
+    const oHatSeg = audioMap[oHatLetter.spriteKey];
+    assert.ok(oSeg && oHatSeg, 'Cả "o" và "ô" đều phải có toạ độ trong audio-map');
+
+    // Kiểm tra hai tệp âm thanh trong raw-audio phải khác nhau về kích thước và nội dung
+    const oFile = path.join(rootDir, 'raw-audio', 'van__o.mp3');
+    const oHatFile = path.join(rootDir, 'raw-audio', 'van__o_hat.mp3');
+    assert.ok(fs.existsSync(oFile), 'van__o.mp3 phải tồn tại');
+    assert.ok(fs.existsSync(oHatFile), 'van__o_hat.mp3 phải tồn tại');
+
+    const oBuf = fs.readFileSync(oFile);
+    const oHatBuf = fs.readFileSync(oHatFile);
+    assert.notEqual(oBuf.length, oHatBuf.length, 'Kích thước tệp âm thanh "o" và "ô" phải khác biệt');
+  });
 });
+

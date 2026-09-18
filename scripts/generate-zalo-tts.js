@@ -58,7 +58,7 @@ const AUDIO_DATASET = [
   { key: 'am_dau__gh', text: 'gờ' },
   { key: 'am_dau__gi', text: 'giờ' },
   { key: 'am_dau__h', text: 'hờ' },
-  { key: 'am_dau__k', text: 'kờ' },
+  { key: 'am_dau__k', text: 'cờ' },
   { key: 'am_dau__kh', text: 'khờ' },
   { key: 'am_dau__l', text: 'lờ' },
   { key: 'am_dau__m', text: 'mờ' },
