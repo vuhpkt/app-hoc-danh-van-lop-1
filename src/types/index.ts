@@ -27,7 +27,7 @@ export interface PhonicsBreakdown {
 export interface Token {
   id: string;
   text: string;
-  type: 'syllable' | 'punctuation' | 'space';
+  type: 'syllable' | 'punctuation' | 'space' | 'newline';
   phonics?: PhonicsBreakdown;
   isActive?: boolean;
 }
@@ -96,4 +96,25 @@ export interface KidReaderState {
   mode: ReadingMode;
   speed: number;
 }
+
+/**
+ * Service Layer Contracts (Sẵn sàng mở rộng Backend Server)
+ */
+export interface IAudioStorage {
+  hasClip(key: string): Promise<boolean>;
+  getClip(key: string): Promise<ArrayBuffer | null>;
+  saveClip(key: string, data: ArrayBuffer, mimeType: string): Promise<void>;
+  deleteClip(key: string): Promise<void>;
+  clear(): Promise<void>;
+  getAllKeys(): Promise<string[]>;
+}
+
+export interface ITtsService {
+  fetchAudioBuffer(text: string): Promise<ArrayBuffer>;
+  getSpeed(): string;
+  setSpeed(speed: string): void;
+  getApiKey(): string;
+  setApiKey(key: string): void;
+}
+
 

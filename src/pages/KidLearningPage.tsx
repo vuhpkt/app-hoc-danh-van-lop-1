@@ -1,57 +1,133 @@
-import React, { useState, useRef } from 'react';
-import { Sparkles, PlusCircle, RefreshCw, Trash2, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { PlusCircle, RefreshCw, Trash2, CheckCircle2, AlertCircle, Zap, Settings, BookOpen } from 'lucide-react';
 import { Token, ReadingMode } from '../types/index.ts';
 import { tokenizeVietnameseText } from '../core/parser/vietnamesePhonics.ts';
 import { AudioSpritePlayer } from '../core/audio/AudioSpritePlayer.ts';
 import { audioManager } from '../core/audio/AudioManager.ts';
 import { audioCacheService } from '../core/audio/AudioCacheService.ts';
 import { spriteManager } from '../core/audio/SpriteManager.ts';
+import { LessonAudioSyncer, SyncProgressInfo } from '../core/audio/LessonAudioSyncer.ts';
+import { GRADE1_LESSONS } from '../core/data/grade1Lessons.ts';
 import { KidReaderBoard } from '../components/kid/KidReaderBoard.tsx';
 import { KidControlBar } from '../components/shared/KidControlBar.tsx';
 import { PhonicsBadgeModal } from '../components/kid/PhonicsBadgeModal.tsx';
-import { OCRUploader } from '../components/OCRUploader.tsx';
+import { ParentLessonModal, CustomLessonData } from '../components/parent/ParentLessonModal.tsx';
 
-export const GRADE1_LESSONS = [
-  {
-    id: 'lesson-1',
-    title: 'Bài 1: Trường học của em',
-    text: 'Trường học của em khang trang. Tiếng chim hót líu lo trên cành cây. Bé học bài vui vẻ.',
-    note: 'SGK Kết nối tri thức - Âm tr, kh, ch, v',
-  },
-  {
-    id: 'lesson-2',
-    title: 'Bài 2: Vè chim chích',
-    text: 'Ve vẻ vè ve. Cái vè chim chích. Bắt sâu đầu cành. Giúp ích cho cây.',
-    note: 'Thơ đồng dao - Luyện dấu thanh & âm ch, v',
-  },
-  {
-    id: 'lesson-3',
-    title: 'Bài 3: Bé ngoan chăm chỉ',
-    text: 'Bé ngoan bé học chăm chỉ. Cô giáo khen bé hoa điểm mười.',
-    note: 'Chủ đề trường lớp - Luyện vần oan, am, iêm',
-  },
-  {
-    id: 'lesson-4',
-    title: 'Bài 4: Luyện âm khó & vần tắc',
-    text: 'Bé giặt khăn sạch. Chú vịt bơi nhanh. Bé gập khuỷu tay. Bắt con cá nhỏ.',
-    note: 'Luyện âm tắc giặt, vịt, bắt và vần hiếm khuỷu tay',
-  },
-];
+export { GRADE1_LESSONS };
 
 export const KidLearningPage: React.FC = () => {
-  const [currentLesson, setCurrentLesson] = useState(GRADE1_LESSONS[0]);
-  const [tokens, setTokens] = useState<Token[]>(() => tokenizeVietnameseText(GRADE1_LESSONS[0].text));
+  const [currentLesson, setCurrentLesson] = useState<{ id: string; title: string; text: string; note?: string }>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('tv1_active_lesson');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {}
+      }
+    }
+    return GRADE1_LESSONS[0];
+  });
+
+  const [tokens, setTokens] = useState<Token[]>(() => tokenizeVietnameseText(currentLesson.text));
   const [activeWordIdx, setActiveWordIdx] = useState<number>(-1);
   const [activeSubStepLabel, setActiveSubStepLabel] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [readingMode, setReadingMode] = useState<ReadingMode>('fluent');
-  const [speed, setSpeed] = useState<number>(0.85);
+  const [speed, setSpeed] = useState<number>(0.8);
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
-  const [showOcrModal, setShowOcrModal] = useState<boolean>(false);
+  const [showParentModal, setShowParentModal] = useState<boolean>(false);
+  const [showSettingsMenu, setShowSettingsMenu] = useState<boolean>(false);
   const [preparingInfo, setPreparingInfo] = useState<{ current: number; total: number; word: string } | null>(null);
   const [cacheMessage, setCacheMessage] = useState<string | null>(null);
 
+  // Trạng thái kiểm tra & đồng bộ âm thanh bài học với kho gốc
+  const [syncStatus, setSyncStatus] = useState<{
+    isChecking: boolean;
+    isSyncing: boolean;
+    missingWords: string[];
+    totalUnique: number;
+    progress: SyncProgressInfo | null;
+  }>({
+    isChecking: false,
+    isSyncing: false,
+    missingWords: [],
+    totalUnique: 0,
+    progress: null,
+  });
+
   const playbackControllerRef = useRef<{ stop: () => void } | null>(null);
+
+  // Nạp trước Audio Sprite Master vào RAM ngay khi vào màn hình bé học
+  useEffect(() => {
+    spriteManager.loadSprite().catch((err) => {
+      console.warn('Lỗi khi nạp Master Sprite:', err);
+    });
+  }, []);
+
+  // Tự động kiểm tra độ sẵn sàng âm thanh mỗi khi bài học thay đổi
+  useEffect(() => {
+    let cancelled = false;
+    const checkAvailability = async () => {
+      const words = LessonAudioSyncer.extractUniqueWords(currentLesson.text);
+      if (words.length === 0) {
+        if (!cancelled) setSyncStatus({ isChecking: false, isSyncing: false, missingWords: [], totalUnique: 0, progress: null });
+        return;
+      }
+      setSyncStatus((prev) => ({ ...prev, isChecking: true }));
+      const missing: string[] = [];
+      for (const w of words) {
+        const available = await LessonAudioSyncer.isWordAvailable(w);
+        if (!available) missing.push(w);
+      }
+      if (!cancelled) {
+        setSyncStatus({
+          isChecking: false,
+          isSyncing: false,
+          missingWords: missing,
+          totalUnique: words.length,
+          progress: null,
+        });
+      }
+    };
+    checkAvailability();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentLesson.text]);
+
+  const handleSyncLessonAudio = async () => {
+    if (syncStatus.isSyncing || syncStatus.missingWords.length === 0) return;
+    handleStop();
+    setSyncStatus((prev) => ({ ...prev, isSyncing: true, progress: null }));
+    audioManager.playClickSound();
+
+    try {
+      await LessonAudioSyncer.syncLesson(currentLesson.text, (progress) => {
+        setSyncStatus((prev) => ({ ...prev, progress }));
+      });
+      audioManager.playSuccessChime();
+
+      // Cập nhật lại sau khi nạp xong
+      const words = LessonAudioSyncer.extractUniqueWords(currentLesson.text);
+      const remainingMissing: string[] = [];
+      for (const w of words) {
+        const available = await LessonAudioSyncer.isWordAvailable(w);
+        if (!available) remainingMissing.push(w);
+      }
+      setSyncStatus({
+        isChecking: false,
+        isSyncing: false,
+        missingWords: remainingMissing,
+        totalUnique: words.length,
+        progress: null,
+      });
+      setCacheMessage('Đã đồng bộ 100% âm thanh chuẩn DSP kho gốc cho bài đọc!');
+      setTimeout(() => setCacheMessage(null), 4000);
+    } catch (err) {
+      console.error('Lỗi khi đồng bộ âm thanh bài học:', err);
+      setSyncStatus((prev) => ({ ...prev, isSyncing: false }));
+    }
+  };
 
   const handleClearAudioCache = async () => {
     if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ âm thanh tải về trước đây để làm mới kho âm thanh theo chuẩn DSP mới nhất không?')) {
@@ -59,16 +135,45 @@ export const KidLearningPage: React.FC = () => {
       await audioCacheService.clear();
       spriteManager.clearDynamicBuffers();
       audioManager.playSuccessChime();
-      setCacheMessage('Đã làm mới sạch kho âm! Các từ mới sẽ được xử lý DSP chất lượng cao nhất.');
+
+      // Quét lại bài học hiện tại ngay sau khi làm mới
+      const words = LessonAudioSyncer.extractUniqueWords(currentLesson.text);
+      const missing: string[] = [];
+      for (const w of words) {
+        const available = await LessonAudioSyncer.isWordAvailable(w);
+        if (!available) missing.push(w);
+      }
+      setSyncStatus({
+        isChecking: false,
+        isSyncing: false,
+        missingWords: missing,
+        totalUnique: words.length,
+        progress: null,
+      });
+      setCacheMessage('Đã làm mới sạch kho âm! Bạn có thể nhấn "Đồng Bộ Ngay" để nạp âm thanh chuẩn DSP mới nhất.');
       setTimeout(() => setCacheMessage(null), 4500);
     }
   };
 
-  const handleSelectLesson = (lesson: typeof GRADE1_LESSONS[0]) => {
+  const handleSelectLesson = (lesson: { id: string; title: string; text: string; note?: string }) => {
     handleStop();
     setCurrentLesson(lesson);
     setTokens(tokenizeVietnameseText(lesson.text));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('tv1_active_lesson', JSON.stringify(lesson));
+    }
     audioManager.playClickSound();
+  };
+
+  const handleSaveLesson = (lesson: CustomLessonData) => {
+    handleStop();
+    setCurrentLesson(lesson);
+    setTokens(tokenizeVietnameseText(lesson.text));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('tv1_active_lesson', JSON.stringify(lesson));
+    }
+    setCacheMessage(`Đã nạp bài học mới: "${lesson.title}". Sẵn sàng phát đọc và đánh vần!`);
+    setTimeout(() => setCacheMessage(null), 4000);
   };
 
   const handleStop = () => {
@@ -94,10 +199,7 @@ export const KidLearningPage: React.FC = () => {
     setSelectedToken(null);
     audioManager.playClickSound();
 
-    const wordsData = tokens.map((t) => ({
-      text: t.text,
-      breakdown: t.phonics,
-    }));
+    const wordsData = AudioSpritePlayer.packageTokensForPlayback(tokens);
 
     if (readingMode === 'fluent') {
       // 1. Đọc trơn cả câu
@@ -144,105 +246,196 @@ export const KidLearningPage: React.FC = () => {
     }
   };
 
+  // Tương tác 1-chạm: Click vào từ lập tức dừng câu, highlight từ đó và phát ngay âm thanh
   const handleTokenClick = (token: Token) => {
     handleStop();
     setSelectedToken(token);
-    audioManager.playClickSound();
-  };
 
-  const handleOcrResult = (result: any) => {
-    const text = result.sanitizedText || result.rawText;
-    if (text) {
-      const customLesson = {
-        id: `custom-${Date.now()}`,
-        title: 'Trang Sách Vừa Quét OCR',
-        text,
-        note: 'Bài đọc phụ huynh tải lên',
-      };
-      setCurrentLesson(customLesson);
-      setTokens(tokenizeVietnameseText(text));
-      setShowOcrModal(false);
-      audioManager.playSuccessChime();
+    const syllablesOnly = tokens.filter((t) => t.type === 'syllable');
+    const syllableIdx = syllablesOnly.findIndex((t) => t.id === token.id);
+    if (syllableIdx !== -1) {
+      setActiveWordIdx(syllableIdx);
+    }
+
+    if (token.phonics) {
+      if (readingMode === 'fluent') {
+        AudioSpritePlayer.playFluentWord(token.phonics, speed);
+      } else {
+        AudioSpritePlayer.playSpellingSequence(
+          token.phonics,
+          speed,
+          (_subIdx) => {
+            const step = token.phonics?.spellingFormula[_subIdx] || '';
+            setActiveSubStepLabel(step);
+          },
+          () => {
+            setActiveSubStepLabel('');
+          }
+        );
+      }
+    } else {
+      audioManager.playClickSound();
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-white to-orange-50/30 p-4 sm:p-6 md:p-10 space-y-6 max-w-5xl mx-auto">
-      {/* HEADER BÉ HỌC */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+    <div className="min-h-screen bg-[#F8F6F1] p-3 sm:p-6 md:p-8 space-y-4 sm:space-y-5 max-w-4xl mx-auto transition-colors">
+      {/* HEADER BÉ HỌC: THANH LỊCH & TỐI GIẢN */}
+      <header className="flex items-center justify-between gap-3 pb-1">
         <div className="flex items-center gap-3">
-          <div className="w-14 h-14 rounded-3xl bg-amber-400 text-amber-950 flex items-center justify-center font-black shadow-lg shadow-amber-200/80">
-            <Sparkles className="w-8 h-8" />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-amber-400 text-stone-950 flex items-center justify-center font-black shadow-2xs">
+            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">
               Bé Tập Đọc & Đánh Vần
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-bold mt-0.5">
-              Chuẩn SGK Tiếng Việt Lớp 1 (Kết Nối Tri Thức)
+            <p className="text-[11px] sm:text-xs text-stone-500 font-bold">
+              SGK Tiếng Việt 1 • Kết Nối Tri Thức
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-center">
+        {/* GÓC PHỤ HUYNH TINH GỌN */}
+        <div className="flex items-center gap-2 relative">
           <button
-            onClick={handleClearAudioCache}
-            className="flex items-center gap-1.5 px-3.5 py-3 rounded-2xl bg-white hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95"
-            title="Xóa kho âm thanh cũ để nạp lại bản xử lý DSP chất lượng cao"
+            type="button"
+            onClick={() => setShowParentModal(true)}
+            className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-black text-xs shadow-2xs transition-all cursor-pointer active:scale-95"
+            title="Dán văn bản hoặc chụp ảnh trang sách để nạp bài học mới"
           >
-            <Trash2 className="w-4 h-4 text-rose-500" />
-            <span className="hidden md:inline">Làm Mới Kho Âm</span>
+            <PlusCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">Nạp Bài Mới</span>
           </button>
 
           <button
-            onClick={() => setShowOcrModal(!showOcrModal)}
-            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer active:scale-95"
+            type="button"
+            onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+            className="p-2 rounded-xl bg-white hover:bg-stone-100 text-stone-600 border border-stone-200 transition-all cursor-pointer active:scale-95 shadow-2xs"
+            title="Cài đặt & Dọn dẹp kho âm"
+            aria-label="Cài đặt"
           >
-            <PlusCircle className="w-4 h-4" />
-            <span>Quét Thêm Trang Sách (OCR)</span>
+            <Settings className="w-4 h-4" />
           </button>
+
+          {/* MENU CÀI ĐẶT PHỤ HUYNH THU GỌN */}
+          {showSettingsMenu && (
+            <div className="absolute right-0 top-12 z-30 w-64 bg-white border border-stone-200 rounded-2xl shadow-xl p-2 space-y-1 animate-fadeIn">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSettingsMenu(false);
+                  handleClearAudioCache();
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-rose-50 text-stone-700 hover:text-rose-700 text-xs font-bold transition-all text-left cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4 text-rose-500 shrink-0" />
+                <span>Làm mới kho âm (Xóa cache)</span>
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* THÔNG BÁO DỌN DẸP KHO ÂM THÀNH CÔNG */}
+      {/* THÔNG BÁO NHẸ NHÀNG KHI LÀM MỚI KHO ÂM */}
       {cacheMessage && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-center gap-2.5 text-emerald-800 text-xs font-bold animate-fadeIn shadow-xs">
+        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-emerald-900 text-xs font-bold animate-fadeIn shadow-2xs">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>{cacheMessage}</span>
         </div>
       )}
 
-      {/* MODAL QUÉT TRANG SÁCH OCR */}
-      {showOcrModal && (
-        <div className="p-4 bg-purple-50/60 rounded-3xl border-2 border-purple-200 animate-fadeIn">
-          <OCRUploader onScanComplete={handleOcrResult} />
-        </div>
-      )}
+      {/* MODAL NẠP BÀI DÁN CHỮ & OCR */}
+      <ParentLessonModal
+        isOpen={showParentModal}
+        onClose={() => setShowParentModal(false)}
+        onSaveLesson={handleSaveLesson}
+        currentLessonTitle={currentLesson.title}
+      />
 
-      {/* DANH SÁCH 4 BÀI ĐỌC MẪU */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      {/* THANH CHỌN BÀI ĐỌC DẠNG PILL CAROUSEL GỌN GÀNG */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none py-1">
+        {!GRADE1_LESSONS.some((l) => l.id === currentLesson.id) && (
+          <button
+            type="button"
+            onClick={() => handleSelectLesson(currentLesson)}
+            className="px-3.5 py-1.5 rounded-full text-xs font-black border-2 border-amber-500 bg-amber-500 text-white shadow-2xs whitespace-nowrap cursor-pointer flex items-center gap-1.5"
+          >
+            <span>✏️ {currentLesson.title}</span>
+          </button>
+        )}
+
         {GRADE1_LESSONS.map((lesson) => {
           const isSelected = currentLesson.id === lesson.id;
           return (
             <button
               key={lesson.id}
+              type="button"
               onClick={() => handleSelectLesson(lesson)}
-              className={`p-3.5 rounded-2xl text-left border-2 transition-all cursor-pointer space-y-1 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
                 isSelected
-                  ? 'bg-amber-100/80 border-amber-400 shadow-md ring-2 ring-amber-200'
-                  : 'bg-white border-slate-200 hover:border-amber-300 hover:bg-amber-50/40'
+                  ? 'bg-amber-400 text-stone-950 border-2 border-amber-500 font-black shadow-2xs scale-105'
+                  : 'bg-white text-stone-600 border border-stone-200/80 font-bold hover:border-amber-300 hover:bg-amber-50/50'
               }`}
             >
-              <h3 className="text-xs sm:text-sm font-black text-slate-900 line-clamp-1">
-                {lesson.title}
-              </h3>
-              <p className="text-[11px] text-slate-500 line-clamp-1">{lesson.text}</p>
+              {lesson.title}
             </button>
           );
         })}
       </div>
 
-      {/* BẢNG ĐIỀU KHIỂN BÉ HỌC */}
+      {/* VI THÔNG BÁO ĐỒNG BỘ ÂM THANH (TINH TẾ, KHÔNG THUẬT NGỮ RỐI RẮM) */}
+      {syncStatus.isSyncing ? (
+        <div className="flex items-center justify-between gap-3 p-3 bg-blue-50/90 border border-blue-200 rounded-2xl text-xs animate-fadeIn">
+          <div className="flex items-center gap-2 text-blue-900 font-bold">
+            <RefreshCw className="w-4 h-4 animate-spin text-blue-600 shrink-0" />
+            <span>Đang chuẩn bị giọng đọc cho bài: "{syncStatus.progress?.word || '...'}"</span>
+          </div>
+          <span className="font-black text-blue-700 bg-blue-100/80 px-2.5 py-0.5 rounded-md text-[11px]">
+            {syncStatus.progress?.percent || 0}%
+          </span>
+        </div>
+      ) : syncStatus.missingWords.length > 0 ? (
+        <div className="flex items-center justify-between gap-3 p-3 bg-amber-50/90 border border-amber-200 rounded-2xl text-xs animate-fadeIn">
+          <div className="flex items-center gap-2 text-stone-800 font-bold">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>Bài học có {syncStatus.missingWords.length} từ mới cần chuẩn bị giọng đọc</span>
+          </div>
+          <button
+            type="button"
+            onClick={handleSyncLessonAudio}
+            className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer shrink-0 active:scale-95"
+          >
+            <Zap className="w-3.5 h-3.5 fill-white" />
+            <span>Chuẩn bị giọng đọc</span>
+          </button>
+        </div>
+      ) : null}
+
+      {/* VI THÔNG BÁO KHI ĐANG PHÁT MÀ CẦN TẢI TỪ MỚI */}
+      {preparingInfo && (
+        <div className="flex items-center justify-between gap-3 p-3 bg-blue-50/90 border border-blue-200 rounded-2xl text-xs animate-fadeIn">
+          <div className="flex items-center gap-2 text-blue-900 font-bold">
+            <RefreshCw className="w-4 h-4 animate-spin text-blue-600 shrink-0" />
+            <span>Đang chuẩn bị từ: "{preparingInfo.word}"...</span>
+          </div>
+          <span className="font-black text-blue-700 bg-blue-100/80 px-2.5 py-0.5 rounded-md text-[11px]">
+            {Math.round((preparingInfo.current / preparingInfo.total) * 100)}%
+          </span>
+        </div>
+      )}
+
+      {/* BẢNG BÀI ĐỌC (TRANG SÁCH GIẤY NGÀ ẤM ÁP) */}
+      <KidReaderBoard
+        tokens={tokens}
+        title={currentLesson.title}
+        activeWordIndex={activeWordIdx}
+        activeSubStepLabel={activeSubStepLabel}
+        readingMode={readingMode}
+        onTokenClick={handleTokenClick}
+      />
+
+      {/* BẢNG ĐIỀU KHIỂN NỔI SIÊU GỌN (FLOATING CONTROL DOCK) */}
       <KidControlBar
         isPlaying={isPlaying}
         readingMode={readingMode}
@@ -256,41 +449,16 @@ export const KidLearningPage: React.FC = () => {
         onSpeedChange={setSpeed}
       />
 
-      {/* BANNER CHUẨN BỊ ÂM THANH KHI CÓ TỪ MỚI CẦN TẢI TỪ ZALO AI */}
-      {preparingInfo && (
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 flex items-center justify-between gap-3 animate-fadeIn shadow-sm">
-          <div className="flex items-center gap-3">
-            <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-            <div>
-              <p className="text-xs sm:text-sm font-black text-blue-900">
-                Đang chuẩn bị âm thanh Zalo AI cho từ: <span className="underline decoration-blue-400">"{preparingInfo.word}"</span>
-              </p>
-              <p className="text-[11px] text-blue-600 font-medium">
-                Ứng dụng đang tải giọng Nữ Bắc Ngọc Huyền và lưu vào máy ({preparingInfo.current}/{preparingInfo.total})...
-              </p>
-            </div>
-          </div>
-          <span className="text-xs font-black text-blue-700 bg-blue-100 px-3 py-1 rounded-full">
-            {Math.round((preparingInfo.current / preparingInfo.total) * 100)}%
-          </span>
-        </div>
-      )}
-
-      {/* BẢNG BÀI ĐỌC TYPOGRAPHY LỚN */}
-      <KidReaderBoard
-        tokens={tokens}
-        title={currentLesson.title}
-        activeWordIndex={activeWordIdx}
-        activeSubStepLabel={activeSubStepLabel}
-        readingMode={readingMode}
-        onTokenClick={handleTokenClick}
-      />
-
       {/* POPUP BÓC TÁCH NGỮ ÂM 3 MÀU KHI CHẠM VÀO TỪ */}
       {selectedToken && (
         <PhonicsBadgeModal
           token={selectedToken}
-          onClose={() => setSelectedToken(null)}
+          speed={speed}
+          onClose={() => {
+            setSelectedToken(null);
+            setActiveWordIdx(-1);
+            setActiveSubStepLabel('');
+          }}
         />
       )}
     </div>

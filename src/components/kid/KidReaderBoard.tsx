@@ -23,29 +23,25 @@ export const KidReaderBoard: React.FC<KidReaderBoardProps> = ({
   let wordCounter = -1;
 
   return (
-    <div className="bg-amber-50/60 rounded-3xl sm:rounded-[2.5rem] border-4 border-amber-200/90 p-6 sm:p-10 md:p-12 shadow-xl space-y-6 relative overflow-hidden">
-      {/* Nền trang trí dễ thương cho bé */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-200/20 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Tiêu đề bài đọc */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b-2 border-amber-200/80">
+    <div className="bg-[#FAF8F5] rounded-3xl sm:rounded-[2.25rem] border-2 sm:border-3 border-[#E7DEC8] p-5 sm:p-8 md:p-10 shadow-sm space-y-6 relative overflow-hidden transition-all">
+      {/* Tiêu đề bài đọc: Trang nhã & Tối giản */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-amber-200/60">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center font-black shadow-md">
-            <BookOpen className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-2xl bg-amber-400/90 text-stone-900 flex items-center justify-center font-black shadow-2xs">
+            <BookOpen className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">
               {title}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 font-bold mt-0.5">
-              Bé chạm vào bất kỳ từ nào để nghe bóc tách ngữ âm
+            <p className="text-xs sm:text-sm text-stone-500 font-bold mt-0.5">
+              Bé chạm vào chữ bất kỳ để nghe đánh vần
             </p>
           </div>
         </div>
 
-        <span className="inline-flex items-center gap-1 text-xs font-black text-amber-800 bg-amber-100/90 px-3.5 py-1.5 rounded-full self-start sm:self-center border border-amber-300">
-          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+        <span className="inline-flex items-center gap-1.5 text-xs font-black text-stone-600 bg-stone-100/80 px-3.5 py-1.5 rounded-full self-start sm:self-center border border-stone-200/80">
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
           <span>SGK Tiếng Việt 1</span>
         </span>
       </div>

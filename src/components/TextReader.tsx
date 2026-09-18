@@ -46,14 +46,28 @@ export const TextReader: React.FC<TextReaderProps> = ({
       </div>
 
       {/* Vùng văn bản tương tác Karaoke 60fps */}
-      <div className="min-h-[140px] flex flex-wrap items-center gap-x-3 gap-y-6 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide leading-relaxed p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-        {tokens.map((token, index) => {
-          // Xác định trạng thái active qua activeTokenId hoặc activeWordIndex
-          const isActive =
-            (activeTokenId && token.id === activeTokenId) ||
-            (activeWordIndex !== undefined && activeWordIndex === index);
+      <div className="min-h-[140px] flex flex-wrap items-center gap-x-2.5 gap-y-4 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide leading-relaxed p-6 bg-slate-50/50 rounded-2xl border border-slate-100">
+        {(() => {
+          let syllableCount = -1;
+          return tokens.map((token, index) => {
+            if (token.type === 'newline') {
+              return <div key={token.id} className="w-full h-3 sm:h-5 basis-full block select-none" aria-hidden="true" />;
+            }
+            if (token.type === 'punctuation') {
+              return (
+                <span key={token.id} className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-400 select-none self-center mx-0.5">
+                  {token.text}
+                </span>
+              );
+            }
 
-          const isSpellingMode = readingMode === 'spelling';
+            syllableCount++;
+            const currentSyllableIdx = syllableCount;
+            const isActive =
+              (activeTokenId && token.id === activeTokenId) ||
+              (activeWordIndex !== undefined && activeWordIndex === currentSyllableIdx);
+
+            const isSpellingMode = readingMode === 'spelling';
 
           return (
             <div key={token.id} className="relative inline-block my-1">
@@ -87,7 +101,8 @@ export const TextReader: React.FC<TextReaderProps> = ({
               </button>
             </div>
           );
-        })}
+        });
+      })()}
       </div>
 
       {/* Footer gợi ý */}

@@ -513,12 +513,56 @@ export function parseVietnamesePhonics(rawInput: string): PhonicsBreakdown {
 /**
  * Tách một đoạn văn bản thành danh sách Token phân tích ngữ âm
  */
+/**
+ * Tách một đoạn văn bản (kể cả bài thơ nhiều dòng) thành danh sách Token phân tích ngữ âm
+ * - Bảo toàn dòng mới \n thành token type: 'newline'
+ * - Tách dấu câu (.,!?:;"...) thành token type: 'punctuation'
+ * - Tách từ tiếng Việt thành token type: 'syllable' với đầy đủ phân tích ngữ âm
+ */
 export function tokenizeVietnameseText(text: string): Token[] {
-  const words = text.split(/\s+/).filter(Boolean);
-  return words.map((w, idx) => ({
-    id: `token-${idx}-${w}`,
-    text: w,
-    type: 'syllable',
-    phonics: parseVietnamesePhonics(w),
-  }));
+  if (!text || !text.trim()) return [];
+
+  // Chuẩn hóa Unicode NFC và đồng bộ xuống dòng
+  const normalized = text.normalize('NFC').replace(/\r\n/g, '\n');
+
+  // Regex nhận diện:
+  // 1. Dấu xuống dòng: (\n)
+  // 2. Dấu câu: ([.,!?:;…""''«»()—–-])
+  // 3. Từ tiếng Việt: ([^\s.,!?:;…""''«»()—–-]+)
+  const tokenRegex = /(\n)|([.,!?:;…""''«»()—–-])|([^\s.,!?:;…""''«»()—–-]+)/g;
+
+  const tokens: Token[] = [];
+  let match: RegExpExecArray | null;
+  let tokenCounter = 0;
+
+  while ((match = tokenRegex.exec(normalized)) !== null) {
+    const [, newlineMatch, puncMatch, wordMatch] = match;
+
+    if (newlineMatch) {
+      tokens.push({
+        id: `newline-${tokenCounter++}`,
+        text: '\n',
+        type: 'newline',
+      });
+    } else if (puncMatch) {
+      tokens.push({
+        id: `punc-${tokenCounter++}`,
+        text: puncMatch,
+        type: 'punctuation',
+      });
+    } else if (wordMatch) {
+      const cleanWord = wordMatch.trim();
+      if (cleanWord) {
+        tokens.push({
+          id: `word-${tokenCounter++}-${cleanWord}`,
+          text: cleanWord,
+          type: 'syllable',
+          phonics: parseVietnamesePhonics(cleanWord),
+        });
+      }
+    }
+  }
+
+  return tokens;
 }
+

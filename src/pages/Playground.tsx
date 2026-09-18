@@ -32,8 +32,9 @@ import { AudioSpritePlayer } from '../core/audio/AudioSpritePlayer';
 import { LessonAudioSyncer, SyncProgressInfo } from '../core/audio/LessonAudioSyncer';
 import { PhonicsPlayer } from '../components/PhonicsPlayer';
 import { TextReader } from '../components/TextReader';
-import { ControlBar } from '../components/ControlBar';
+import { KidControlBar } from '../components/shared/KidControlBar';
 import { OCRUploader } from '../components/OCRUploader';
+import { AudioMasteringLab } from '../components/audio/AudioMasteringLab';
 
 type TabType = 'parser' | 'audio' | 'karaoke' | 'ocr';
 
@@ -428,7 +429,8 @@ export const Playground: React.FC = () => {
     setKaraokePreparingInfo(null);
     setSelectedKaraokeToken(null);
 
-    const wordsData = karaokeTokens.map((t) => ({
+    const syllablesOnly = karaokeTokens.filter((t) => t.type === 'syllable');
+    const wordsData = syllablesOnly.map((t) => ({
       text: t.text,
       breakdown: t.phonics,
     }));
@@ -995,6 +997,9 @@ export const Playground: React.FC = () => {
               </div>
             </div>
 
+            {/* BẢNG ĐIỀU KHIỂN THẨM ĐỊNH THUẬT TOÁN XỬ LÝ ÂM THANH SƯ PHẠM (A/B TESTING LAB) */}
+            <AudioMasteringLab />
+
             {/* BẢNG THẨM ÂM 225 CLIPS ZALO AI (SOUNDBOARD PHÂN LOẠI 5 DANH MỤC) */}
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200/80 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
@@ -1412,9 +1417,9 @@ export const Playground: React.FC = () => {
               )}
             </div>
 
-            {/* BỘ ĐIỀU KHIỂN PLAY / PAUSE / SPEED (ControlBar) */}
-            <ControlBar
-              mode={readingMode}
+            {/* BỘ ĐIỀU KHIỂN PLAY / PAUSE / SPEED (KidControlBar) */}
+            <KidControlBar
+              readingMode={readingMode}
               onModeChange={(newMode) => {
                 handleStopKaraoke();
                 setReadingMode(newMode);
@@ -1424,8 +1429,6 @@ export const Playground: React.FC = () => {
               onReset={handleResetKaraoke}
               speed={playbackSpeed}
               onSpeedChange={setPlaybackSpeed}
-              currentWordIndex={activeWordIdx}
-              totalWords={karaokeTokens.length}
             />
 
             {/* BANNER CHUẨN BỊ ÂM THANH KHI CÓ TỪ MỚI CẦN TẢI TỪ ZALO AI */}
