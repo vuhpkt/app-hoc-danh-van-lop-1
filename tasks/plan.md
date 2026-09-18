@@ -141,6 +141,30 @@ Dự án phát triển ứng dụng web/PWA học đánh vần chuẩn SGK Lớp
 - [x] Chuỗi đánh vần mẩu ("a - ngờ - ang") hoạt động trơn tru.
 - [x] 100% tests PASS, build production sạch sẽ.
 
+### Phase 13: Đại Tu Âm Học Phụ Âm & Tối Giản Bảng Chữ Cái (Montessori Phonics Fix)
+- [ ] **Task 13.1: Rà soát & Audit âm học toàn bộ 28 phụ âm đơn và ghép**
+  - Viết script `scripts/audit-consonant-acoustics.js` đo đạc thông số thời lượng và peak của 28 clip `am_dau__*`.
+  - Phát hiện các lỗi prompt sai (`am_dau__gh` bị gán `"ghờ"` đọc thành "gâu", `am_dau__ngh` bị gán `"nghờ"`).
+- [ ] **Task 13.2: Sửa âm thanh lỗi (am_dau__gh -> "gờ", am_dau__ngh -> "ngờ"), Master & Đóng gói Sprite v4.4.0**
+  - Đồng bộ âm chuẩn ngữ âm Lớp 1: `gh` phát âm "gờ", `ngh` phát âm "ngờ".
+  - Chạy `scripts/master-audio-dataset.js` chuẩn hóa peak $0.86 \pm 0.02$, thời lượng $\ge 300\text{ms}$.
+  - Đóng gói Master Sprite mới và nâng `SPRITE_VERSION = 'v4.4.0'` trong `SpriteManager.ts`.
+- [ ] **Task 13.3: Bỏ phân chia Nguyên âm / Phụ âm khỏi giao diện**
+  - Xóa badge "Nguyên âm" / "Phụ âm" trên `LetterCard.tsx`.
+  - Xóa 3 nút lọc "Tất cả", "Nguyên âm", "Phụ âm" trên `AlphabetLearningPage.tsx`.
+  - Đồng bộ 29 chữ cái về một giao diện thẻ ngà ấm `#FFFDF9` thống nhất.
+- [ ] **Task 13.4: Bỏ hoàn toàn các phiên âm gạch chéo (/{soundLabel}/)**
+  - Xóa `/{soundLabel}/` khỏi `LetterCard.tsx` và thẻ phụ âm ghép ở Tab 2.
+  - Thẻ chữ chỉ hiển thị mặt chữ to rõ (`A a`, `Ă ă`, `B b`...), icon loa chuyển động khi đang phát âm.
+- [ ] **Task 13.5: Cập nhật bộ kiểm thử TDD tự động (`test/alphabet_board.test.js`) & Build Production**
+  - Kiểm tra độ phủ, thời lượng âm học `gh`, `ngh` và giao diện tối giản.
+  - Chạy `npm test` và `npm run build` đạt 100% pass 0 lỗi.
+
+#### Checkpoint 13: Âm Học Chuẩn Xác & Giao Diện Tối Giản Hoàn Hảo
+- [ ] 28 phụ âm phát âm chuẩn xác không tạp âm ngoại lai.
+- [ ] Giao diện sạch sẽ, thân thiện với trẻ 5-6 tuổi.
+- [ ] 100% tests PASS, build sạch sẽ.
+
 ---
 
 ## 4. Risks and Mitigations (Rủi Ro & Biện Pháp Kiểm Soát)
@@ -152,9 +176,11 @@ Dự án phát triển ứng dụng web/PWA học đánh vần chuẩn SGK Lớp
 | Người dùng bấm Dừng nhưng âm thanh vẫn bị phát đè | Thấp | Sử dụng ID định danh phiên phát (`playbackId`), hủy bỏ mọi `setTimeout` còn chờ và xả Gain về 0.0001 trong 3ms. |
 | Trình duyệt di động chặn Autoplay âm thanh | Trung bình | Cơ chế Auto-Unlock đa sự kiện (`touchstart`, `click`, `keydown`) tại `WebAudioEngine`. |
 | Danh mục 145 vần gây quá tải thị giác cho bé 6 tuổi | Thấp | Chia làm 4 nhóm vần rõ ràng với tab cuộn mượt và kích thước thẻ lớn. |
+| Token "ghờ" bị TTS Zalo phát âm sai thành "gâu" | Cao | Dùng prompt chuẩn ngữ âm tiếng Việt "gờ" cho cả `g` và `gh`, "ngờ" cho cả `ng` và `ngh`. |
 
 ---
 
 ## 5. Open Questions (Câu Hỏi Mở)
 
 - *Đã giải quyết:* Bé sẽ nghe phát âm chữ cái theo **Âm** (*"bờ"*, *"cờ"*, *"dờ"*) theo đúng định hướng SGK mới mà người dùng đã phê duyệt.
+

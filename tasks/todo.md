@@ -197,3 +197,27 @@
   - Chạy `npm test` và `npm run build` hoàn thành 100% với 0 lỗi.
 
 ### ── Checkpoint 12: Bảng Chữ Cái & Khay Ghép Vần Hoàn Hảo Sẵn Sàng Nghiệm Thu [ĐÃ ĐẠT] ──
+ 
+---
+ 
+## Phase 13: Đại Tu Âm Học Phụ Âm & Tối Giản Bảng Chữ Cái (Phonics Defect Elimination & Clean Montessori Redesign)
+- [x] **Task 13.1: Rà soát & Audit âm học toàn bộ 28 phụ âm đơn và ghép**
+  - Viết script `scripts/audit-consonant-acoustics.js` đo đạc thông số thời lượng và peak của 28 clip `am_dau__*`.
+  - Bắt lỗi prompt sai (`am_dau__gh` bị gán `"ghờ"` đọc thành "gâu", `am_dau__ngh` bị gán `"nghờ"`).
+- [x] **Task 13.2: Sửa âm thanh lỗi (am_dau__gh -> "gờ", am_dau__ngh -> "ngờ"), Master & Đóng gói Sprite v4.4.0**
+  - Thay thế `raw-audio-backup/am_dau__gh.mp3` bằng âm chuẩn "gờ" (/ɣ/), `am_dau__ngh.mp3` bằng âm chuẩn "ngờ" (/ŋ/).
+  - Cập nhật prompt trong `scripts/generate-zalo-tts.js`.
+  - Chạy `scripts/master-audio-dataset.js` chuẩn hóa peak $0.86 \pm 0.02$, thời lượng $\ge 300\text{ms}$.
+  - Đóng gói Master Sprite mới và nâng `SPRITE_VERSION = 'v4.4.0'` trong `SpriteManager.ts`.
+- [x] **Task 13.3: Bỏ phân chia Nguyên âm / Phụ âm khỏi giao diện**
+  - Xóa badge "Nguyên âm" / "Phụ âm" trên `LetterCard.tsx`.
+  - Xóa 3 nút lọc "Tất cả", "Nguyên âm", "Phụ âm" trên `AlphabetLearningPage.tsx`.
+  - Đồng bộ 29 chữ cái về một giao diện thẻ ngà ấm `#FFFDF9` thống nhất.
+- [x] **Task 13.4: Bỏ hoàn toàn các phiên âm gạch chéo (/{soundLabel}/)**
+  - Xóa `/{soundLabel}/` khỏi `LetterCard.tsx` và thẻ phụ âm ghép ở Tab 2.
+  - Thẻ chữ chỉ hiển thị mặt chữ to rõ (`A a`, `Ă ă`, `B b`...), icon loa chuyển động khi đang phát âm.
+- [x] **Task 13.5: Cập nhật bộ kiểm thử TDD tự động (`test/alphabet_board.test.js`) & Build Production**
+  - Kiểm tra toạ độ và thời lượng âm học `am_dau__gh`, `am_dau__ngh` và giao diện tối giản.
+  - Chạy `npm test` và `npm run build` đạt 100% pass 0 lỗi.
+
+### ── Checkpoint 13: Âm Học Chuẩn Xác & Giao Diện Tối Giản Hoàn Hảo [ĐÃ HOÀN THÀNH XUẤT SẮC] ──

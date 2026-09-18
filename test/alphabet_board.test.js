@@ -22,11 +22,18 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
   await t.test('1. ALPHABET_LETTERS chứa đúng 29 chữ cái tiếng Việt chuẩn', () => {
     assert.equal(ALPHABET_LETTERS.length, 29, `Phải có đúng 29 chữ cái, thực tế có ${ALPHABET_LETTERS.length}`);
     
-    // Đếm số nguyên âm và phụ âm
-    const vowels = ALPHABET_LETTERS.filter(l => l.type === 'vowel');
-    const consonants = ALPHABET_LETTERS.filter(l => l.type === 'consonant');
-    assert.equal(vowels.length, 12, `Phải có 12 nguyên âm đơn (a, ă, â, e, ê, i, o, ô, ơ, u, ư, y), thực tế: ${vowels.length}`);
-    assert.equal(consonants.length, 17, `Phải có 17 phụ âm đơn (b, c, d, đ, g, h, k, l, m, n, p, q, r, s, t, v, x), thực tế: ${consonants.length}`);
+    // 29 chữ cái tiếng Việt chuẩn
+    const expectedLetters = [
+      'a', 'ă', 'â', 'b', 'c', 'd', 'đ', 'e', 'ê', 'g',
+      'h', 'i', 'k', 'l', 'm', 'n', 'o', 'ô', 'ơ', 'p',
+      'q', 'r', 's', 't', 'u', 'ư', 'v', 'x', 'y'
+    ];
+    for (const exp of expectedLetters) {
+      assert.ok(
+        ALPHABET_LETTERS.some(l => l.letter === exp),
+        `Bảng chữ cái phải chứa chữ "${exp}"`
+      );
+    }
   });
 
   await t.test('2. 100% 29 chữ cái đều có spriteKey hợp lệ và phát âm theo Âm', () => {
@@ -37,12 +44,13 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
       assert.ok(letter.spriteKey, `Chữ cái ${letter.uppercase} phải có spriteKey`);
 
       // Kiểm tra spriteKey tồn tại trong audio-map.json
-      assert.ok(audioMap[letter.spriteKey], `Sprite key ${letter.spriteKey} của chữ ${letter.uppercase} phải tồn tại trong audio-map.json`);
+      const seg = audioMap[letter.spriteKey];
+      assert.ok(seg, `Sprite key ${letter.spriteKey} của chữ ${letter.uppercase} phải tồn tại trong audio-map.json`);
+      assert.ok(seg.duration >= 0.25, `Sprite key ${letter.spriteKey} phải có duration >= 0.25s (thực tế: ${seg.duration}s)`);
 
-      // Kiểm tra quy chuẩn phát âm theo Âm (Phonics): Phụ âm phải dùng am_dau__*, Nguyên âm dùng van__*
+      // Quy chuẩn phát âm theo Âm:
       if (letter.type === 'consonant') {
         assert.ok(letter.spriteKey.startsWith('am_dau__'), `Phụ âm ${letter.uppercase} phải trỏ vào am_dau__* để phát âm bờ, cờ, dờ... (thực tế: ${letter.spriteKey})`);
-        // Kiểm tra nhãn phát âm kết thúc bằng "ờ" (ví dụ: "bờ", "cờ", "quờ"...)
         assert.ok(letter.soundLabel.endsWith('ờ') || letter.soundLabel === 'quờ', `Nhãn âm của phụ âm ${letter.uppercase} phải là âm ("bờ", "cờ"...), thực tế: ${letter.soundLabel}`);
       } else {
         assert.ok(letter.spriteKey.startsWith('van__'), `Nguyên âm ${letter.uppercase} phải trỏ vào van__* (thực tế: ${letter.spriteKey})`);
@@ -50,7 +58,7 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
     }
   });
 
-  await t.test('3. COMPOUND_CONSONANTS chứa đúng 11 phụ âm ghép chuẩn SGK', () => {
+  await t.test('3. COMPOUND_CONSONANTS chứa đúng 11 phụ âm ghép chuẩn SGK kèm âm học chuẩn', () => {
     assert.equal(COMPOUND_CONSONANTS.length, 11, `Phải có đúng 11 phụ âm ghép, thực tế có ${COMPOUND_CONSONANTS.length}`);
     const expectedCompounds = ['ch', 'gh', 'gi', 'kh', 'nh', 'ng', 'ngh', 'ph', 'qu', 'th', 'tr'];
     
@@ -59,8 +67,20 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
       assert.ok(comp.soundLabel, `Phụ âm ghép ${comp.consonant} phải có soundLabel`);
       assert.ok(comp.spriteKey, `Phụ âm ghép ${comp.consonant} phải có spriteKey`);
       assert.ok(comp.spriteKey.startsWith('am_dau__'), `Phụ âm ghép ${comp.consonant} phải dùng am_dau__*`);
-      assert.ok(audioMap[comp.spriteKey], `Sprite key ${comp.spriteKey} của phụ âm ghép ${comp.consonant} phải tồn tại trong audio-map.json`);
+      
+      const seg = audioMap[comp.spriteKey];
+      assert.ok(seg, `Sprite key ${comp.spriteKey} của phụ âm ghép ${comp.consonant} phải tồn tại trong audio-map.json`);
+      assert.ok(seg.duration >= 0.25, `Sprite key ${comp.spriteKey} phải có duration >= 0.25s (thực tế: ${seg.duration}s)`);
     }
+
+    // Kiểm tra đặc biệt: "gh" và "g" cùng phát âm là "gờ", "ngh" và "ng" cùng phát âm là "ngờ"
+    const ghComp = COMPOUND_CONSONANTS.find(c => c.consonant === 'gh');
+    assert.ok(ghComp, 'Phải có âm ghép "gh"');
+    assert.equal(ghComp.soundLabel, 'gờ', 'Âm ghép "gh" phải phát âm là "gờ"');
+
+    const nghComp = COMPOUND_CONSONANTS.find(c => c.consonant === 'ngh');
+    assert.ok(nghComp, 'Phải có âm ghép "ngh"');
+    assert.equal(nghComp.soundLabel, 'ngờ', 'Âm ghép "ngh" phải phát âm là "ngờ"');
   });
 
   await t.test('4. RIME_CATEGORIES chia theo 4 họ vần và 100% vần trỏ vào audio-map.json', () => {
@@ -140,5 +160,16 @@ test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
       assert.ok(!singleSet.has(comp.consonant), `Phụ âm ghép ${comp.consonant} không được trùng với phụ âm đơn`);
     }
   });
-});
 
+  await t.test('8. UI Contract: Không hiển thị badge "Nguyên âm/Phụ âm" và không có phiên âm gạch chéo /{soundLabel}/', () => {
+    const letterCardCode = fs.readFileSync(path.join(rootDir, 'src', 'components', 'alphabet', 'LetterCard.tsx'), 'utf-8');
+    assert.ok(!letterCardCode.includes("'Nguyên âm'"), 'LetterCard không được chứa chữ Nguyên âm');
+    assert.ok(!letterCardCode.includes("'Phụ âm'"), 'LetterCard không được chứa chữ Phụ âm');
+    assert.ok(!letterCardCode.includes('/{letter.soundLabel}/'), 'LetterCard không được chứa phiên âm gạch chéo /{letter.soundLabel}/');
+
+    const pageCode = fs.readFileSync(path.join(rootDir, 'src', 'pages', 'AlphabetLearningPage.tsx'), 'utf-8');
+    assert.ok(!pageCode.includes("'vowel'"), 'AlphabetLearningPage không được chứa filter vowel');
+    assert.ok(!pageCode.includes("'consonant'"), 'AlphabetLearningPage không được chứa filter consonant');
+    assert.ok(!pageCode.includes('/{comp.soundLabel}/'), 'AlphabetLearningPage không được chứa phiên âm /{comp.soundLabel}/');
+  });
+});

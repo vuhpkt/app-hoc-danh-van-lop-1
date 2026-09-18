@@ -16,7 +16,6 @@ type AlphabetTab = 'letters' | 'compounds' | 'rimes';
 
 export const AlphabetLearningPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AlphabetTab>('letters');
-  const [letterFilter, setLetterFilter] = useState<'all' | 'vowel' | 'consonant'>('all');
   const [selectedRimeCatId, setSelectedRimeCatId] = useState<string>('open_semivowel');
 
   // Trạng thái phát âm
@@ -57,7 +56,7 @@ export const AlphabetLearningPage: React.FC = () => {
     }
   };
 
-  // Phát âm phụ âm ghép ("chờ", "trờ", "ngờ"...)
+  // Phát âm âm ghép ("chờ", "gờ", "ngờ"...)
   const handlePlayCompound = async (spriteKey: string) => {
     spriteManager.stop();
     setActiveAudioKey(spriteKey);
@@ -66,7 +65,7 @@ export const AlphabetLearningPage: React.FC = () => {
     try {
       await spriteManager.playAudioSegment(spriteKey);
     } catch (err) {
-      console.warn('Lỗi phát âm phụ âm ghép:', err);
+      console.warn('Lỗi phát âm âm ghép:', err);
     } finally {
       setActiveAudioKey((prev) => (prev === spriteKey ? null : prev));
     }
@@ -114,13 +113,6 @@ export const AlphabetLearningPage: React.FC = () => {
     }
   };
 
-  // Lọc danh sách chữ cái
-  const filteredLetters = ALPHABET_LETTERS.filter((l) => {
-    if (letterFilter === 'vowel') return l.type === 'vowel';
-    if (letterFilter === 'consonant') return l.type === 'consonant';
-    return true;
-  });
-
   const activeRimeCategory =
     RIME_CATEGORIES.find((c) => c.id === selectedRimeCatId) || RIME_CATEGORIES[0];
 
@@ -143,7 +135,7 @@ export const AlphabetLearningPage: React.FC = () => {
             {/* Hint âm thanh 100% Offline */}
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold self-start sm:self-center">
               <Volume2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Offline Master v4.3.0</span>
+              <span>Offline Master v4.4.0</span>
             </div>
           </div>
 
@@ -172,7 +164,7 @@ export const AlphabetLearningPage: React.FC = () => {
                 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-2xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer shadow-sm
                 ${
                   activeTab === 'compounds'
-                    ? 'bg-sky-500 text-white shadow-[0_4px_0_#0369a1] -translate-y-0.5'
+                    ? 'bg-amber-500 text-white shadow-[0_4px_0_#b45309] -translate-y-0.5'
                     : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                 }
               `}
@@ -199,55 +191,21 @@ export const AlphabetLearningPage: React.FC = () => {
           </div>
         </div>
 
-        {/* TAB 1: 29 CHỮ CÁI ĐƠN */}
+        {/* TAB 1: 29 CHỮ CÁI (KHÔNG PHÂN CHIA NGUYÊN ÂM / PHỤ ÂM) */}
         {activeTab === 'letters' && (
           <div>
-            {/* Bộ Lọc Nguyên Âm / Phụ Âm */}
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setLetterFilter('all')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    letterFilter === 'all'
-                      ? 'bg-stone-800 text-white shadow-sm'
-                      : 'bg-white text-stone-600 hover:bg-stone-100 border border-stone-200'
-                  }`}
-                >
-                  Tất cả (29)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLetterFilter('vowel')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    letterFilter === 'vowel'
-                      ? 'bg-amber-600 text-white shadow-sm'
-                      : 'bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200'
-                  }`}
-                >
-                  Nguyên âm (12)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLetterFilter('consonant')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    letterFilter === 'consonant'
-                      ? 'bg-sky-600 text-white shadow-sm'
-                      : 'bg-sky-50 text-sky-900 hover:bg-sky-100 border border-sky-200'
-                  }`}
-                >
-                  Phụ âm (17)
-                </button>
-              </div>
-
-              <span className="text-xs text-stone-500 font-semibold hidden sm:inline">
-                Chạm vào chữ cái để nghe phát âm
+              <span className="text-xs sm:text-sm text-stone-600 font-medium">
+                Chạm vào chữ cái để nghe cô giáo phát âm chuẩn.
+              </span>
+              <span className="text-xs text-amber-800 font-bold bg-amber-100/70 px-2.5 py-1 rounded-full">
+                29 Chữ Cái
               </span>
             </div>
 
-            {/* Grid 29 Thẻ Chữ Cái */}
+            {/* Grid 29 Thẻ Chữ Cái Thống Nhất */}
             <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-2.5 sm:gap-3">
-              {filteredLetters.map((item) => (
+              {ALPHABET_LETTERS.map((item) => (
                 <LetterCard
                   key={item.letter}
                   letter={item}
@@ -259,13 +217,16 @@ export const AlphabetLearningPage: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 2: 11 PHỤ ÂM GHÉP */}
+        {/* TAB 2: 11 ÂM GHÉP (KHÔNG PHIÊN ÂM GẠCH CHÉO) */}
         {activeTab === 'compounds' && (
           <div>
-            <div className="mb-4">
+            <div className="flex items-center justify-between mb-4">
               <p className="text-xs sm:text-sm text-stone-600 font-medium">
-                11 phụ âm ghép cơ bản trong tiếng Việt. Chạm vào để nghe cô giáo phát âm chuẩn.
+                11 âm ghép cơ bản trong tiếng Việt. Chạm vào chữ để nghe cô giáo phát âm.
               </p>
+              <span className="text-xs text-amber-800 font-bold bg-amber-100/70 px-2.5 py-1 rounded-full">
+                11 Âm Ghép
+              </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
@@ -276,34 +237,30 @@ export const AlphabetLearningPage: React.FC = () => {
                     key={comp.consonant}
                     type="button"
                     onClick={() => handlePlayCompound(comp.spriteKey)}
-                    aria-label={`Phụ âm ghép ${comp.consonant}, phát âm ${comp.soundLabel}`}
+                    aria-label={`Âm ghép ${comp.consonant}`}
                     className={`
-                      flex flex-col items-center justify-between p-4 rounded-3xl border-2 transition-all duration-150 select-none cursor-pointer outline-none min-h-[110px]
-                      focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2
+                      relative group flex flex-col items-center justify-between p-4 rounded-3xl border-2 transition-all duration-150 select-none cursor-pointer outline-none min-h-[110px]
+                      focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2
                       ${
                         isPlaying
-                          ? 'bg-sky-100 border-sky-500 shadow-[0_6px_0_#0284c7] -translate-y-1 scale-105'
-                          : 'bg-sky-50/80 hover:bg-sky-100/90 border-sky-200 shadow-[0_4px_0_#bae6fd] hover:shadow-[0_5px_0_#7dd3fc] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none'
+                          ? 'bg-amber-100 border-amber-500 shadow-[0_6px_0_#d97706] -translate-y-1 scale-105'
+                          : 'bg-[#FFFDF9] hover:bg-amber-50/70 border-[#F6EAD8] hover:border-amber-300 shadow-[0_4px_0_#F0DFCA] hover:shadow-[0_5px_0_#FCD34D] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none'
                       }
                     `}
                   >
-                    <span className="text-xs font-bold text-sky-800 uppercase tracking-wider bg-sky-200/70 px-2 py-0.5 rounded-full">
-                      Phụ âm ghép
-                    </span>
-
-                    <div className="my-2">
-                      <span className="text-4xl font-extrabold text-sky-950 tracking-tight">
+                    <div className="my-auto">
+                      <span className={`text-4xl font-extrabold tracking-tight transition-colors ${
+                        isPlaying ? 'text-amber-950' : 'text-stone-800 group-hover:text-amber-950'
+                      }`}>
                         {comp.consonant}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center justify-center h-4 mt-2">
                       {isPlaying ? (
-                        <Volume2 className="w-4 h-4 text-sky-600 animate-pulse" />
+                        <Volume2 className="w-4 h-4 text-amber-600 animate-pulse" />
                       ) : (
-                        <span className="text-sm font-bold text-stone-500">
-                          /{comp.soundLabel}/
-                        </span>
+                        <Volume2 className="w-3.5 h-3.5 text-stone-300 group-hover:text-amber-500 transition-colors" />
                       )}
                     </div>
                   </button>

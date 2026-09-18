@@ -183,12 +183,13 @@ async function main() {
 
     // Xác định phân loại sư phạm
     const isStop = isClosedStopRhyme(item.text, item.key);
-    const isWordOrRime = item.key.startsWith('tu__') || item.key.startsWith('van__');
+    const isConsonant = item.key.startsWith('am_dau__');
+    const isWordOrRime = item.key.startsWith('tu__') || item.key.startsWith('van__') || isConsonant;
 
     let stretchFactor = 1.0;
     let actionDesc = 'giữ nguyên thời lượng';
 
-    if (isStop && isWordOrRime) {
+    if (isStop && isWordOrRime && !isConsonant) {
       // Nhóm vần khép tắc: dải vàng 220ms - 250ms
       if (origActiveDurMs < 220) {
         stretchFactor = Math.max(0.72, origActiveDurMs / 232); // Mục tiêu ~232ms
@@ -196,11 +197,11 @@ async function main() {
         actionDesc = `kéo giãn khép tắc -> 220-250ms (factor ${stretchFactor.toFixed(3)})`;
       }
     } else if (isWordOrRime) {
-      // Nhóm vần mở / vang: dải vàng 300ms - 340ms
+      // Nhóm vần mở / vang / âm đầu (bờ, cờ, dờ, gờ, ngờ...): dải vàng 300ms - 340ms
       if (origActiveDurMs < 300) {
         stretchFactor = Math.max(0.65, origActiveDurMs / 312); // Mục tiêu ~312ms
         stretchedOpenCount++;
-        actionDesc = `kéo giãn mở/vang -> 300-340ms (factor ${stretchFactor.toFixed(3)})`;
+        actionDesc = `kéo giãn mở/vang/âm đầu -> 300-340ms (factor ${stretchFactor.toFixed(3)})`;
       }
     }
 
@@ -446,32 +447,32 @@ async function main() {
     fs.rmSync(TEMP_DIR, { recursive: true, force: true });
   } catch {}
 
-  console.log('\n--- BƯỚC 3: NÂNG CẤP SPRITE_VERSION LÊN v4.3.0 (CACHE-BUSTING) ---');
+  console.log('\n--- BƯỚC 3: NÂNG CẤP SPRITE_VERSION LÊN v4.4.0 (CACHE-BUSTING) ---');
 
   if (fs.existsSync(SPRITE_MANAGER_FILE)) {
     let spriteContent = fs.readFileSync(SPRITE_MANAGER_FILE, 'utf-8');
-    if (spriteContent.includes("SPRITE_VERSION = 'v4.2.0'")) {
-      spriteContent = spriteContent.replace("SPRITE_VERSION = 'v4.2.0'", "SPRITE_VERSION = 'v4.3.0'");
+    if (spriteContent.includes("SPRITE_VERSION = 'v4.3.0'")) {
+      spriteContent = spriteContent.replace("SPRITE_VERSION = 'v4.3.0'", "SPRITE_VERSION = 'v4.4.0'");
       fs.writeFileSync(SPRITE_MANAGER_FILE, spriteContent, 'utf-8');
-      console.log(`  ✅ Đã nâng cấp SPRITE_VERSION trong SpriteManager.ts lên 'v4.3.0'`);
-    } else if (spriteContent.includes("SPRITE_VERSION = 'v4.3.0'")) {
-      console.log(`  ℹ️ SPRITE_VERSION trong SpriteManager.ts đã ở 'v4.3.0'`);
+      console.log(`  ✅ Đã nâng cấp SPRITE_VERSION trong SpriteManager.ts lên 'v4.4.0'`);
+    } else if (spriteContent.includes("SPRITE_VERSION = 'v4.4.0'")) {
+      console.log(`  ℹ️ SPRITE_VERSION trong SpriteManager.ts đã ở 'v4.4.0'`);
     }
   }
 
   if (fs.existsSync(SPRITE_TEST_FILE)) {
     let testContent = fs.readFileSync(SPRITE_TEST_FILE, 'utf-8');
-    if (testContent.includes("SPRITE_VERSION = 'v4.2.0'")) {
-      testContent = testContent.replace(/SPRITE_VERSION = 'v4\.2\.0'/g, "SPRITE_VERSION = 'v4.3.0'");
+    if (testContent.includes("SPRITE_VERSION = 'v4.3.0'")) {
+      testContent = testContent.replace(/SPRITE_VERSION = 'v4\.3\.0'/g, "SPRITE_VERSION = 'v4.4.0'");
       fs.writeFileSync(SPRITE_TEST_FILE, testContent, 'utf-8');
-      console.log(`  ✅ Đã cập nhật kiểm thử SPRITE_VERSION trong test/sprite_integrity.test.js lên 'v4.3.0'`);
+      console.log(`  ✅ Đã cập nhật kiểm thử SPRITE_VERSION trong test/sprite_integrity.test.js lên 'v4.4.0'`);
     }
   }
 
   console.log('='.repeat(80));
   console.log('🎉 TOÀN BỘ TIẾN TRÌNH MASTERING VÀ ĐÓNG GÓI SPRITE ĐÃ HOÀN TẤT THÀNH CÔNG!');
   console.log(`📊 Tổng thời lượng Sprite: ${currentOffset.toFixed(2)}s (${Object.keys(audioMap).length} mẩu âm chuẩn)`);
-  console.log(`⭐ Phiên bản Sprite:       v4.3.0`);
+  console.log(`⭐ Phiên bản Sprite:       v4.4.0`);
   console.log('='.repeat(80));
 }
 
