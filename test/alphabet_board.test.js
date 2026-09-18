@@ -1,0 +1,144 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import {
+  ALPHABET_LETTERS,
+  COMPOUND_CONSONANTS,
+  RIME_CATEGORIES,
+  blendSoundWithPhonics
+} from '../src/core/data/vietnameseAlphabet.ts';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.join(__dirname, '..');
+const mapPath = path.join(rootDir, 'public', 'audio', 'audio-map.json');
+
+test('Vietnamese Alphabet & Phonics Lab Data Integrity (TDD)', async (t) => {
+  const audioMap = JSON.parse(fs.readFileSync(mapPath, 'utf-8'));
+
+  await t.test('1. ALPHABET_LETTERS chứa đúng 29 chữ cái tiếng Việt chuẩn', () => {
+    assert.equal(ALPHABET_LETTERS.length, 29, `Phải có đúng 29 chữ cái, thực tế có ${ALPHABET_LETTERS.length}`);
+    
+    // Đếm số nguyên âm và phụ âm
+    const vowels = ALPHABET_LETTERS.filter(l => l.type === 'vowel');
+    const consonants = ALPHABET_LETTERS.filter(l => l.type === 'consonant');
+    assert.equal(vowels.length, 12, `Phải có 12 nguyên âm đơn (a, ă, â, e, ê, i, o, ô, ơ, u, ư, y), thực tế: ${vowels.length}`);
+    assert.equal(consonants.length, 17, `Phải có 17 phụ âm đơn (b, c, d, đ, g, h, k, l, m, n, p, q, r, s, t, v, x), thực tế: ${consonants.length}`);
+  });
+
+  await t.test('2. 100% 29 chữ cái đều có spriteKey hợp lệ và phát âm theo Âm', () => {
+    for (const letter of ALPHABET_LETTERS) {
+      assert.ok(letter.uppercase, `Chữ cái ${letter.uppercase} phải có uppercase`);
+      assert.ok(letter.lowercase, `Chữ cái ${letter.uppercase} phải có lowercase`);
+      assert.ok(letter.soundLabel, `Chữ cái ${letter.uppercase} phải có soundLabel`);
+      assert.ok(letter.spriteKey, `Chữ cái ${letter.uppercase} phải có spriteKey`);
+
+      // Kiểm tra spriteKey tồn tại trong audio-map.json
+      assert.ok(audioMap[letter.spriteKey], `Sprite key ${letter.spriteKey} của chữ ${letter.uppercase} phải tồn tại trong audio-map.json`);
+
+      // Kiểm tra quy chuẩn phát âm theo Âm (Phonics): Phụ âm phải dùng am_dau__*, Nguyên âm dùng van__*
+      if (letter.type === 'consonant') {
+        assert.ok(letter.spriteKey.startsWith('am_dau__'), `Phụ âm ${letter.uppercase} phải trỏ vào am_dau__* để phát âm bờ, cờ, dờ... (thực tế: ${letter.spriteKey})`);
+        // Kiểm tra nhãn phát âm kết thúc bằng "ờ" (ví dụ: "bờ", "cờ", "quờ"...)
+        assert.ok(letter.soundLabel.endsWith('ờ') || letter.soundLabel === 'quờ', `Nhãn âm của phụ âm ${letter.uppercase} phải là âm ("bờ", "cờ"...), thực tế: ${letter.soundLabel}`);
+      } else {
+        assert.ok(letter.spriteKey.startsWith('van__'), `Nguyên âm ${letter.uppercase} phải trỏ vào van__* (thực tế: ${letter.spriteKey})`);
+      }
+    }
+  });
+
+  await t.test('3. COMPOUND_CONSONANTS chứa đúng 11 phụ âm ghép chuẩn SGK', () => {
+    assert.equal(COMPOUND_CONSONANTS.length, 11, `Phải có đúng 11 phụ âm ghép, thực tế có ${COMPOUND_CONSONANTS.length}`);
+    const expectedCompounds = ['ch', 'gh', 'gi', 'kh', 'nh', 'ng', 'ngh', 'ph', 'qu', 'th', 'tr'];
+    
+    for (const comp of COMPOUND_CONSONANTS) {
+      assert.ok(expectedCompounds.includes(comp.consonant), `Phụ âm ghép ${comp.consonant} không nằm trong danh sách SGK chuẩn`);
+      assert.ok(comp.soundLabel, `Phụ âm ghép ${comp.consonant} phải có soundLabel`);
+      assert.ok(comp.spriteKey, `Phụ âm ghép ${comp.consonant} phải có spriteKey`);
+      assert.ok(comp.spriteKey.startsWith('am_dau__'), `Phụ âm ghép ${comp.consonant} phải dùng am_dau__*`);
+      assert.ok(audioMap[comp.spriteKey], `Sprite key ${comp.spriteKey} của phụ âm ghép ${comp.consonant} phải tồn tại trong audio-map.json`);
+    }
+  });
+
+  await t.test('4. RIME_CATEGORIES chia theo 4 họ vần và 100% vần trỏ vào audio-map.json', () => {
+    assert.equal(RIME_CATEGORIES.length, 4, `Phải có đúng 4 nhóm vần, thực tế: ${RIME_CATEGORIES.length}`);
+    
+    let totalRimes = 0;
+    for (const group of RIME_CATEGORIES) {
+      assert.ok(group.id, 'Nhóm vần phải có id');
+      assert.ok(group.name, 'Nhóm vần phải có name');
+      assert.ok(Array.isArray(group.rimes), `Nhóm vần ${group.name} phải chứa mảng rimes`);
+      assert.ok(group.rimes.length > 0, `Nhóm vần ${group.name} không được rỗng`);
+
+      for (const rimeItem of group.rimes) {
+        totalRimes++;
+        assert.ok(rimeItem.rime, 'Mục vần phải có rime');
+        assert.ok(rimeItem.spriteKey, `Vần ${rimeItem.rime} phải có spriteKey`);
+        assert.ok(audioMap[rimeItem.spriteKey], `Sprite key ${rimeItem.spriteKey} của vần ${rimeItem.rime} phải tồn tại trong audio-map.json`);
+
+        // Kiểm tra công thức đánh vần bóc tách (spellingSteps)
+        assert.ok(Array.isArray(rimeItem.spellingSteps), `Vần ${rimeItem.rime} phải có spellingSteps dạng mảng`);
+        assert.ok(rimeItem.spellingSteps.length >= 1, `Vần ${rimeItem.rime} spellingSteps phải có ít nhất 1 bước`);
+        
+        for (const stepKey of rimeItem.spellingSteps) {
+          assert.ok(audioMap[stepKey], `Bước ghép ${stepKey} trong công thức của vần ${rimeItem.rime} phải tồn tại trong audio-map.json`);
+        }
+      }
+    }
+    assert.ok(totalRimes >= 100, `Tổng số vần hỗ trợ phải >= 100 vần (thực tế: ${totalRimes})`);
+  });
+
+  await t.test('5. Khay Ghép Vần (Sound Blending): blendSoundWithPhonics tạo chuỗi âm thanh chính xác', () => {
+    // Thử ghép "b" + "an" -> "ban"
+    const blend1 = blendSoundWithPhonics('b', 'an');
+    assert.ok(blend1, 'Phải tạo được kết quả ghép vần');
+    assert.equal(blend1.blendedWord, 'ban');
+    assert.deepEqual(blend1.audioSteps, ['am_dau__b', 'van__an', 'tu__ban_ngang']);
+    assert.ok(audioMap[blend1.blendedWordKey], `Sprite key ${blend1.blendedWordKey} của từ ghép phải tồn tại trong audio-map.json`);
+
+    // Thử ghép "c" + "a" -> "ca"
+    const blend2 = blendSoundWithPhonics('c', 'a');
+    assert.equal(blend2.blendedWord, 'ca');
+    assert.deepEqual(blend2.audioSteps, ['am_dau__c', 'van__a', 'tu__ca']);
+
+    // Thử ghép trường hợp từ chưa có sẵn trong master sprite (chỉ phát cờ + ang)
+    const blendUnknown = blendSoundWithPhonics('c', 'ang');
+    assert.equal(blendUnknown.blendedWord, 'cang');
+    assert.deepEqual(blendUnknown.audioSteps, ['am_dau__c', 'van__ang']);
+  });
+
+  await t.test('6. Kiểm tra các bộ ghép âm mẫu (Presets) giải quyết 100% audio hợp lệ', () => {
+    const samples = [
+      { c: 'b', r: 'an' },
+      { c: 'c', r: 'a' },
+      { c: 'v', r: 'ui' },
+      { c: 'm', r: 'e' },
+      { c: 'ch', r: 'im' },
+      { c: 'tr', r: 'ang' },
+      { c: 'kh', r: 'ang' },
+      { c: 'l', r: 'o' }
+    ];
+
+    for (const sample of samples) {
+      const res = blendSoundWithPhonics(sample.c, sample.r);
+      assert.ok(res.blendedWord, `Phải tạo được từ ghép cho ${sample.c} + ${sample.r}`);
+      for (const step of res.audioSteps) {
+        assert.ok(audioMap[step], `Step "${step}" trong mẫu ${sample.c}+${sample.r} phải tồn tại trong audio-map.json`);
+      }
+    }
+  });
+
+  await t.test('7. Tính độc lập giữa 17 phụ âm đơn và 11 phụ âm ghép', () => {
+    const singleSet = new Set(ALPHABET_LETTERS.filter(l => l.type === 'consonant').map(l => l.letter));
+    assert.equal(singleSet.size, 17, 'Phải có đúng 17 phụ âm đơn duy nhất');
+
+    for (const comp of COMPOUND_CONSONANTS) {
+      assert.ok(comp.consonant.length >= 2, `Phụ âm ghép ${comp.consonant} phải có độ dài >= 2`);
+      assert.ok(!singleSet.has(comp.consonant), `Phụ âm ghép ${comp.consonant} không được trùng với phụ âm đơn`);
+    }
+  });
+});
+

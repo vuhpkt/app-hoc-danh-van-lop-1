@@ -117,6 +117,32 @@ Dự án phát triển ứng dụng web/PWA học đánh vần chuẩn SGK Lớp
 
 ---
 
+### Phase 12: Màn Hình Bảng Chữ Cái & Khay Ghép Vần Tương Tác (Montessori Phonics Lab)
+- [x] **Task 12.1: Xây dựng bộ dữ liệu ngữ âm chuẩn (`src/core/data/vietnameseAlphabet.ts`)**
+  - Khai báo 29 chữ cái tiếng Việt kèm nhãn phát âm theo Âm ("bờ", "cờ", "dờ"...) và sprite key tương ứng.
+  - Khai báo 11 phụ âm ghép (`ch`, `tr`, `ng`, `kh`...) và sprite key.
+  - Khai báo ~145 vần chia theo 4 họ vần kèm công thức đánh vần mẩu (`spellingSteps` trỏ vào sprite keys).
+- [x] **Task 12.2: Xây dựng các component thẻ chữ và thẻ vần (`LetterCard.tsx`, `RimeCard.tsx`)**
+  - Thiết kế thẻ gỗ nam châm xúc giác chuẩn Fitts ($\ge 56\text{px}$) trên nền giấy ngà ấm `#FAF8F5`.
+  - Nút kép trên thẻ vần: Đọc trơn và đánh vần mẩu bóc tách từng bước (*"a - ngờ - ang"*).
+- [x] **Task 12.3: Xây dựng Khay Ghép Vần Tương Tác (`SoundBlendingTray.tsx`)**
+  - Cho phép bé chọn 1 phụ âm đầu + 1 vần và bấm "Ghép Vần".
+  - Tự động phát chuỗi âm thanh ghép nối mượt mà từ Master Sprite (ví dụ: *"bờ - an - ban"*).
+- [x] **Task 12.4: Xây dựng trang `AlphabetLearningPage.tsx` & Tích hợp Header Navigation vào `App.tsx`**
+  - Quản lý 3 Tab: 29 Chữ cái | 11 Phụ âm ghép | Bảng vần & Khay ghép âm.
+  - Cập nhật Header Capsule Toggle trên `App.tsx`: [📖 Bài Đọc SGK] ⟷ [🔤 Bảng Chữ Cái & Âm] ⟷ [🧪 Lab].
+- [x] **Task 12.5: Viết bộ kiểm thử TDD tự động (`test/alphabet_board.test.js`) & Đóng gói hoàn thiện**
+  - Kiểm tra độ phủ 100% của chữ cái, phụ âm ghép và vần với Master Sprite (116/116 tests pass).
+  - Chạy `npm test` và `npm run build` đảm bảo 0 lỗi.
+
+#### Checkpoint 12: Bảng Chữ Cái & Khay Ghép Vần Hoàn Hảo [ĐÃ ĐẠT]
+- [x] 29 chữ cái phát âm chuẩn theo Âm ("bờ", "cờ", "dờ").
+- [x] 11 phụ âm ghép và ~145 vần phát âm tức thì < 15ms.
+- [x] Chuỗi đánh vần mẩu ("a - ngờ - ang") hoạt động trơn tru.
+- [x] 100% tests PASS, build production sạch sẽ.
+
+---
+
 ## 4. Risks and Mitigations (Rủi Ro & Biện Pháp Kiểm Soát)
 
 | Rủi ro | Mức độ | Biện pháp kiểm soát |
@@ -125,9 +151,10 @@ Dự án phát triển ứng dụng web/PWA học đánh vần chuẩn SGK Lớp
 | Phụ âm xát (*th, s, kh*) bị mất năng lượng khi gọt DSP | Thấp | Mở rộng pre-roll lên 25ms và chỉ bắt đầu tính năng lượng sau 5ms windowing tích phân. |
 | Người dùng bấm Dừng nhưng âm thanh vẫn bị phát đè | Thấp | Sử dụng ID định danh phiên phát (`playbackId`), hủy bỏ mọi `setTimeout` còn chờ và xả Gain về 0.0001 trong 3ms. |
 | Trình duyệt di động chặn Autoplay âm thanh | Trung bình | Cơ chế Auto-Unlock đa sự kiện (`touchstart`, `click`, `keydown`) tại `WebAudioEngine`. |
+| Danh mục 145 vần gây quá tải thị giác cho bé 6 tuổi | Thấp | Chia làm 4 nhóm vần rõ ràng với tab cuộn mượt và kích thước thẻ lớn. |
 
 ---
 
 ## 5. Open Questions (Câu Hỏi Mở)
 
-- *Hiện tại:* Không còn câu hỏi mở nào tồn đọng; toàn bộ mục tiêu, phạm vi và thứ tự ưu tiên đã được thống nhất 100% với người dùng.
+- *Đã giải quyết:* Bé sẽ nghe phát âm chữ cái theo **Âm** (*"bờ"*, *"cờ"*, *"dờ"*) theo đúng định hướng SGK mới mà người dùng đã phê duyệt.

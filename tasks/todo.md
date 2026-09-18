@@ -175,3 +175,25 @@
   - **108/108 tests PASS (100%)**, `npm run build` thành công xuất sắc 0 lỗi (2.48s).
 
 ### ── Checkpoint 11: Bộ âm thanh đạt chất lượng sư phạm hoàn hảo toàn diện v4.3.0 [CHIẾN THẮNG TUYỆT ĐỐI] ──
+
+---
+
+## Phase 12: Màn Hình Bảng Chữ Cái & Khay Ghép Vần Tương Tác (Montessori Phonics Lab)
+- [x] **Task 12.1: Xây dựng bộ dữ liệu ngữ âm chuẩn (`src/core/data/vietnameseAlphabet.ts`)**
+  - Khai báo 29 chữ cái tiếng Việt kèm nhãn phát âm theo Âm ("bờ", "cờ", "dờ"...) và sprite key tương ứng.
+  - Khai báo 11 phụ âm ghép (`ch`, `tr`, `ng`, `kh`...) và sprite key.
+  - Khai báo ~145 vần chia theo 4 họ vần kèm công thức đánh vần mẩu (`spellingSteps` trỏ vào sprite keys).
+- [x] **Task 12.2: Xây dựng các component thẻ chữ và thẻ vần (`LetterCard.tsx`, `RimeCard.tsx`)**
+  - Thiết kế thẻ gỗ nam châm xúc giác chuẩn Fitts ($\ge 56\text{px}$) trên nền giấy ngà ấm `#FAF8F5`.
+  - Nút kép trên thẻ vần: Đọc trơn và đánh vần mẩu bóc tách từng bước (*"a - ngờ - ang"*).
+- [x] **Task 12.3: Xây dựng Khay Ghép Vần Tương Tác (`SoundBlendingTray.tsx`)**
+  - Cho phép bé chọn 1 phụ âm đầu + 1 vần và bấm "Ghép Vần".
+  - Tự động phát chuỗi âm thanh ghép nối mượt mà từ Master Sprite (ví dụ: *"bờ - an - ban"*).
+- [x] **Task 12.4: Xây dựng trang `AlphabetLearningPage.tsx` & Tích hợp Header Navigation vào `App.tsx`**
+  - Quản lý 3 Tab: 29 Chữ cái | 11 Phụ âm ghép | Bảng vần & Khay ghép âm.
+  - Cập nhật Header Capsule Toggle trên `App.tsx`: [📖 Bài Đọc SGK] ⟷ [🔤 Bảng Chữ Cái & Âm] ⟷ [🧪 Lab].
+- [x] **Task 12.5: Viết bộ kiểm thử TDD tự động (`test/alphabet_board.test.js`) & Đóng gói hoàn thiện**
+  - Kiểm tra độ phủ 100% của chữ cái, phụ âm ghép và vần với Master Sprite (116/116 tests pass).
+  - Chạy `npm test` và `npm run build` hoàn thành 100% với 0 lỗi.
+
+### ── Checkpoint 12: Bảng Chữ Cái & Khay Ghép Vần Hoàn Hảo Sẵn Sàng Nghiệm Thu [ĐÃ ĐẠT] ──
