@@ -105,20 +105,21 @@ async function main() {
       samples[s] = rawBuf.readInt16LE(44 + s * 2) / 32768.0;
     }
 
-    // 2. Tìm điểm bắt đầu thực tế (vượt ngưỡng âm lượng 0.008, lùi 10ms an toàn)
+    // 2. Tìm điểm bắt đầu thực tế (bỏ qua 64 mẫu đầu chống MP3 pop header, giữ 50ms pre-roll tự nhiên)
     let startIdx = 0;
-    for (let s = 0; s < totalSamples; s++) {
+    const skipSamples = Math.min(64, Math.floor(totalSamples / 10));
+    for (let s = skipSamples; s < totalSamples; s++) {
       if (Math.abs(samples[s]) > 0.008) {
-        startIdx = Math.max(0, s - 240); // 10ms
+        startIdx = Math.max(0, s - 1200); // 50ms pre-roll an toàn (có khoảng trống tự nhiên ở đầu)
         break;
       }
     }
 
-    // 3. Tìm điểm kết thúc tự nhiên (bao gồm toàn bộ đuôi âm ngân xuống -52dB + 50ms reverb tail)
+    // 3. Tìm điểm kết thúc tự nhiên (bao gồm toàn bộ đuôi âm ngân xuống -52dB + 140ms decay tail tự nhiên)
     let endIdx = totalSamples - 1;
     for (let s = totalSamples - 1; s >= 0; s--) {
       if (Math.abs(samples[s]) > 0.0025) {
-        endIdx = Math.min(totalSamples, s + 1200); // 50ms decay tail
+        endIdx = Math.min(totalSamples, s + 3360); // 140ms decay tail (ngân dài tự nhiên, không bị cụt)
         break;
       }
     }

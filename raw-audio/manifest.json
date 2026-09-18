@@ -20,14 +20,14 @@
     "text": "dờ"
   },
   {
-    "key": "am_dau__dd",
-    "filename": "am_dau__dd.mp3",
-    "text": "đờ"
-  },
-  {
     "key": "am_dau__g",
     "filename": "am_dau__g.mp3",
     "text": "gờ"
+  },
+  {
+    "key": "am_dau__dd",
+    "filename": "am_dau__dd.mp3",
+    "text": "đờ"
   },
   {
     "key": "am_dau__gh",
@@ -120,14 +120,14 @@
     "text": "thờ"
   },
   {
-    "key": "am_dau__tr",
-    "filename": "am_dau__tr.mp3",
-    "text": "trờ"
-  },
-  {
     "key": "am_dau__v",
     "filename": "am_dau__v.mp3",
     "text": "vờ"
+  },
+  {
+    "key": "am_dau__tr",
+    "filename": "am_dau__tr.mp3",
+    "text": "trờ"
   },
   {
     "key": "am_dau__x",
@@ -140,14 +140,14 @@
     "text": "thanh ngang"
   },
   {
-    "key": "thanh__huyen",
-    "filename": "thanh__huyen.mp3",
-    "text": "huyền"
-  },
-  {
     "key": "thanh__sac",
     "filename": "thanh__sac.mp3",
     "text": "sắc"
+  },
+  {
+    "key": "thanh__huyen",
+    "filename": "thanh__huyen.mp3",
+    "text": "huyền"
   },
   {
     "key": "thanh__hoi",
@@ -160,14 +160,14 @@
     "text": "ngã"
   },
   {
-    "key": "thanh__nang",
-    "filename": "thanh__nang.mp3",
-    "text": "nặng"
-  },
-  {
     "key": "van__a",
     "filename": "van__a.mp3",
     "text": "a"
+  },
+  {
+    "key": "thanh__nang",
+    "filename": "thanh__nang.mp3",
+    "text": "nặng"
   },
   {
     "key": "van__a_breve",
@@ -250,14 +250,14 @@
     "text": "ua"
   },
   {
-    "key": "van__uo_hat",
-    "filename": "van__uo_hat.mp3",
-    "text": "uô"
-  },
-  {
     "key": "van__ua_horn",
     "filename": "van__ua_horn.mp3",
     "text": "ưa"
+  },
+  {
+    "key": "van__uo_hat",
+    "filename": "van__uo_hat.mp3",
+    "text": "uô"
   },
   {
     "key": "van__uo_horn",
@@ -310,14 +310,14 @@
     "text": "iu"
   },
   {
-    "key": "van__ieu",
-    "filename": "van__ieu.mp3",
-    "text": "iêu"
-  },
-  {
     "key": "van__yeu",
     "filename": "van__yeu.mp3",
     "text": "yêu"
+  },
+  {
+    "key": "van__ieu",
+    "filename": "van__ieu.mp3",
+    "text": "iêu"
   },
   {
     "key": "van__oi",
@@ -350,19 +350,14 @@
     "text": "uôi"
   },
   {
-    "key": "van__u_horn_o_horn_i",
-    "filename": "van__u_horn_o_horn_i.mp3",
-    "text": "ươi"
-  },
-  {
     "key": "van__oa",
     "filename": "van__oa.mp3",
     "text": "oa"
   },
   {
-    "key": "van__oe",
-    "filename": "van__oe.mp3",
-    "text": "oe"
+    "key": "van__u_horn_o_horn_i",
+    "filename": "van__u_horn_o_horn_i.mp3",
+    "text": "ươi"
   },
   {
     "key": "van__oai",
@@ -370,14 +365,19 @@
     "text": "oai"
   },
   {
-    "key": "van__oay",
-    "filename": "van__oay.mp3",
-    "text": "oay"
+    "key": "van__oe",
+    "filename": "van__oe.mp3",
+    "text": "oe"
   },
   {
     "key": "van__uay",
     "filename": "van__uay.mp3",
     "text": "uây"
+  },
+  {
+    "key": "van__oay",
+    "filename": "van__oay.mp3",
+    "text": "oay"
   },
   {
     "key": "van__ue",
@@ -400,14 +400,14 @@
     "text": "uyu"
   },
   {
-    "key": "van__ui_horn_i",
-    "filename": "van__ui_horn_i.mp3",
-    "text": "uôi"
-  },
-  {
     "key": "van__am",
     "filename": "van__am.mp3",
     "text": "am"
+  },
+  {
+    "key": "van__ui_horn_i",
+    "filename": "van__ui_horn_i.mp3",
+    "text": "uôi"
   },
   {
     "key": "van__a_breve_m",
@@ -420,24 +420,24 @@
     "text": "âm"
   },
   {
-    "key": "van__em",
-    "filename": "van__em.mp3",
-    "text": "em"
-  },
-  {
     "key": "van__e_hat_m",
     "filename": "van__e_hat_m.mp3",
     "text": "êm"
   },
   {
-    "key": "van__im",
-    "filename": "van__im.mp3",
-    "text": "im"
+    "key": "van__em",
+    "filename": "van__em.mp3",
+    "text": "em"
   },
   {
     "key": "van__om",
     "filename": "van__om.mp3",
     "text": "om"
+  },
+  {
+    "key": "van__im",
+    "filename": "van__im.mp3",
+    "text": "im"
   },
   {
     "key": "van__o_hat_m",
@@ -570,24 +570,24 @@
     "text": "oăn"
   },
   {
-    "key": "van__uan_hat_a",
-    "filename": "van__uan_hat_a.mp3",
-    "text": "uân"
-  },
-  {
     "key": "van__uen",
     "filename": "van__uen.mp3",
     "text": "uên"
   },
   {
-    "key": "van__uyen",
-    "filename": "van__uyen.mp3",
-    "text": "uyên"
+    "key": "van__uan_hat_a",
+    "filename": "van__uan_hat_a.mp3",
+    "text": "uân"
   },
   {
     "key": "van__ang",
     "filename": "van__ang.mp3",
     "text": "ang"
+  },
+  {
+    "key": "van__uyen",
+    "filename": "van__uyen.mp3",
+    "text": "uyên"
   },
   {
     "key": "van__a_breve_ng",
@@ -620,14 +620,14 @@
     "text": "ông"
   },
   {
-    "key": "van__ung",
-    "filename": "van__ung.mp3",
-    "text": "ung"
-  },
-  {
     "key": "van__u_horn_ng",
     "filename": "van__u_horn_ng.mp3",
     "text": "ưng"
+  },
+  {
+    "key": "van__ung",
+    "filename": "van__ung.mp3",
+    "text": "ung"
   },
   {
     "key": "van__ieng",
@@ -650,19 +650,14 @@
     "text": "ương"
   },
   {
-    "key": "van__oang",
-    "filename": "van__oang.mp3",
-    "text": "oang"
-  },
-  {
     "key": "van__oang_breve",
     "filename": "van__oang_breve.mp3",
     "text": "oăng"
   },
   {
-    "key": "van__uang_hat",
-    "filename": "van__uang_hat.mp3",
-    "text": "uâng"
+    "key": "van__oang",
+    "filename": "van__oang.mp3",
+    "text": "oang"
   },
   {
     "key": "van__anh",
@@ -670,14 +665,19 @@
     "text": "anh"
   },
   {
-    "key": "van__e_hat_nh",
-    "filename": "van__e_hat_nh.mp3",
-    "text": "ênh"
+    "key": "van__uang_hat",
+    "filename": "van__uang_hat.mp3",
+    "text": "uâng"
   },
   {
     "key": "van__inh",
     "filename": "van__inh.mp3",
     "text": "inh"
+  },
+  {
+    "key": "van__e_hat_nh",
+    "filename": "van__e_hat_nh.mp3",
+    "text": "ênh"
   },
   {
     "key": "van__oanh",
@@ -760,14 +760,14 @@
     "text": "ướp"
   },
   {
-    "key": "van__at",
-    "filename": "van__at.mp3",
-    "text": "át"
-  },
-  {
     "key": "van__a_breve_t",
     "filename": "van__a_breve_t.mp3",
     "text": "ắt"
+  },
+  {
+    "key": "van__at",
+    "filename": "van__at.mp3",
+    "text": "át"
   },
   {
     "key": "van__a_hat_t",
@@ -810,24 +810,24 @@
     "text": "út"
   },
   {
-    "key": "van__u_horn_t",
-    "filename": "van__u_horn_t.mp3",
-    "text": "ứt"
-  },
-  {
     "key": "van__iet",
     "filename": "van__iet.mp3",
     "text": "iết"
   },
   {
-    "key": "van__uot_hat",
-    "filename": "van__uot_hat.mp3",
-    "text": "uốt"
+    "key": "van__u_horn_t",
+    "filename": "van__u_horn_t.mp3",
+    "text": "ứt"
   },
   {
     "key": "van__uot_horn",
     "filename": "van__uot_horn.mp3",
     "text": "ướt"
+  },
+  {
+    "key": "van__uot_hat",
+    "filename": "van__uot_hat.mp3",
+    "text": "uốt"
   },
   {
     "key": "van__oat",
@@ -850,14 +850,14 @@
     "text": "uyết"
   },
   {
-    "key": "van__uyt",
-    "filename": "van__uyt.mp3",
-    "text": "uýt"
-  },
-  {
     "key": "van__ac",
     "filename": "van__ac.mp3",
     "text": "ác"
+  },
+  {
+    "key": "van__uyt",
+    "filename": "van__uyt.mp3",
+    "text": "uýt"
   },
   {
     "key": "van__a_breve_c",
@@ -890,24 +890,24 @@
     "text": "ốc"
   },
   {
-    "key": "van__uc",
-    "filename": "van__uc.mp3",
-    "text": "úc"
-  },
-  {
     "key": "van__u_horn_c",
     "filename": "van__u_horn_c.mp3",
     "text": "ức"
   },
   {
-    "key": "van__iec",
-    "filename": "van__iec.mp3",
-    "text": "iếc"
+    "key": "van__uc",
+    "filename": "van__uc.mp3",
+    "text": "úc"
   },
   {
     "key": "van__uoc_hat",
     "filename": "van__uoc_hat.mp3",
     "text": "uốc"
+  },
+  {
+    "key": "van__iec",
+    "filename": "van__iec.mp3",
+    "text": "iếc"
   },
   {
     "key": "van__uoc_horn",
@@ -920,14 +920,14 @@
     "text": "oác"
   },
   {
-    "key": "van__oac_breve",
-    "filename": "van__oac_breve.mp3",
-    "text": "oắc"
-  },
-  {
     "key": "van__ach",
     "filename": "van__ach.mp3",
     "text": "ách"
+  },
+  {
+    "key": "van__oac_breve",
+    "filename": "van__oac_breve.mp3",
+    "text": "oắc"
   },
   {
     "key": "van__e_hat_ch",
@@ -960,19 +960,14 @@
     "text": "giặt"
   },
   {
-    "key": "tu__hoc_sac",
-    "filename": "tu__hoc_sac.mp3",
-    "text": "hóc"
-  },
-  {
     "key": "tu__hoc",
     "filename": "tu__hoc.mp3",
     "text": "học"
   },
   {
-    "key": "tu__vit_sac",
-    "filename": "tu__vit_sac.mp3",
-    "text": "vít"
+    "key": "tu__hoc_sac",
+    "filename": "tu__hoc_sac.mp3",
+    "text": "hóc"
   },
   {
     "key": "tu__vit",
@@ -980,14 +975,19 @@
     "text": "vịt"
   },
   {
-    "key": "tu__mat_sac",
-    "filename": "tu__mat_sac.mp3",
-    "text": "mắt"
+    "key": "tu__vit_sac",
+    "filename": "tu__vit_sac.mp3",
+    "text": "vít"
   },
   {
     "key": "tu__mat",
     "filename": "tu__mat.mp3",
     "text": "mặt"
+  },
+  {
+    "key": "tu__mat_sac",
+    "filename": "tu__mat_sac.mp3",
+    "text": "mắt"
   },
   {
     "key": "tu__quat_sac",
@@ -1010,24 +1010,24 @@
     "text": "chuột"
   },
   {
-    "key": "tu__bat",
-    "filename": "tu__bat.mp3",
-    "text": "bắt"
-  },
-  {
     "key": "tu__hat",
     "filename": "tu__hat.mp3",
     "text": "hát"
   },
   {
-    "key": "tu__sach",
-    "filename": "tu__sach.mp3",
-    "text": "sách"
+    "key": "tu__bat",
+    "filename": "tu__bat.mp3",
+    "text": "bắt"
   },
   {
     "key": "tu__quoc",
     "filename": "tu__quoc.mp3",
     "text": "quốc"
+  },
+  {
+    "key": "tu__sach",
+    "filename": "tu__sach.mp3",
+    "text": "sách"
   },
   {
     "key": "tu__truong_ngang",
@@ -1040,14 +1040,14 @@
     "text": "trường"
   },
   {
-    "key": "tu__quang",
-    "filename": "tu__quang.mp3",
-    "text": "quang"
-  },
-  {
     "key": "tu__khuyu_ngang",
     "filename": "tu__khuyu_ngang.mp3",
     "text": "khuyu"
+  },
+  {
+    "key": "tu__quang",
+    "filename": "tu__quang.mp3",
+    "text": "quang"
   },
   {
     "key": "tu__khuyu",
@@ -1150,14 +1150,14 @@
     "text": "trang"
   },
   {
-    "key": "tu__tieng_ngang",
-    "filename": "tu__tieng_ngang.mp3",
-    "text": "tiêng"
-  },
-  {
     "key": "tu__tieng",
     "filename": "tu__tieng.mp3",
     "text": "tiếng"
+  },
+  {
+    "key": "tu__tieng_ngang",
+    "filename": "tu__tieng_ngang.mp3",
+    "text": "tiêng"
   },
   {
     "key": "tu__hot",
@@ -1180,24 +1180,24 @@
     "text": "lo"
   },
   {
-    "key": "tu__canh_huyen",
-    "filename": "tu__canh_huyen.mp3",
-    "text": "cành"
-  },
-  {
     "key": "tu__tren",
     "filename": "tu__tren.mp3",
     "text": "trên"
   },
   {
-    "key": "tu__cay",
-    "filename": "tu__cay.mp3",
-    "text": "cây"
+    "key": "tu__canh_huyen",
+    "filename": "tu__canh_huyen.mp3",
+    "text": "cành"
   },
   {
     "key": "tu__canh",
     "filename": "tu__canh.mp3",
     "text": "canh"
+  },
+  {
+    "key": "tu__cay",
+    "filename": "tu__cay.mp3",
+    "text": "cây"
   },
   {
     "key": "tu__bai_huyen",
@@ -1220,24 +1220,24 @@
     "text": "vẻ"
   },
   {
-    "key": "tu__ve_huyen",
-    "filename": "tu__ve_huyen.mp3",
-    "text": "vè"
-  },
-  {
     "key": "tu__ve",
     "filename": "tu__ve.mp3",
     "text": "ve"
   },
   {
-    "key": "tu__cai_ngang",
-    "filename": "tu__cai_ngang.mp3",
-    "text": "cai"
+    "key": "tu__ve_huyen",
+    "filename": "tu__ve_huyen.mp3",
+    "text": "vè"
   },
   {
     "key": "tu__cai",
     "filename": "tu__cai.mp3",
     "text": "cái"
+  },
+  {
+    "key": "tu__cai_ngang",
+    "filename": "tu__cai_ngang.mp3",
+    "text": "cai"
   },
   {
     "key": "tu__sau",
@@ -1290,19 +1290,14 @@
     "text": "cô"
   },
   {
-    "key": "tu__giao_sac",
-    "filename": "tu__giao_sac.mp3",
-    "text": "giáo"
-  },
-  {
     "key": "tu__giao",
     "filename": "tu__giao.mp3",
     "text": "giao"
   },
   {
-    "key": "tu__diem_hoi",
-    "filename": "tu__diem_hoi.mp3",
-    "text": "điểm"
+    "key": "tu__giao_sac",
+    "filename": "tu__giao_sac.mp3",
+    "text": "giáo"
   },
   {
     "key": "tu__khen",
@@ -1310,9 +1305,9 @@
     "text": "khen"
   },
   {
-    "key": "tu__muoi_huyen",
-    "filename": "tu__muoi_huyen.mp3",
-    "text": "mười"
+    "key": "tu__diem_hoi",
+    "filename": "tu__diem_hoi.mp3",
+    "text": "điểm"
   },
   {
     "key": "tu__diem",
@@ -1320,14 +1315,19 @@
     "text": "điêm"
   },
   {
-    "key": "tu__khan",
-    "filename": "tu__khan.mp3",
-    "text": "khăn"
+    "key": "tu__muoi_huyen",
+    "filename": "tu__muoi_huyen.mp3",
+    "text": "mười"
   },
   {
     "key": "tu__muoi",
     "filename": "tu__muoi.mp3",
     "text": "mươi"
+  },
+  {
+    "key": "tu__khan",
+    "filename": "tu__khan.mp3",
+    "text": "khăn"
   },
   {
     "key": "tu__sach_nang",
@@ -1340,19 +1340,14 @@
     "text": "chú"
   },
   {
-    "key": "tu__boi",
-    "filename": "tu__boi.mp3",
-    "text": "bơi"
-  },
-  {
     "key": "tu__chu",
     "filename": "tu__chu.mp3",
     "text": "chu"
   },
   {
-    "key": "tu__gap_sac",
-    "filename": "tu__gap_sac.mp3",
-    "text": "gấp"
+    "key": "tu__boi",
+    "filename": "tu__boi.mp3",
+    "text": "bơi"
   },
   {
     "key": "tu__nhanh",
@@ -1360,14 +1355,19 @@
     "text": "nhanh"
   },
   {
-    "key": "tu__tay",
-    "filename": "tu__tay.mp3",
-    "text": "tay"
+    "key": "tu__gap_sac",
+    "filename": "tu__gap_sac.mp3",
+    "text": "gấp"
   },
   {
     "key": "tu__gap_nang",
     "filename": "tu__gap_nang.mp3",
     "text": "gập"
+  },
+  {
+    "key": "tu__tay",
+    "filename": "tu__tay.mp3",
+    "text": "tay"
   },
   {
     "key": "tu__con",
@@ -1388,6 +1388,11 @@
     "key": "tu__nho_hoi",
     "filename": "tu__nho_hoi.mp3",
     "text": "nhỏ"
+  },
+  {
+    "key": "tu__hoi",
+    "filename": "tu__hoi.mp3",
+    "text": "hỏi"
   },
   {
     "key": "tu__nho",
