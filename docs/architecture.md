@@ -2,6 +2,10 @@
 
 Tài liệu này cung cấp bức tranh toàn cảnh về kiến trúc kỹ thuật của **App Học Đánh Vần Tiếng Việt Lớp 1**, phục vụ cho các kỹ sư mới hoặc khi bạn quay lại bảo trì/mở rộng dự án sau 6 tháng.
 
+> [!NOTE]
+> Để tìm hiểu chi tiết các công nghệ chuyên sâu và thuật toán nâng cao (WSOLA Time-Stretching thuần TypeScript, Biquad Parametric EQ, Động cơ ngữ âm 5 bước SGK, Canvas OCR Preprocessor), vui lòng tham khảo:
+> 👉 **[Tài Liệu Các Công Nghệ & Thuật Toán Nổi Bật](file:///d:/Workspace/web_apps/app_hoc_danh_van/docs/cong_nghe_va_thuat_toan_noi_bat.md)**
+
 ---
 
 ## 1. Sơ Đồ Kiến Trúc Tổng Thể (High-Level Architecture)

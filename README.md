@@ -2,10 +2,11 @@
 
 > Ứng dụng web sư phạm chuẩn mực hỗ trợ trẻ 6 tuổi học đọc, ghép vần và đánh vần Tiếng Việt Lớp 1. Được xây dựng theo nguyên tắc **Offline-First**, **100% giọng đọc người thật (Zero Robot TTS)**, giao diện **Montessori tối giản** và tích hợp **nhận diện trang sách OCR ngay trên trình duyệt**.
 
-[![Node.js Tests](https://img.shields.io/badge/Tests-77%2F77%20PASS-brightgreen)](file:///d:/Workspace/web_apps/app_hoc_danh_van/test)
+[![Node.js Tests](https://img.shields.io/badge/Tests-147%2F147%20PASS-brightgreen)](file:///d:/Workspace/web_apps/app_hoc_danh_van/test)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue)](file:///d:/Workspace/web_apps/app_hoc_danh_van/tsconfig.json)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean%20%26%20Modular-orange)](file:///d:/Workspace/web_apps/app_hoc_danh_van/docs/architecture.md)
-[![Audio Pipeline](https://img.shields.io/badge/Audio-Master%20Sprite%20v4.2.0-purple)](file:///d:/Workspace/web_apps/app_hoc_danh_van/docs/audio_guide.md)
+[![Audio Pipeline](https://img.shields.io/badge/Audio-Master%20Sprite%20v4.8.0-purple)](file:///d:/Workspace/web_apps/app_hoc_danh_van/docs/audio_guide.md)
+[![Algorithms & Tech](https://img.shields.io/badge/Tech%20%26%20Algorithms-Deep%20Dive-darkgreen)](file:///d:/Workspace/web_apps/app_hoc_danh_van/docs/cong_nghe_va_thuat_toan_noi_bat.md)
 
 ---
 
@@ -142,9 +143,10 @@ Dự án duy trì hệ thống tài liệu kiến trúc và quyết định thi�
 Trước khi tạo commit hoặc triển khai tính năng mới, luôn đảm bảo vượt qua 2 bước kiểm tra bắt buộc:
 
 ```bash
-# 1. Chạy toàn bộ 77 bài kiểm thử
+# 1. Chạy toàn bộ 147 bài kiểm thử (135 tests chính + 12 tests Bảng chữ cái)
 npm test
-# Kết quả mong đợi: 77 pass, 0 fail, 0 skipped
+node --test test/alphabet_board.test.js
+# Kết quả mong đợi: 147 pass, 0 fail, 0 skipped
 
 # 2. Biên dịch Production Build
 npm run build
