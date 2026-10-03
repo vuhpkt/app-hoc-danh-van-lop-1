@@ -4,15 +4,14 @@
 
 ---
 
-## 🎯 5 Trụ Cột Kỹ Thuật Chính
+## 🎯 4 Trụ Cột Kỹ Thuật Chính
 
 | Phân hệ | Công nghệ / Thuật toán cốt lõi | Hiệu quả thực tế |
 |---|---|---|
 | **1. Xử lý âm thanh (DSP)** | Thuật toán **WSOLA** thuần TypeScript, Bộ lọc **Biquad IIR 5 băng tần**, **Hann Windowing** | Kéo giãn từ ngắn (*"em"*, *"lo"*) bảo toàn 100% cao độ, xử lý $< 4\text{ms}$ trên CPU trình duyệt. |
 | **2. Web Audio & RAM** | **Master Audio Sprite** (282 mẩu âm), giải phóng bộ nhớ `masterBuffer = null` | Độ trễ phát **$< 15\text{ms}$**, giảm $70\%$ RAM, triệt tiêu rò rỉ bộ nhớ. |
 | **3. Ngữ âm SGK** | Động cơ quyết định luận (Deterministic Automata), công thức **5 bước SGK Kết Nối Tri Thức** | Bóc tách âm vần chuẩn xác $100\%$, tự động xử lý bước đệm sắc cho vần khép tắc (*"học"* $\to$ *"hóc"*). |
-| **4. Thị giác máy tính (OCR)** | Pipeline **Canvas 2D** (ITU-R BT.601, Contrast Curve, Binarization) + **Tesseract.js WASM** | Nhận diện trang sách $100\%$ trên máy, bảo mật tuyệt đối dữ liệu trẻ em (Zero-Server). |
-| **5. Hiệu năng UI (Montessori)** | `React.memo` so sánh tùy biến cho Karaoke ($O(1)$ updates), quy chuẩn **Fitts's Law** ($\ge 56\text{px}$) | Đọc cả bài không giật lag ($60\text{ fps}$), tối ưu xúc giác cho ngón tay trẻ 6 tuổi. |
+| **4. Hiệu năng UI (Montessori)** | `React.memo` so sánh tùy biến cho Karaoke ($O(1)$ updates), quy chuẩn **Fitts's Law** ($\ge 56\text{px}$) | Đọc cả bài không giật lag ($60\text{ fps}$), tối ưu xúc giác cho ngón tay trẻ 6 tuổi. |
 
 ---
 
@@ -20,14 +19,14 @@
 *Tệp mã nguồn:* [`src/core/audio/AudioDspProcessor.ts`](file:///d:/Workspace/web_apps/app_hoc_danh_van/src/core/audio/AudioDspProcessor.ts)
 
 * **Thuật toán WSOLA (Waveform Similarity Overlap-Add) thuần TypeScript**:
-  - **Vấn đề:** Các từ đơn âm tiết ngắn hoặc vần mở (*"em"*, *"lo"*, *"vui"*) khi sinh từ TTS thường bị cộc lốc ($< 220\text{ms}$). Tua chậm thông thường sẽ làm hạ trầm giọng đọc (méo tiếng cô giáo).
+  - **Vấn đề:** Các từ đơn âm tiết ngắn hoặc vần mở (*"em"*, *"lo"*, *"vui"*) thường có thời lượng phát âm thực tế quá ngắn ($< 220\text{ms}$), gây cảm giác cộc lốc và hụt hơi. Kỹ thuật tua chậm thông thường (resampling) sẽ làm hạ trầm giọng đọc khiến giọng cô giáo bị méo.
   - **Giải pháp:** Phân tích khung cửa sổ $20\text{ms}$, dịch chuyển bước tổng hợp $10\text{ms}$ và tìm độ tương đồng dạng sóng cực đại (Cross-Correlation) trong miền thời gian.
-  - **Tối ưu 2 tầng:** Quét thô ($\Delta=2, k=4$) rồi tinh chỉnh lân cận $\to$ Xử lý xong trong **$< 4\text{ms}$** trên CPU điện thoại, kéo giãn *"em"* từ $187\text{ms}$ lên $310\text{ms}$ mà **giữ nguyên 100% cao độ**.
+  - **Tối ưu 2 tầng:** Quét thô ($\Delta=2, k=4$) rồi tinh chỉnh lân cận $\to$ Xử lý xong trong **$< 4\text{ms}$** trên CPU thiết bị di động, kéo giãn *"em"* từ $187\text{ms}$ lên $310\text{ms}$ mà **giữ nguyên 100% cao độ tự nhiên**.
 * **Bộ lọc số Biquad Parametric EQ 5 băng tần**:
   - Dựa trên công thức giải tích *Audio EQ Cookbook* của Robert Bristow-Johnson.
-  - Profile *"Cô giáo ấm áp"*: High-Pass $85\text{Hz}$ (khử DC/ù loa), Peaking $220\text{Hz}$ (+2.2dB độ ấm ngực), Peaking $1.8\text{kHz}$ (+0.8dB rõ phụ âm), Peaking $3.6\text{kHz}$ (-2.2dB khử chói gắt $s, x, ch$), High-Shelf $7.5\text{kHz}$ (-1.8dB khử artifact MP3).
+  - Profile *"Cô giáo ấm áp"*: High-Pass $85\text{Hz}$ (khử DC/ù loa), Peaking $220\text{Hz}$ (+2.2dB độ ấm ngực), Peaking $1.8\text{kHz}$ (+0.8dB rõ phụ âm), Peaking $3.6\text{kHz}$ (-2.2dB khử chói gắt $s, x, ch$), High-Shelf $7.5\text{kHz}$ (-1.8dB khử artifact nén).
 * **Studio Padding & Chống Pop màng loa**:
-  - Gọt bỏ 64 mẫu đầu tiên của MP3 để khử tiếng nổ xung điện của bộ mã hóa LAME.
+  - Gọt bỏ 64 mẫu đầu tiên để khử tiếng nổ xung điện khởi động âm thanh.
   - Tự động đệm **50ms pre-roll** (lấy hơi) và **140ms decay tail** (vang vòm họng), bọc 2 đầu bằng cửa sổ **Hann 12ms**.
 
 ---
@@ -39,9 +38,9 @@
   - Đóng gói toàn bộ 282 mẩu âm vào duy nhất 1 file `sprite-main.mp3` ($1020\text{ KB}$) và `sprite-main.webm` ($696\text{ KB}$) kèm `audio-map.json`.
   - Phát âm thanh qua con trỏ thời gian (Buffer Slice), phản hồi tức thì **$< 15\text{ms}$**, hoạt động ngoại tuyến $100\%$.
 * **Giải phóng RAM tức thì (`masterBuffer = null`)**:
-  - Ngay sau khi cắt xong 282 lát cắt, đối tượng `masterBuffer` ($30 - 60\text{ MB}$ Float32 PCM) được gán `null` để thu hồi bộ nhớ ngay, giảm $70\%$ RAM trên thiết bị di động.
+  - Ngay sau khi cắt xong 282 lát cắt con, đối tượng `masterBuffer` ($30 - 60\text{ MB}$ Float32 PCM) được giải phóng khỏi RAM, giảm $70\%$ bộ nhớ tiêu thụ trên thiết bị di động.
 * **Dọn dẹp Promise treo luồng (Hanging Promise Cleanup)**:
-  - Khi dừng phát hoặc đổi bài: xả GainNode về 0 trong $3\text{ms}$ (tránh nổ loa), ngắt kết nối node âm thanh và kích hoạt `activeResolvers` để kết thúc sạch toàn bộ Promise `async/await`.
+  - Khi dừng phát hoặc chuyển bài: xả GainNode về 0 trong $3\text{ms}$ (tránh nổ loa), ngắt kết nối node âm thanh và kích hoạt `activeResolvers` để kết thúc sạch toàn bộ Promise `async/await`.
 * **Cơ chế Cache-Busting tự động**:
   - Sử dụng tham số truy vấn `SPRITE_VERSION = 'v4.8.0'` để ép trình duyệt tải ngay file âm thanh mới, vượt qua HTTP Disk Cache cũ.
 
@@ -64,21 +63,7 @@
 
 ---
 
-## 4. 👁️ Thị Giác Máy Tính & OCR 100% Trên Trình Duyệt
-*Tệp mã nguồn:* [`src/core/ocr/`](file:///d:/Workspace/web_apps/app_hoc_danh_van/src/core/ocr/)
-
-* **Pipeline Canvas 2D thích ứng**:
-  - Co kích thước ảnh về tối đa $2048\text{px}$ chống tràn RAM.
-  - Chuyển mức xám quang học (ITU-R BT.601: $0.299R + 0.587G + 0.114B$).
-  - Nâng tương phản phi tuyến tính ($C = 1.3$) và nhị phân hóa (Threshold = 140) loại bỏ hoàn toàn bóng mờ của bàn học.
-* **Tesseract.js WebAssembly (Privacy-First)**:
-  - Nhận diện trực tiếp trong Web Worker của trình duyệt. Không gửi ảnh lên server, bảo mật tuyệt đối hình ảnh của trẻ em.
-* **Text Sanitizer SGK**:
-  - Chuẩn hóa Unicode NFD $\to$ NFC, tự động gọt bỏ số trang ("Trang 45"), tiêu đề sách và khử nhiễu quét lỗi.
-
----
-
-## 5. 🎨 Giao Diện Xúc Giác Montessori & Tối Ưu Re-render $O(1)$
+## 4. 🎨 Giao Diện Xúc Giác Montessori & Tối Ưu Re-render $O(1)$
 *Tệp mã nguồn:* [`src/components/kid/`](file:///d:/Workspace/web_apps/app_hoc_danh_van/src/components/kid), [`src/components/alphabet/`](file:///d:/Workspace/web_apps/app_hoc_danh_van/src/components/alphabet)
 
 * **Tối ưu Karaoke $O(1)$ Updates**:
